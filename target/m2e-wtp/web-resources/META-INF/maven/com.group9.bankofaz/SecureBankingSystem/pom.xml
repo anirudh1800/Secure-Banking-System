@@ -11,8 +11,9 @@
 	<properties>
 		<springframework.version>4.2.1.RELEASE</springframework.version>
 		<hibernate.version>5.0.1.Final</hibernate.version>
+		<!-- hibernate.version>4.1.9.Final</hibernate.version-->
 		<mysql.connector.version>5.1.36</mysql.connector.version>
-		<joda-time.version>2.8.2</joda-time.version>
+		<!-- joda-time.version>2.8.2</joda-time.version -->
 		<testng.version>6.9.4</testng.version>
 		<mockito.version>1.10.19</mockito.version>
 		<h2.version>1.4.189</h2.version>
@@ -73,19 +74,21 @@
 			<version>${mysql.connector.version}</version>
 		</dependency>
 
+		<!-- Joda & Jadira not supported by Hibernate 5 -->
+		<!-- http://stackoverflow.com/questions/32448957/abstractmethoderror-in-sessionfactoryimpl-when-upgrading-to-hibernate-5 -->  
 		<!-- Joda-Time -->
-		<dependency>
+		<!--dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time.version}</version>
-		</dependency>
+		</dependency -->
 
 		<!-- To map JodaTime with database type -->
-		<dependency>
+		<!-- dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
 			<version>3.0.0.CR1</version>
-		</dependency>
+		</dependency -->
 
 		<!-- Servlet+JSP+JSTL -->
 		<dependency>
@@ -139,6 +142,11 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>4.0.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
+			<version>2.1.1</version>
 		</dependency>
 	</dependencies>
 
