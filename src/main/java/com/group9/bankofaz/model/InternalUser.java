@@ -4,10 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.sql.Blob;
 
@@ -28,8 +32,9 @@ public class InternalUser {
 	@Column(name = "lastname", nullable = false)
 	private String lastname;
 	
-	@Column(name = "email", nullable = false)
-	private String email;
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "email")
+	private Authentication email;
 	
 	@Column(name = "addressline1", nullable = false)
 	private String addressline1;
@@ -45,10 +50,7 @@ public class InternalUser {
 	
 	@Column(name = "zipcode", nullable = false, columnDefinition = "char")	
 	private String zipcode;
-	
-	@Column(name = "passwd", nullable = false)
-	private String passwd;
-	
+		
 	@Column(name = "ssn", nullable = false)
 	private String ssn;
 	
@@ -92,11 +94,11 @@ public class InternalUser {
 		this.lastname = lastname;
 	}
 
-	public String getEmail() {
+	public Authentication getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(Authentication email) {
 		this.email = email;
 	}
 
@@ -138,16 +140,6 @@ public class InternalUser {
 
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
-	}
-
-	
-
-	public String getPasswd() {
-		return passwd;
-	}
-
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
 	}
 
 	public String getSsn() {

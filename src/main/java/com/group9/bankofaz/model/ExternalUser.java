@@ -4,7 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.sql.Blob;
 
@@ -25,8 +28,9 @@ public class ExternalUser {
 	@Column(name = "lastname", nullable = false)
 	private String lastname;
 	
-	@Column(name = "email", nullable = false)
-	private String email;
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "email")
+	private Authentication email;
 	
 	@Column(name = "addressline1", nullable = false)
 	private String addressline1;
@@ -48,9 +52,6 @@ public class ExternalUser {
 	
 	@Column(name = "publickey", nullable = false)
 	private Blob publickey;
-	
-	@Column(name = "passwd", nullable = false)
-	private String passwd;
 	
 	@Column(name = "ssn", nullable = false)
 	private String ssn;
@@ -90,11 +91,11 @@ public class ExternalUser {
 		this.lastname = lastname;
 	}
 
-	public String getEmail() {
+	public Authentication getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(Authentication email) {
 		this.email = email;
 	}
 
@@ -152,14 +153,6 @@ public class ExternalUser {
 
 	public void setPublickey(Blob publickey) {
 		this.publickey = publickey;
-	}
-
-	public String getPasswd() {
-		return passwd;
-	}
-
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
 	}
 
 	public String getSsn() {
