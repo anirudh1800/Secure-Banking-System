@@ -1,23 +1,20 @@
 package com.group9.bankofaz.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import java.sql.Blob;
-
 @Entity
 @Table(name = "InternalUser")
-public class InternalUser {	
+public class InternalUser implements AbstractUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)
@@ -157,4 +154,46 @@ public class InternalUser {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	/**
+	 * 
+	 */
+	public InternalUser() {
+		super();
+	}
+	
+	/**
+	 * @param userid
+	 * @param firstname
+	 * @param middlename
+	 * @param lastname
+	 * @param email
+	 * @param addressline1
+	 * @param addressline2
+	 * @param city
+	 * @param state
+	 * @param zipcode
+	 * @param ssn
+	 * @param accessprivilege
+	 * @param name
+	 */
+	public InternalUser(int userid, String firstname, String middlename, String lastname, Authentication email,
+			String addressline1, String addressline2, String city, String state, String zipcode, String ssn,
+			String accessprivilege, String name) {
+		super();
+		this.userid = userid;
+		this.firstname = firstname;
+		this.middlename = middlename;
+		this.lastname = lastname;
+		this.email = email;
+		this.addressline1 = addressline1;
+		this.addressline2 = addressline2;
+		this.city = city;
+		this.state = state;
+		this.zipcode = zipcode;
+		this.ssn = ssn;
+		this.accessprivilege = accessprivilege;
+		this.name = name;
+	}
+	
 }

@@ -1,5 +1,7 @@
 package com.group9.bankofaz.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,11 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import java.util.Date;
+
+import org.hibernate.annotations.Any;
+import org.hibernate.annotations.AnyMetaDef;
+import org.hibernate.annotations.MetaValue;
 
 @Entity
 @Table(name = "Task")
@@ -31,9 +32,15 @@ public class Task {
     @JoinColumn(name = "tid")
 	private Transaction tid;
 	
+	@Any (metaColumn = @Column(name = "tasktype"))
+	@AnyMetaDef(idType = "int", metaType = "string",
+	metaValues = {
+	@MetaValue(targetEntity = InternalUser.class, value = "direct"),
+	@MetaValue(targetEntity = ExternalUser.class, value = "merchant")
+	})	
 	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "empid")
-	private InternalUser assigneeid;
+    @JoinColumn(name = "userid")
+	private AbstractUser assigneeid;
 
 	public Transaction getTaskid() {
 		return taskid;
@@ -67,17 +74,12 @@ public class Task {
 		this.tid = tid;
 	}
 
-	public InternalUser getAssigneeid() {
+	public AbstractUser getAssigneeid() {
 		return assigneeid;
 	}
 
-	public void setAssigneeid(InternalUser assigneeid) {
+	public void setAssigneeid(AbstractUser assigneeid) {
 		this.assigneeid = assigneeid;
 	}
-	
-	
-	
-	
-	
 	
 }
