@@ -10,6 +10,7 @@
 
 	<properties>
 		<springframework.version>4.2.1.RELEASE</springframework.version>
+		<springframework.security.version>4.0.2.RELEASE</springframework.security.version>
 		<hibernate.version>5.0.1.Final</hibernate.version>
 		<mysql.connector.version>5.1.36</mysql.connector.version>
 		<joda-time.version>2.8.2</joda-time.version>
@@ -46,7 +47,30 @@
 			<artifactId>spring-orm</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		
+		<!-- Spring Security -->
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-core</artifactId>
+    		<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-web</artifactId>
+    		<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springframework.security.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		
 		<!-- Hibernate -->
 		<dependency>
 			<groupId>org.hibernate</groupId>

@@ -11,19 +11,28 @@
 	<br>
 	<br>
 	<div style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align:center;">
+ 	<form action="authenticate" method="post">
  	<table>
+ 		<tr> 
+ 		 	<td><input type="radio" name="usertype" value="customer"/>Customer </td> 
+ 			<td><input type="radio" name="usertype" value="employee"/>Employee </td> 
+ 			<td><input type="radio" name="usertype" value="government"/>Government </td>
+ 		</tr>	
  		<tr>
- 			<td align="left">Login Id:</td>
+  			<td align="left">User ID:</td>
  			<td align="left"><input type="text" size="20" name="loginid"/></td>
  		</tr>
  		<tr>
  			<td align="left">Password:</td>
- 			<td align="left"><input type="text" size="20" name="password"/></td>
+ 			<td align="left"><input type="password" size="20" name="password"/></td>
  		</tr>
  		<tr>
- 			<td align="center" colspan="2"><input type="submit" size="20" name="submitBtn" value="Login"/></td>
+ 			<td align="center" colspan="2"><input type="submit" size="20" name="submitBtn" value="Login" /></td>
+ 			<td align="center" colspan="2"><a href="ForgotPwd">Forgot Password</a></td>
  		</tr> 
  	</table>
+ 	</form>
+ 	  
 	<br>
 	</div>
 </body>
