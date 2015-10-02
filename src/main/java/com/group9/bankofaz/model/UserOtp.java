@@ -18,7 +18,7 @@ import java.util.Date;
 @Table(name = "UserOtp")
 public class UserOtp implements Serializable {
 	@Id
-		@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userid")
 	private ExternalUser userid;
 	
