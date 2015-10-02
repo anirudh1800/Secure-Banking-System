@@ -38,7 +38,6 @@ public class Task {
 	@MetaValue(targetEntity = InternalUser.class, value = "direct"),
 	@MetaValue(targetEntity = ExternalUser.class, value = "merchant")
 	})	
-	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userid")
 	private AbstractUser assigneeid;
 

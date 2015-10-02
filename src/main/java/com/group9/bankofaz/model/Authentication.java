@@ -12,9 +12,10 @@ import javax.persistence.Table;
 @Table(name = "Authentication")
 public class Authentication {	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "email", nullable = false)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)	
+    @Column(name = "email")
 	private String email;
+	
 	
 	@Column(name = "passwd", nullable = false)
 	private String passwd;
