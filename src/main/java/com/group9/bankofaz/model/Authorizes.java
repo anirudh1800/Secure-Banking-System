@@ -1,5 +1,6 @@
 package com.group9.bankofaz.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "Authorizes")
-public class Authorizes {
+public class Authorizes implements Serializable{
 	
 	@Id
 	@ManyToOne(cascade = CascadeType.ALL)

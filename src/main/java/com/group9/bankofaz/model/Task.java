@@ -20,7 +20,7 @@ public class Task {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "taskid", nullable = false)
-	private Transaction taskid;
+	private int taskid;
 	
 	@Column(name = "message", nullable = false)
 	private String message;
@@ -41,11 +41,11 @@ public class Task {
     @JoinColumn(name = "userid")
 	private AbstractUser assigneeid;
 
-	public Transaction getTaskid() {
+	public int getTaskid() {
 		return taskid;
 	}
 
-	public void setTaskid(Transaction taskid) {
+	public void setTaskid(int taskid) {
 		this.taskid = taskid;
 	}
 
