@@ -1,50 +1,50 @@
 package com.group9.bankofaz.model;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 
-import java.io.Serializable;
-import java.sql.Blob;
-import java.util.Date;
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
 
 @Entity
 @Table(name = "Authorizes")
-public class Authorizes  implements Serializable{
-	
-	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userid", nullable = false)
-	private ExternalUser userid;
-	
-	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "empid", nullable = false)
-	private InternalUser empid;
-	
-	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tid", nullable = false)
-	private Transaction tid;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "start_datetime", nullable = false)
-	private Date start_datetime;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "end_datetime", nullable = false)
-	private Date end_datetime;
-	
+public class Authorizes implements Serializable {
 
-	
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "userid", nullable = false)
+	private ExternalUser userid;
+
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "userid", nullable = false)
+	private InternalUser empid;
+
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "tid", nullable = false)
+	private Transaction tid;
+
+	@Column(name = "start_datetime", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date start_datetime;
+
+	@Column(name = "end_datetime", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date end_datetime;
+
 	public InternalUser getEmpid() {
 		return empid;
 	}
@@ -56,7 +56,7 @@ public class Authorizes  implements Serializable{
 	public Transaction getTid() {
 		return tid;
 	}
-	
+
 	public void setTid(Transaction tid) {
 		this.tid = tid;
 	}
@@ -65,8 +65,6 @@ public class Authorizes  implements Serializable{
 		return userid;
 	}
 
-	
-	
 	public Date getStart_datetime() {
 		return start_datetime;
 	}
@@ -86,5 +84,5 @@ public class Authorizes  implements Serializable{
 	public void setUserid(ExternalUser userid) {
 		this.userid = userid;
 	}
-	
+
 }

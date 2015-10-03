@@ -1,5 +1,9 @@
 package com.group9.bankofaz.model;
 
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,23 +13,22 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 
-import java.io.Serializable;
-import java.sql.Blob;
-import java.util.Date;
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
 
 @Entity
 @Table(name = "Transaction")
-public class Transaction implements Serializable {	
+public class Transaction{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "tid", nullable = false)
 	private int tid;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "datetime", nullable = false)
+	@Column(name = "datetime", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date datetime;
 	
 	@Column(name = "type", nullable = false)
@@ -38,12 +41,10 @@ public class Transaction implements Serializable {
 	private String status;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	//@Column(name="from")
     @JoinColumn(name = "accno", insertable = false, updatable = false)
 	private BankAccount from;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	//@Column(name="from")
 	@JoinColumn(name = "accno")
 	private BankAccount to;
 	

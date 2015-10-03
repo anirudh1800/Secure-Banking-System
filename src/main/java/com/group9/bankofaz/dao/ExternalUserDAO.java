@@ -1,17 +1,22 @@
+/**
+ * 
+ */
 package com.group9.bankofaz.dao;
 
 import com.group9.bankofaz.model.ExternalUser;
 
-// ref: http://examples.javacodegeeks.com/enterprise-java/spring/jpaorm/spring-hibernate-mysql-and-maven-showcase/
-
+/**
+ * @author Anirudh Ruia Gali
+ *
+ */
 public interface ExternalUserDAO {
-	  void persistExternalUser(ExternalUser externalUser);
-	  
-	  ExternalUser findExternalUserById(int userid);
-	  
-	  void updateExternalUser(ExternalUser externalUser);
-	  
-	  void deleteExternalUser(ExternalUser externalUser);
-	  
-	  
+	public void add(ExternalUser externaluser);
+
+	public void update(ExternalUser externaluser);
+
+	public void persist(ExternalUser externaluser);
+
+	public void delete(ExternalUser externaluser);
+
+	public ExternalUser findUserById(String email);
 }

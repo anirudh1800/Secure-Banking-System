@@ -1,72 +1,69 @@
 package com.group9.bankofaz.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
+/**
+ * @author Anirudh Ruia Gali
+ *
+ */
 
-import java.io.Serializable;
-import java.util.Date;
-
-@Entity
-@Table(name = "UserOtp")
-public class UserOtp implements Serializable {
-	@Id
-		@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userid")
-	private ExternalUser userid;
+public class UserOtp{
+	private String email;
+	private String  otp;
+	private int  validationcode;	
+	private int scratchid;
 	
-	@Column(name = "otp", nullable = false)	
-	private int  otp;
-	
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "createdatetime", nullable = false)
-	private Date createdatetime;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "expirydatetime", nullable = false)
-	private Date expirydatetime;
-
-	public ExternalUser getUserid() {
-		return userid;
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUserid(ExternalUser userid) {
-		this.userid = userid;
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public int getOtp() {
+	/**
+	 * @return the otp
+	 */
+	public String getOtp() {
 		return otp;
 	}
 
-	public void setOtp(int otp) {
+	/**
+	 * @param otp the otp to set
+	 */
+	public void setOtp(String otp) {
 		this.otp = otp;
 	}
 
-	public Date getCreatedatetime() {
-		return createdatetime;
+	/**
+	 * @return the validationcode
+	 */
+	public int getValidationcode() {
+		return validationcode;
 	}
 
-	public void setCreatedatetime(Date createdatetime) {
-		this.createdatetime = createdatetime;
+	/**
+	 * @param validationcode the validationcode to set
+	 */
+	public void setValidationcode(int validationcode) {
+		this.validationcode = validationcode;
 	}
 
-	public Date getExpirydatetime() {
-		return expirydatetime;
+	/**
+	 * @return the scratchid
+	 */
+	public int getScratchid() {
+		return scratchid;
 	}
 
-	public void setExpirydatetime(Date expirydatetime) {
-		this.expirydatetime = expirydatetime;
-	}
-	
-	
-	
-	
+	/**
+	 * @param scratchid the scratchid to set
+	 */
+	public void setScratchid(int scratchid) {
+		this.scratchid = scratchid;
+	}	
 }

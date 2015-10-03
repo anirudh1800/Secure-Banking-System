@@ -11,9 +11,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.sql.Blob;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "ExternalUser")
-public class ExternalUser {	
+public class ExternalUser implements AbstractUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)
@@ -170,4 +175,48 @@ public class ExternalUser {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	/**
+	 * 
+	 */
+	public ExternalUser() {
+		super();
+	}
+
+	/**
+	 * @param userid
+	 * @param firstname
+	 * @param middlename
+	 * @param lastname
+	 * @param email
+	 * @param addressline1
+	 * @param addressline2
+	 * @param city
+	 * @param state
+	 * @param zipcode
+	 * @param usertype
+	 * @param publickey
+	 * @param ssn
+	 * @param name
+	 */
+	public ExternalUser(int userid, String firstname, String middlename, String lastname, Authentication email,
+			String addressline1, String addressline2, String city, String state, String zipcode, String usertype,
+			Blob publickey, String ssn, String name) {
+		super();
+		this.userid = userid;
+		this.firstname = firstname;
+		this.middlename = middlename;
+		this.lastname = lastname;
+		this.email = email;
+		this.addressline1 = addressline1;
+		this.addressline2 = addressline2;
+		this.city = city;
+		this.state = state;
+		this.zipcode = zipcode;
+		this.usertype = usertype;
+		this.publickey = publickey;
+		this.ssn = ssn;
+		this.name = name;
+	}
+	
 }
