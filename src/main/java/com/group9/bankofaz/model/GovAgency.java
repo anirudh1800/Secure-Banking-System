@@ -5,6 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "GovAgency")
 public class GovAgency {

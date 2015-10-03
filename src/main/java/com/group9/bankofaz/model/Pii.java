@@ -10,6 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "Pii")
 public class Pii implements Serializable{
@@ -36,9 +41,4 @@ public class Pii implements Serializable{
 	public void setVisastatus(String visastatus) {
 		this.visastatus = visastatus;
 	}
-	
-	
-
-	
-	
 }

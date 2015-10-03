@@ -9,6 +9,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "Logs")
 public class Logs {
@@ -19,8 +24,8 @@ public class Logs {
 	@Column(name = "description", nullable = false)
 	private String description;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "datetime", nullable = false)
+	@Column(name = "datetime", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date datetime;
 
 	public String getAccno() {
@@ -46,7 +51,5 @@ public class Logs {
 	public void setDatetime(Date datetime) {
 		this.datetime = datetime;
 	}
-	
-	
 	
 }

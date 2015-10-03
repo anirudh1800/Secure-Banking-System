@@ -1,5 +1,9 @@
 package com.group9.bankofaz.model;
 
+/**
+ * @author Anirudh Ruia Gali
+ *
+ */
 
 public class UserOtp{
 	private String email;

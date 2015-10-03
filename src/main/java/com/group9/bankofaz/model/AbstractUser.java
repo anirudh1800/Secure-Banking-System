@@ -4,7 +4,7 @@
 package com.group9.bankofaz.model;
 
 /**
- * @author agali
+ * @author Anirudh Ruia Gali
  *
  */
 

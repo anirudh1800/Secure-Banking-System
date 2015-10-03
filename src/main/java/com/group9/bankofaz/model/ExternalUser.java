@@ -11,6 +11,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.sql.Blob;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "ExternalUser")
 public class ExternalUser implements AbstractUser{	

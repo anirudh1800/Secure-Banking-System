@@ -12,6 +12,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "InternalUser")
 public class InternalUser implements AbstractUser{	

@@ -3,6 +3,11 @@
  */
 package com.group9.bankofaz.model;
 
+/**
+ * @author Anirudh Ruia Gali
+ *
+ */
+
 public class Scratchcodes{
 	private int scratchid;	
 	private int scratchcode;

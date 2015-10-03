@@ -14,6 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
+
 @Entity
 @Table(name = "Transaction")
 public class Transaction{	
@@ -22,8 +27,8 @@ public class Transaction{
 	@Column(name = "tid", nullable = false)
 	private int tid;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "datetime", nullable = false)
+	@Column(name = "datetime", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date datetime;
 	
 	@Column(name = "type", nullable = false)
@@ -36,12 +41,10 @@ public class Transaction{
 	private String status;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	//@Column(name="from")
     @JoinColumn(name = "accno", insertable = false, updatable = false)
 	private BankAccount from;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	//@Column(name="from")
 	@JoinColumn(name = "accno")
 	private BankAccount to;
 	

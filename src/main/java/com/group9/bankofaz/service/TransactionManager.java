@@ -96,9 +96,4 @@ public class TransactionManager implements Runnable{
 		// TODO Auto-generated method stub
 		
 	}
-	
 }
-
-/**
-Anirudh Ruia Gali
-*/

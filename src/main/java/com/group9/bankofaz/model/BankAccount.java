@@ -1,5 +1,9 @@
 package com.group9.bankofaz.model;
 
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -7,9 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import java.util.Date;
+
+/**
+ * @author Chandrani Mukherjee
+ *
+ */
 
 @Entity
 @Table(name = "BankAccount")
@@ -24,8 +30,8 @@ public class BankAccount {
 	@Column(name = "acctype", nullable = false)
 	private String acctype;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "opendate", nullable = false)
+	@Column(name = "opendate", columnDefinition="DATETIME", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date opendate;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -71,7 +77,5 @@ public class BankAccount {
 	public void setUserid(ExternalUser userid) {
 		this.userid = userid;
 	}
-	
-	
 	
 }

@@ -1,5 +1,9 @@
 package com.group9.bankofaz.model;
 
+/**
+ * @author Anirudh Ruia Gali
+ *
+ */
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
