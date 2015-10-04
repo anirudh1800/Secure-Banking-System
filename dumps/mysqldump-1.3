@@ -15,7 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-SET FOREIGN_KEY_CHECKS=0
 --
 -- Current Database: `bankofazdb`
 --
@@ -47,67 +46,6 @@ LOCK TABLES `authentication` WRITE;
 /*!40000 ALTER TABLE `authentication` DISABLE KEYS */;
 INSERT INTO `authentication` VALUES ('gali.anirudh@gmail.com','1234'),('nomail1@gmail.com','1234'),('nomail3@gmail.com','1234'),('nomail@gmail.com','1234'),('ssgrp9@gmail.com','1234'),('testmail2@gmail.com','1234'),('testmail@gmail.com','1234');
 /*!40000 ALTER TABLE `authentication` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `authorizes`
---
-
-DROP TABLE IF EXISTS `authorizes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `authorizes` (
-  `userid` int(11) NOT NULL,
-  `empid` int(11) NOT NULL,
-  `tid` int(11) NOT NULL,
-  `start_datetime` datetime NOT NULL,
-  `end_datetime` datetime NOT NULL,
-  KEY `fk_Authorizes_1_idx` (`userid`),
-  KEY `fk_Authorizes_2_idx` (`empid`),
-  KEY `fk_Authorizes_3_idx` (`tid`),
-  CONSTRAINT `fk_Authorizes_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Authorizes_2` FOREIGN KEY (`empid`) REFERENCES `internaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Authorizes_3` FOREIGN KEY (`tid`) REFERENCES `transaction` (`tid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `authorizes`
---
-
-LOCK TABLES `authorizes` WRITE;
-/*!40000 ALTER TABLE `authorizes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `authorizes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `bankaccount`
---
-
-DROP TABLE IF EXISTS `bankaccount`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `bankaccount` (
-  `accno` varchar(9) NOT NULL,
-  `balance` float NOT NULL,
-  `acctype` varchar(8) NOT NULL,
-  `opendate` datetime NOT NULL,
-  `userid` int(11) NOT NULL,
-  `status` varchar(8) NOT NULL DEFAULT 'inactive',
-  PRIMARY KEY (`accno`),
-  KEY `fk_BankAccount_1_idx` (`userid`),
-  CONSTRAINT `fk_BankAccount_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `bankaccount`
---
-
-LOCK TABLES `bankaccount` WRITE;
-/*!40000 ALTER TABLE `bankaccount` DISABLE KEYS */;
-INSERT INTO `bankaccount` VALUES ('852810001',30,'checking','2014-11-11 12:45:34',1001,'active'),('852810002',0,'savings','2014-11-11 12:45:34',1002,'active'),('852810003',50,'savings','2014-11-11 12:45:34',1001,'active'),('852810004',0,'checking','2015-11-11 12:45:34',1002,'active'),('852810005',0,'checking','2015-11-11 12:45:34',1003,'inactive');
-/*!40000 ALTER TABLE `bankaccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -149,30 +87,6 @@ INSERT INTO `externaluser` VALUES (1001,'adam','','carter','nomail@gmail.com','1
 UNLOCK TABLES;
 
 --
--- Table structure for table `govagency`
---
-
-DROP TABLE IF EXISTS `govagency`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `govagency` (
-  `username` varchar(30) NOT NULL,
-  `passwd` varchar(30) NOT NULL,
-  PRIMARY KEY (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `govagency`
---
-
-LOCK TABLES `govagency` WRITE;
-/*!40000 ALTER TABLE `govagency` DISABLE KEYS */;
-INSERT INTO `govagency` VALUES ('agent','secretpassword');
-/*!40000 ALTER TABLE `govagency` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `internaluser`
 --
 
@@ -206,6 +120,125 @@ LOCK TABLES `internaluser` WRITE;
 /*!40000 ALTER TABLE `internaluser` DISABLE KEYS */;
 INSERT INTO `internaluser` VALUES (10001,'test','','bankofaz','ssgrp9@gmail.com','Hayden Library','','tempe','az','85281','789456123','RE1'),(10002,'test1','','bankofaz','gali.anirudh@gmail.com','Hayden Library','','tempe','az','85281','741852963','RE2'),(10003,'test2','','bankofaz','testmail@gmail.com','Hayden Library','','tempe','az','85281','852963741','SM'),(10004,'test3','','bankofaz','testmail2@gmail.com','Hayden Library','','tempe','az','85281','852741963','SA');
 /*!40000 ALTER TABLE `internaluser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `bankaccount`
+--
+
+DROP TABLE IF EXISTS `bankaccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bankaccount` (
+  `accno` varchar(9) NOT NULL,
+  `balance` float NOT NULL,
+  `acctype` varchar(8) NOT NULL,
+  `opendate` datetime NOT NULL,
+  `userid` int(11) NOT NULL,
+  `status` varchar(8) NOT NULL DEFAULT 'inactive',
+  PRIMARY KEY (`accno`),
+  KEY `fk_BankAccount_1_idx` (`userid`),
+  CONSTRAINT `fk_BankAccount_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bankaccount`
+--
+
+LOCK TABLES `bankaccount` WRITE;
+/*!40000 ALTER TABLE `bankaccount` DISABLE KEYS */;
+INSERT INTO `bankaccount` VALUES ('852810001',30,'checking','2014-11-11 12:45:34',1001,'active'),('852810002',0,'savings','2014-11-11 12:45:34',1002,'active'),('852810003',50,'savings','2014-11-11 12:45:34',1001,'active'),('852810004',0,'checking','2015-11-11 12:45:34',1002,'active'),('852810005',0,'checking','2015-11-11 12:45:34',1003,'inactive');
+/*!40000 ALTER TABLE `bankaccount` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `transaction`
+--
+
+DROP TABLE IF EXISTS `transaction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `transaction` (
+  `tid` int(11) NOT NULL AUTO_INCREMENT,
+  `datetime` datetime NOT NULL,
+  `type` varchar(8) NOT NULL,
+  `amt` float DEFAULT NULL,
+  `status` varchar(10) DEFAULT NULL,
+  `from` varchar(9) DEFAULT NULL,
+  `to` varchar(9) DEFAULT NULL,
+  `desc` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`tid`),
+  KEY `fk_Transaction_1_idx` (`from`),
+  KEY `fk_Transaction_2_idx` (`to`),
+  CONSTRAINT `fk_Transaction_1` FOREIGN KEY (`from`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Transaction_2` FOREIGN KEY (`to`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transaction`
+--
+
+LOCK TABLES `transaction` WRITE;
+/*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
+INSERT INTO `transaction` VALUES (1,'2015-11-11 12:45:34','credit',100,'approved','852810001','852810001',''),(2,'2015-11-12 12:45:34','debit',20,'approved','852810001','852810001',NULL),(3,'2015-11-13 12:45:34','transfer',50,'approved','852810001','852810003','internal'),(4,'2015-11-14 12:45:34','payment',31,'declined','852810001','852810004','TACOBELL'),(5,'2015-11-15 12:45:34','debit',50,'declined','852810001','852810001',''),(6,'2015-11-15 12:45:34','review',0,'processing','852810001','852810001',''),(7,'2015-11-11 12:45:34','openacc',0,'processing','852810005','852810005',NULL);
+/*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `authorizes`
+--
+
+DROP TABLE IF EXISTS `authorizes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `authorizes` (
+  `userid` int(11) NOT NULL,
+  `empid` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `start_datetime` datetime NOT NULL,
+  `end_datetime` datetime NOT NULL,
+  KEY `fk_Authorizes_1_idx` (`userid`),
+  KEY `fk_Authorizes_2_idx` (`empid`),
+  KEY `fk_Authorizes_3_idx` (`tid`),
+  CONSTRAINT `fk_Authorizes_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Authorizes_2` FOREIGN KEY (`empid`) REFERENCES `internaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Authorizes_3` FOREIGN KEY (`tid`) REFERENCES `transaction` (`tid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `authorizes`
+--
+
+LOCK TABLES `authorizes` WRITE;
+/*!40000 ALTER TABLE `authorizes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `authorizes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `govagency`
+--
+
+DROP TABLE IF EXISTS `govagency`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `govagency` (
+  `username` varchar(30) NOT NULL,
+  `passwd` varchar(30) NOT NULL,
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `govagency`
+--
+
+LOCK TABLES `govagency` WRITE;
+/*!40000 ALTER TABLE `govagency` DISABLE KEYS */;
+INSERT INTO `govagency` VALUES ('agent','secretpassword');
+/*!40000 ALTER TABLE `govagency` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -307,40 +340,6 @@ LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
 INSERT INTO `task` VALUES (1,'general','completed',3,1001,'direct'),(2,'general','completed',4,1002,'merchant'),(3,' ','notcompleted',7,1001,'direct');
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `transaction`
---
-
-DROP TABLE IF EXISTS `transaction`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `transaction` (
-  `tid` int(11) NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
-  `type` varchar(8) NOT NULL,
-  `amt` float DEFAULT NULL,
-  `status` varchar(10) DEFAULT NULL,
-  `from` varchar(9) DEFAULT NULL,
-  `to` varchar(9) DEFAULT NULL,
-  `desc` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`tid`),
-  KEY `fk_Transaction_1_idx` (`from`),
-  KEY `fk_Transaction_2_idx` (`to`),
-  CONSTRAINT `fk_Transaction_1` FOREIGN KEY (`from`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Transaction_2` FOREIGN KEY (`to`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `transaction`
---
-
-LOCK TABLES `transaction` WRITE;
-/*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'2015-11-11 12:45:34','credit',100,'approved','852810001','852810001',''),(2,'2015-11-12 12:45:34','debit',20,'approved','852810001','852810001',NULL),(3,'2015-11-13 12:45:34','transfer',50,'approved','852810001','852810003','internal'),(4,'2015-11-14 12:45:34','payment',31,'declined','852810001','852810004','TACOBELL'),(5,'2015-11-15 12:45:34','debit',50,'declined','852810001','852810001',''),(6,'2015-11-15 12:45:34','review',0,'processing','852810001','852810001',''),(7,'2015-11-11 12:45:34','openacc',0,'processing','852810005','852810005',NULL);
-/*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1233,5 +1232,4 @@ CREATE TABLE IF NOT EXISTS `slow_log` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-SET FOREIGN_KEY_CHECKS=1
 -- Dump completed on 2015-10-02 22:35:04
