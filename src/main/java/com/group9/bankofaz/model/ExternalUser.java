@@ -35,7 +35,7 @@ public class ExternalUser implements AbstractUser{
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "email")
-	private Authentication email;
+	private Users email;
 	
 	@Column(name = "addressline1", nullable = false)
 	private String addressline1;
@@ -96,11 +96,11 @@ public class ExternalUser implements AbstractUser{
 		this.lastname = lastname;
 	}
 
-	public Authentication getEmail() {
+	public Users getEmail() {
 		return email;
 	}
 
-	public void setEmail(Authentication email) {
+	public void setEmail(Users email) {
 		this.email = email;
 	}
 
@@ -199,7 +199,7 @@ public class ExternalUser implements AbstractUser{
 	 * @param ssn
 	 * @param name
 	 */
-	public ExternalUser(int userid, String firstname, String middlename, String lastname, Authentication email,
+	public ExternalUser(int userid, String firstname, String middlename, String lastname, Users email,
 			String addressline1, String addressline2, String city, String state, String zipcode, String usertype,
 			Blob publickey, String ssn, String name) {
 		super();

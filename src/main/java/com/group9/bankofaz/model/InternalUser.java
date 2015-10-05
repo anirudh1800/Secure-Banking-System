@@ -36,7 +36,7 @@ public class InternalUser implements AbstractUser{
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "email")
-	private Authentication email;
+	private Users email;
 	
 	@Column(name = "addressline1", nullable = false)
 	private String addressline1;
@@ -96,11 +96,11 @@ public class InternalUser implements AbstractUser{
 		this.lastname = lastname;
 	}
 
-	public Authentication getEmail() {
+	public Users getEmail() {
 		return email;
 	}
 
-	public void setEmail(Authentication email) {
+	public void setEmail(Users email) {
 		this.email = email;
 	}
 
@@ -182,7 +182,7 @@ public class InternalUser implements AbstractUser{
 	 * @param accessprivilege
 	 * @param name
 	 */
-	public InternalUser(int userid, String firstname, String middlename, String lastname, Authentication email,
+	public InternalUser(int userid, String firstname, String middlename, String lastname, Users email,
 			String addressline1, String addressline2, String city, String state, String zipcode, String ssn,
 			String accessprivilege, String name) {
 		super();
