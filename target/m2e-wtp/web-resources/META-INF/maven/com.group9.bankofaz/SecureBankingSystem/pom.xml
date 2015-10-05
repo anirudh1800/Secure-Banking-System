@@ -10,8 +10,8 @@
 
 	<properties>
 		<springframework.version>4.2.1.RELEASE</springframework.version>
+		<springframework.security.version>4.0.2.RELEASE</springframework.security.version>
 		<hibernate.version>5.0.1.Final</hibernate.version>
-		<!-- hibernate.version>4.1.9.Final</hibernate.version -->
 		<mysql.connector.version>5.1.36</mysql.connector.version>
 		<testng.version>6.9.4</testng.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -45,6 +45,24 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${springframework.version}</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springframework.security.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Hibernate -->
@@ -120,11 +138,6 @@
 			<artifactId>dbunit</artifactId>
 			<version>${dbunit.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>4.0.2.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
