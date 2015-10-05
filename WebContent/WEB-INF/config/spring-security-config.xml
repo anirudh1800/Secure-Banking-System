@@ -1,0 +1,43 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+ http://www.springframework.org/schema/security
+ http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<http auto-config="true" use-expressions="true">
+		<session-management invalid-session-url="/login?time=1">
+			<concurrency-control max-sessions="1"
+				expired-url="/login?time=1" />
+		</session-management>
+
+		<access-denied-handler error-page="/403page" />
+
+		<intercept-url pattern="/login**" access="permitAll()" />
+		<intercept-url pattern="/otp**"
+			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+
+		<form-login login-page='/login' username-parameter="email"
+			password-parameter="passwd" login-processing-url="/j_spring_security_check"
+			default-target-url="/otp" authentication-failure-url="/login?authfailed" />
+		<csrf />
+		<logout logout-url="/j_spring_security_logout" logout-success-url="/login?logout" invalidate-session="true"/>
+	</http>
+
+	<authentication-manager>
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="
+         SELECT USERNAME, PASSWORD, CASE ENABLED WHEN 1 THEN 'true' ELSE 'false' END 'ENABLED'
+         FROM users
+         WHERE USERNAME=?;"
+
+				authorities-by-username-query="
+        SELECT USERNAME, AUTHORITY
+        FROM users
+        WHERE USERNAME=?;" />
+		</authentication-provider>
+	</authentication-manager>
+
+</beans:beans>
+
