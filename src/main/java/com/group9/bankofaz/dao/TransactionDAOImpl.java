@@ -1,63 +1,49 @@
-/**
- * 
- */
 package com.group9.bankofaz.dao;
 
 import java.util.List;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.Transaction;
 
-/**
- * @author Anirudh Ruia Gali
- *
- */
+@Repository
 public class TransactionDAOImpl implements TransactionDAO {
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.TransactionDAO#add(com.group9.bankofaz.model.Transaction)
-	 */
+	private SessionFactory sessionFactory;
+	
+	@Autowired
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
+	}
+
 	@Override
 	public void add(Transaction transaction) {
-		// TODO Auto-generated method stub
-
+		sessionFactory.getCurrentSession().persist(transaction);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.TransactionDAO#update(com.group9.bankofaz.model.Transaction)
-	 */
 	@Override
 	public void update(Transaction transaction) {
-		// TODO Auto-generated method stub
-
+		sessionFactory.getCurrentSession().update(transaction);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.TransactionDAO#persist(com.group9.bankofaz.model.Transaction)
-	 */
 	@Override
 	public void persist(Transaction transaction) {
-		// TODO Auto-generated method stub
-
+		sessionFactory.getCurrentSession().persist(transaction);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.TransactionDAO#delete(com.group9.bankofaz.model.Transaction)
-	 */
 	@Override
 	public void delete(Transaction transaction) {
-		// TODO Auto-generated method stub
-
+		sessionFactory.getCurrentSession().delete(transaction);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.TransactionDAO#findTransactionsOfUser(com.group9.bankofaz.model.BankAccount)
-	 */
 	@Override
 	public List<Transaction> findTransactionsOfUser(BankAccount bankaccount) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Transaction> list = sessionFactory.getCurrentSession()
+				.createQuery("from transaction where from = '" + bankaccount.getAccno() + "' ").list();
+		return list;
 	}
 
 }
-

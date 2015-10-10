@@ -11,13 +11,13 @@ import com.group9.bankofaz.model.Users;
  */
 
 public interface UsersDAO {
-	public void add(Users authentication);
+	public void add(Users users);
 
-	public void update(Users authentication);
+	public void update(Users users);
 
-	public void persist(Users authentication);
+	public void persist(Users users);
 
-	public void delete(Users authentication);
+	public void delete(Users users);
 
-	public Users findUsersById(String email);
+	public Users findUsersByEmail(String email);
 }

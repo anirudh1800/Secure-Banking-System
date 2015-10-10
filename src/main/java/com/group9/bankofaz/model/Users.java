@@ -20,8 +20,8 @@ public class Users {
     @Column(name = "username")
 	private String username;	
 	
-	@Column(name = "password", nullable = false)
-	private String password;
+	@Column(name = "passwd", nullable = false)
+	private String passwd;
 
 	@Column(name = "authority", nullable = false)
 	private String authority;
@@ -38,11 +38,11 @@ public class Users {
 	}
 
 	public String getPassword() {
-		return password;
+		return passwd;
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.passwd = password;
 	}
 	
 	public String getAuthority() {

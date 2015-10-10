@@ -3,7 +3,7 @@
 <%@page session="true"%>
 <html>
 <head>
-<title>OTP Page | www.beingjavaguys.com</title>
+<title>OTP Page</title>
 </head>
 <body>
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />

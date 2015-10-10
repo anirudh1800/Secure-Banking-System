@@ -6,7 +6,7 @@ package com.group9.bankofaz.service;
  *
  */
 
-public class RegularEmployee {
-
+public interface RegularEmployee {
+	
 }
 

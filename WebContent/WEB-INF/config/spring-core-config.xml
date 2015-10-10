@@ -16,7 +16,10 @@
 	http://www.springframework.org/schema/task 
 	http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
-	<context:component-scan base-package="com.group9.bankofaz.*" />
+	<context:component-scan base-package="com.group9.bankofaz.controller" />
+	<context:component-scan base-package="com.group9.bankofaz.dao" />
+	<context:component-scan base-package="com.group9.bankofaz.model" />
+	<context:component-scan base-package="com.group9.bankofaz.service" />
 	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">

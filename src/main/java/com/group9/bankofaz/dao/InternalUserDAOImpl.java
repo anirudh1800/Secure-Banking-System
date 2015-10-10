@@ -1,98 +1,80 @@
-/**
- * 
- */
 package com.group9.bankofaz.dao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.group9.bankofaz.model.InternalUser;
 
-/**
- * @author Anirudh Ruia Gali
- *
- */
+@Repository
 public class InternalUserDAOImpl implements InternalUserDAO {
+	private SessionFactory sessionFactory;
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#add(com.group9.bankofaz.model.InternalUser)
-	 */
-	@Override
-	public void add(InternalUser externaluser) {
-		// TODO Auto-generated method stub
-
+	@Autowired
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#update(com.group9.bankofaz.model.InternalUser)
-	 */
 	@Override
-	public void update(InternalUser externaluser) {
-		// TODO Auto-generated method stub
-
+	public void add(InternalUser internaluser) {
+		this.sessionFactory.getCurrentSession().persist(internaluser);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#persist(com.group9.bankofaz.model.InternalUser)
-	 */
 	@Override
-	public void persist(InternalUser externaluser) {
-		// TODO Auto-generated method stub
-
+	public void update(InternalUser internaluser) {
+		this.sessionFactory.getCurrentSession().update(internaluser);		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#delete(com.group9.bankofaz.model.InternalUser)
-	 */
 	@Override
-	public void delete(InternalUser externaluser) {
-		// TODO Auto-generated method stub
-
+	public void persist(InternalUser internaluser) {
+		this.sessionFactory.getCurrentSession().persist(internaluser);		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#findUserById(java.lang.String)
-	 */
+	@Override
+	public void delete(InternalUser internaluser) {
+		this.sessionFactory.getCurrentSession().delete(internaluser);		
+	}
+
 	@Override
 	public InternalUser findUserByEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = this.sessionFactory.getCurrentSession();
+		InternalUser intUser = (InternalUser) session.createQuery("from InternalUser where email = :email")
+				.setString("email", "'" + email + "'")
+				.uniqueResult();
+		return intUser;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#findAllRegEmployees()
-	 */
 	@Override
 	public List<InternalUser> findAllRegEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = this.sessionFactory.getCurrentSession();		
+		List<InternalUser> usersList = session.createQuery("from InternalUser I where I.accessprivilege = 'RE1' or I.accessprivilege = 'RE2'").list();
+		return usersList;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#findAllSystemManagers()
-	 */
 	@Override
 	public List<InternalUser> findAllSystemManagers() {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = this.sessionFactory.getCurrentSession();		
+		List<InternalUser> usersList = session.createQuery("from InternalUser I where I.accessprivilege = 'SM'").list();
+		return usersList;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#findSysAdmin()
-	 */
 	@Override
 	public InternalUser findSysAdmin() {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = this.sessionFactory.getCurrentSession();		
+		InternalUser user = (InternalUser) session.createQuery("from InternalUser I where I.accessprivilege = 'SM'").uniqueResult();
+		return user;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.group9.bankofaz.dao.InternalUserDAO#findUserById(int)
-	 */
 	@Override
 	public InternalUser findUserById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = this.sessionFactory.getCurrentSession();      
+		InternalUser user = (InternalUser) session.createQuery("from InternalUser where userid = :id")
+				.setInteger("id", id)
+				.uniqueResult();
+		return user;
 	}
 
 }
-

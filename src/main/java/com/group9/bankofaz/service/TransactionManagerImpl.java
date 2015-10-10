@@ -40,7 +40,6 @@ import com.group9.bankofaz.model.Transaction;;
 @Service
 @Scope("singleton")
 public class TransactionManagerImpl implements Runnable, TransactionManagerService{
-
 	private InternalUserDAO internalUserDAO;	
 	private TransactionDAO transactionDAO;
 	private TaskDAO taskDAO;
@@ -64,6 +63,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  *  3) On Failure, update the transaction status from processing to declined
  *  4) on exception return false else true
  */	
+	
 	@Override
 	public void scheduleTask(){
 		
@@ -110,7 +110,6 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 			taskDAO.update(task);
 			transactionDAO.update(transaction);			
-	
 			break;
 
 		case "openacc":
@@ -582,13 +581,28 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		}
 	}
 	
-	@Autowired
-	public void TransactionManager(InternalUserDAO internalUserDAO, TransactionDAO transactionDAO, TaskDAO taskDAO, BankAccountDAO bankAccountDAO) {
-		this.internalUserDAO = internalUserDAO;
-		this.transactionDAO = transactionDAO;
-		this.taskDAO = taskDAO;
-		this.bankAccountDAO = bankAccountDAO;
-		
+	public void TransactionManager() {
 		updateEmployeeList();
 	}
+
+	@Autowired
+	public void setInternalUserDAO(InternalUserDAO internalUserDAO) {
+		this.internalUserDAO = internalUserDAO;
+	}
+
+	@Autowired
+	public void setTransactionDAO(TransactionDAO transactionDAO) {
+		this.transactionDAO = transactionDAO;
+	}
+
+	@Autowired
+	public void setTaskDAO(TaskDAO taskDAO) {
+		this.taskDAO = taskDAO;
+	}
+	
+	@Autowired
+	public void setBankAccountDAO(BankAccountDAO bankAccountDAO) {
+		this.bankAccountDAO = bankAccountDAO;
+	}
+		
 }
