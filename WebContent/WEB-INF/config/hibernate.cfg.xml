@@ -22,7 +22,7 @@
 
 		<!-- Mappings for annotated classes -->
 		<mapping class="com.group9.bankofaz.model.AbstractUser" />
-		<mapping class="com.group9.bankofaz.model.Authentication" />
+		<mapping class="com.group9.bankofaz.model.Users" />
 		<mapping class="com.group9.bankofaz.model.ExternalUser" />
 		<mapping class="com.group9.bankofaz.model.InternalUser" />
 		<mapping class="com.group9.bankofaz.model.BankAccount" />

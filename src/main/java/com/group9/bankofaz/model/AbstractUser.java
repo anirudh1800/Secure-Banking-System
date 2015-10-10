@@ -18,7 +18,7 @@ public interface AbstractUser {
 
 	public String getLastname();
 
-	public Authentication getEmail();
+	public Users getEmail();
 
 	public String getAddressline1();
 
@@ -42,7 +42,7 @@ public interface AbstractUser {
 
 	public void setLastname(String lastname);
 
-	public void setEmail(Authentication email);
+	public void setEmail(Users email);
 
 	public void setAddressline1(String addressline1);
 
