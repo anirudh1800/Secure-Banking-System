@@ -37,6 +37,9 @@ public class BankAccount {
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userid")
 	private ExternalUser userid;
+	
+	@Column(name ="status", nullable = false)
+	private String status;
 
 	public String getAccno() {
 		return accno;
@@ -57,6 +60,10 @@ public class BankAccount {
 	public ExternalUser getUserid() {
 		return userid;
 	}
+	
+	public String getStatus(){
+		return status;
+	}
 
 	public void setAccno(String accno) {
 		this.accno = accno;
@@ -76,6 +83,10 @@ public class BankAccount {
 	
 	public void setUserid(ExternalUser userid) {
 		this.userid = userid;
+	}
+	
+	public void setStatus(String status){
+		this.status = status;
 	}
 	
 }

@@ -11,6 +11,7 @@ import com.group9.bankofaz.model.InternalUser;
  * @author Anirudh Ruia Gali
  *
  */
+
 public interface InternalUserDAO {
 	public void add(InternalUser externaluser);
 
@@ -20,7 +21,9 @@ public interface InternalUserDAO {
 
 	public void delete(InternalUser externaluser);
 
-	public InternalUser findUserById(String email);
+	public InternalUser findUserByEmail(String email);
+	
+	public InternalUser findUserById(int id);
 
 	public List<InternalUser> findAllRegEmployees();
 

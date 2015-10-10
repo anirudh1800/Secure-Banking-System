@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LoginController {
 
-	@RequestMapping("login")  
+	@RequestMapping("/login")  
 	 public ModelAndView getLoginForm(  
 	   @RequestParam(required = false) String authfailed, String logout,  
 	   String denied) {  
@@ -32,12 +32,12 @@ public class LoginController {
 	  return new ModelAndView("login", "message", message);  
 	 }  
 	
-	@RequestMapping("otp")  
+	@RequestMapping("/login/otp")  
 	public String geOtpView() {  
 	  return "otp";  
 	 }  
 	
-	@RequestMapping("403page")  
+	@RequestMapping("/403page")  
 	public String ge403denied() {  
 	  return "redirect:login?denied";  
 	}  

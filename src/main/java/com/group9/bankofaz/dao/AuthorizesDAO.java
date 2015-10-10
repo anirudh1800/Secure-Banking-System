@@ -12,6 +12,7 @@ import com.group9.bankofaz.model.Transaction;
  * @author Anirudh Ruia Gali
  *
  */
+
 public interface AuthorizesDAO {
 	public void add(Authorizes authorizes);
 

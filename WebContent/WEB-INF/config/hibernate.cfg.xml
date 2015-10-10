@@ -6,15 +6,21 @@
 <hibernate-configuration>
 	<session-factory>
 
-		<!-- connection details -->
+		<!-- Connection details -->
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/bankofazdb</property>
 		<property name="hibernate.connection.username">dbuser</property>
 		<property name="hibernate.connection.password">tR$qCR8j</property>
 		<property name="hibernate.show_sql">true</property>
+		
+		<!-- JTA details -->
+		<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JTATransactionFactory</property>
+		<property name="hibernate.transaction.manager_lookup_class">org.springframework.transaction.jta.JtaTransactionManager</property>
+		<property name="jta.UserTransaction">java:comp/UserTransaction</property>
+		
 
-		<!-- mappings for annotated classes -->
+		<!-- Mappings for annotated classes -->
 		<mapping class="com.group9.bankofaz.model.AbstractUser" />
 		<mapping class="com.group9.bankofaz.model.Authentication" />
 		<mapping class="com.group9.bankofaz.model.ExternalUser" />
@@ -26,6 +32,6 @@
 		<mapping class="com.group9.bankofaz.model.Pii" />
 		<mapping class="com.group9.bankofaz.model.Logs" />
 		<mapping class="com.group9.bankofaz.model.Authorizes" />
-		<!---->
+		
 	</session-factory>
 </hibernate-configuration>

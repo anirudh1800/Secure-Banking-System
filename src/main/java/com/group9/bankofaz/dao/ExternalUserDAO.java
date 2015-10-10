@@ -18,5 +18,7 @@ public interface ExternalUserDAO {
 
 	public void delete(ExternalUser externaluser);
 
-	public ExternalUser findUserById(String email);
+	public ExternalUser findUserByEmail(String email);
+	
+	public ExternalUser findUserById(int id);
 }
