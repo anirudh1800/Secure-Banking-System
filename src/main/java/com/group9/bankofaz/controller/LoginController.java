@@ -3,6 +3,8 @@
  */
 package com.group9.bankofaz.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.group9.bankofaz.service.LoginService;
+import com.group9.bankofaz.dao.InternalUserDAO;
+import com.group9.bankofaz.model.InternalUser;
 
 /**
  * @author Anirudh Ruia Gali
@@ -22,9 +25,9 @@ import com.group9.bankofaz.service.LoginService;
 @Controller
 public class LoginController {
 	
-//	@Autowired
-//	private LoginService loginService;
-
+	@Autowired
+	InternalUserDAO internalUserDao;
+	
 	@RequestMapping("/login")  
 	 public ModelAndView getLoginForm(  
 	   @RequestParam(required = false) String authfailed, String logout,  
@@ -54,7 +57,14 @@ public class LoginController {
 	public ModelAndView forgotPassword(HttpSession session) {
 		String userName = (String) session.getAttribute("userName");
 		return null;
-
-	}
+	} 
 	
+	@RequestMapping("/test")
+    public ModelAndView handleRequest() throws Exception {
+        InternalUser listUsers = internalUserDao.findUserById(10002);
+        ModelAndView model = new ModelAndView("test_internalusers_list");
+        model.addObject("userList", listUsers);
+        return model;
+    }
+
 }

@@ -16,7 +16,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "Pii")
+@Table(name = "pii")
 public class Pii implements Serializable{
 	@Id
 	@OneToOne(cascade = CascadeType.ALL)

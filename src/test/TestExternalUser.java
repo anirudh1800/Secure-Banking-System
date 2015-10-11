@@ -38,7 +38,7 @@ public class TestExternalUser {
 		}*/
 		
 		ExternalUserService emService = (ExternalUserService) context.getBean("ExternalUserService");
-		// Uncomment to add created ExternalUser object to table
+		//Uncomment to add created ExternalUser object to table
 		//emService.persistExternalUser(extUser);
 				
 		// Search by id example

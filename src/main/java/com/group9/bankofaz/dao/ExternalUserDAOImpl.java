@@ -26,7 +26,7 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 
 	@Override
 	public void add(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().persist(externaluser);			
+		sessionFactory.getCurrentSession().save(externaluser);			
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 	@Override
 	public ExternalUser findUserByEmail(String email) {
 		Session session = this.sessionFactory.getCurrentSession();      
-		ExternalUser user = (ExternalUser) session.createQuery("from ExternalUser where email = :email")
-				.setString("email", "'" + email + "'")
+		ExternalUser user = (ExternalUser) session.createQuery("from ExternalUser where email.username = :email")
+				.setString("email", email)
 				.uniqueResult();
 		return user;
 	}

@@ -20,7 +20,7 @@ import org.hibernate.annotations.MetaValue;
  */
 
 @Entity
-@Table(name = "Task")
+@Table(name = "task")
 public class Task {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

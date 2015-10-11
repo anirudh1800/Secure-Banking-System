@@ -17,7 +17,7 @@ public class GovAgencyDAOImpl implements GovAgencyDAO {
 
 	@Override
 	public void add(GovAgency govagency) {
-		this.sessionFactory.getCurrentSession().persist(govagency);
+		this.sessionFactory.getCurrentSession().save(govagency);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class GovAgencyDAOImpl implements GovAgencyDAO {
 	public GovAgency findByUsername(String username) {
 		Session session = this.sessionFactory.getCurrentSession();
 		GovAgency gov = (GovAgency) session.createQuery("from GovAgency where username = :user")
-				.setString("user", "'" + username + "'")
+				.setString("user", username)
 				.uniqueResult();
 		return gov;
 	}

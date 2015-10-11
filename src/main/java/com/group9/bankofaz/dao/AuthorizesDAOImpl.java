@@ -23,7 +23,7 @@ public class AuthorizesDAOImpl implements AuthorizesDAO {
 	@Override
 	public void add(Authorizes authorizes) {
 		Session session = this.sessionFactory.getCurrentSession();
-        session.persist(authorizes);
+        session.save(authorizes);
 	}
 
 	@Override

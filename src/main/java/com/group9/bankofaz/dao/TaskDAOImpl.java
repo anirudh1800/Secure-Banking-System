@@ -22,7 +22,7 @@ public class TaskDAOImpl implements TaskDAO {
 	
 	@Override
 	public void add(Task task) {
-		sessionFactory.getCurrentSession().persist(task);
+		sessionFactory.getCurrentSession().save(task);
 	}
 
 	@Override

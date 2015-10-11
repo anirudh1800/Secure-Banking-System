@@ -19,8 +19,10 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@Table(name = "Authorizes")
+@Table(name = "authorizes")
 public class Authorizes implements Serializable {
+
+	private static final long serialVersionUID = -2075078276930609695L;
 
 	@Id
 	@ManyToOne(cascade = CascadeType.ALL)

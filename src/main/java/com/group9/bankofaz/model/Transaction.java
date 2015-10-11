@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@Table(name = "Transaction")
+@Table(name = "transaction")
 public class Transaction{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

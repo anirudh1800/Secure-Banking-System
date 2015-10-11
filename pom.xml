@@ -11,7 +11,7 @@
 	<properties>
 		<springframework.version>4.2.1.RELEASE</springframework.version>
 		<springframework.security.version>4.0.2.RELEASE</springframework.security.version>
-		<hibernate.version>5.0.1.Final</hibernate.version>
+		<hibernate.version>4.3.5.Final</hibernate.version>
 		<mysql.connector.version>5.1.36</mysql.connector.version>
 		<testng.version>6.9.4</testng.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -76,6 +76,16 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
 
 		<!-- jsr303 validation -->
 		<dependency>
@@ -118,12 +128,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${springframework.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

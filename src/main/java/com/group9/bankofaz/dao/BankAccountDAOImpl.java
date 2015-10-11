@@ -21,7 +21,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 
 	@Override
 	public void add(BankAccount bankaccount) {		
-		sessionFactory.getCurrentSession().persist(bankaccount);		
+		sessionFactory.getCurrentSession().save(bankaccount);		
 	}
 
 	@Override

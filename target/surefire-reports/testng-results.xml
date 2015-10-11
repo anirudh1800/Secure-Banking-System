@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="0" passed="0">
+  <reporter-output>
+  </reporter-output>
+  <suite name="com.group9.bankofaz.test.InternalUserTest" duration-ms="3" started-at="2015-10-10T21:54:24Z" finished-at="2015-10-10T21:54:24Z">
+    <groups>
+    </groups>
+    <test name="Command line test" duration-ms="3" started-at="2015-10-10T21:54:24Z" finished-at="2015-10-10T21:54:24Z">
+    </test> <!-- Command line test -->
+  </suite> <!-- com.group9.bankofaz.test.InternalUserTest -->
+</testng-results>

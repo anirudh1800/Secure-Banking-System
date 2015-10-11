@@ -11,7 +11,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "GovAgency")
+@Table(name = "govagency")
 public class GovAgency {
 	@Id
 	@Column(name = "username", nullable = false)	
@@ -36,6 +36,4 @@ public class GovAgency {
 		this.passwd = passwd;
 	}
 
-	
-	
 }

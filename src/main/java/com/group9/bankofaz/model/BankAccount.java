@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@Table(name = "BankAccount")
+@Table(name = "bankaccount")
 public class BankAccount {
 	@Id
 	@Column(name = "accno", nullable = false)	

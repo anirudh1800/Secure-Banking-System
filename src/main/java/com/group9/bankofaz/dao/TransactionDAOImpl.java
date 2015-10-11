@@ -21,7 +21,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
 	@Override
 	public void add(Transaction transaction) {
-		sessionFactory.getCurrentSession().persist(transaction);
+		sessionFactory.getCurrentSession().save(transaction);
 	}
 
 	@Override

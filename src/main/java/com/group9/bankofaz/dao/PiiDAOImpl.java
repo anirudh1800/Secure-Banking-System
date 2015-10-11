@@ -20,7 +20,7 @@ public class PiiDAOImpl implements PiiDAO{
 	
 	@Override
 	public void add(Pii pii) {
-		sessionFactory.getCurrentSession().persist(pii);
+		sessionFactory.getCurrentSession().save(pii);
 	}
 
 	@Override

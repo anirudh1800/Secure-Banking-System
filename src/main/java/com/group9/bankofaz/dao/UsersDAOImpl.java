@@ -19,7 +19,7 @@ public class UsersDAOImpl implements UsersDAO{
 	@Override
 	public void add(Users user) {
 		Session session = this.sessionFactory.getCurrentSession();
-        session.persist(user);
+        session.save(user);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class UsersDAOImpl implements UsersDAO{
 	public Users findUsersByEmail(String email) {
 		Session session = this.sessionFactory.getCurrentSession();      
 		Users user = (Users) session.createQuery("from Users where username = :user")
-				.setString("user", "'" + email + "'")
+				.setString("user", email)
 				.uniqueResult();
         return user;
 	}

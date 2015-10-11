@@ -31,8 +31,6 @@ public interface AbstractUser {
 	public String getZipcode();
 	
 	public String getSsn();
-
-	public String getName();
 	
 	public void setUserid(int userid);
 
@@ -55,8 +53,6 @@ public interface AbstractUser {
 	public void setZipcode(String zipcode);
 	
 	public void setSsn(String ssn);
-
-	public void setName(String name);
 
 }
 

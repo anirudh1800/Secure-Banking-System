@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
  */
 
 @Entity
-@Table(name = "Logs")
+@Table(name = "logs")
 public class Logs {
 	@Id
 	@Column(name = "logid", nullable = false)	

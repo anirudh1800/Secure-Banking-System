@@ -6,10 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.model.InternalUser;
 
 @Repository
+@Transactional
 public class InternalUserDAOImpl implements InternalUserDAO {
 	private SessionFactory sessionFactory;
 
@@ -20,7 +22,7 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 
 	@Override
 	public void add(InternalUser internaluser) {
-		this.sessionFactory.getCurrentSession().persist(internaluser);
+		this.sessionFactory.getCurrentSession().save(internaluser);
 	}
 
 	@Override
@@ -41,8 +43,8 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	@Override
 	public InternalUser findUserByEmail(String email) {
 		Session session = this.sessionFactory.getCurrentSession();
-		InternalUser intUser = (InternalUser) session.createQuery("from InternalUser where email = :email")
-				.setString("email", "'" + email + "'")
+		InternalUser intUser = (InternalUser) session.createQuery("from InternalUser where email.username = :email")
+				.setString("email", email)
 				.uniqueResult();
 		return intUser;
 	}
@@ -50,21 +52,21 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	@Override
 	public List<InternalUser> findAllRegEmployees() {
 		Session session = this.sessionFactory.getCurrentSession();		
-		List<InternalUser> usersList = session.createQuery("from InternalUser I where I.accessprivilege = 'RE1' or I.accessprivilege = 'RE2'").list();
+		List<InternalUser> usersList = session.createQuery("from InternalUser where accessprivilege = 'RE1' or accessprivilege = 'RE2'").list();
 		return usersList;
 	}
 
 	@Override
 	public List<InternalUser> findAllSystemManagers() {
 		Session session = this.sessionFactory.getCurrentSession();		
-		List<InternalUser> usersList = session.createQuery("from InternalUser I where I.accessprivilege = 'SM'").list();
+		List<InternalUser> usersList = session.createQuery("from InternalUser where accessprivilege = 'SM'").list();
 		return usersList;
 	}
 
 	@Override
 	public InternalUser findSysAdmin() {
 		Session session = this.sessionFactory.getCurrentSession();		
-		InternalUser user = (InternalUser) session.createQuery("from InternalUser I where I.accessprivilege = 'SM'").uniqueResult();
+		InternalUser user = (InternalUser) session.createQuery("from InternalUser where accessprivilege = 'SA'").uniqueResult();
 		return user;
 	}
 

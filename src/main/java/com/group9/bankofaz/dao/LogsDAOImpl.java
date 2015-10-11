@@ -20,7 +20,7 @@ public class LogsDAOImpl implements LogsDAO{
 	
 	@Override
 	public void add(Logs logs) {
-		sessionFactory.getCurrentSession().persist(logs);
+		sessionFactory.getCurrentSession().save(logs);
 	}
 
 	@Override
