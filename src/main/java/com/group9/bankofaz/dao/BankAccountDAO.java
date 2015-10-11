@@ -6,7 +6,6 @@ package com.group9.bankofaz.dao;
 import java.util.List;
 
 import com.group9.bankofaz.model.BankAccount;
-import com.group9.bankofaz.model.ExternalUser;
 
 /**
  * @author Anirudh Ruia Gali
@@ -21,6 +20,6 @@ public interface BankAccountDAO {
 
 	public void delete(BankAccount bankaccount);
 
-	public List<BankAccount> findAccountsOfUser(ExternalUser userid);
+	public List<BankAccount> findAccountsOfUser(int userid);
 
 }

@@ -6,11 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.group9.bankofaz.model.BankAccount;
-import com.group9.bankofaz.model.ExternalUser;;
+import com.group9.bankofaz.model.BankAccount;;
 
 @Repository
+@Transactional
 public class BankAccountDAOImpl implements BankAccountDAO {	
 	private SessionFactory sessionFactory;
 	
@@ -41,10 +42,10 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<BankAccount> findAccountsOfUser(ExternalUser extUser) {
+	public List<BankAccount> findAccountsOfUser(int userid) {
 		Session session = this.sessionFactory.getCurrentSession();
         List<BankAccount> accountList = session.createQuery("from BankAccount where userid = :userid")
-        		.setInteger("userid", extUser.getUserid())
+        		.setInteger("userid", userid)
         		.list();
         
         return accountList;

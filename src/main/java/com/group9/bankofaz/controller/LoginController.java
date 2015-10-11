@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.InternalUserDAO;
+import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.InternalUser;
 
 /**
@@ -26,7 +28,7 @@ import com.group9.bankofaz.model.InternalUser;
 public class LoginController {
 	
 	@Autowired
-	InternalUserDAO internalUserDao;
+	BankAccountDAO bankAccountDao;
 	
 	@RequestMapping("/login")  
 	 public ModelAndView getLoginForm(  
@@ -61,7 +63,7 @@ public class LoginController {
 	
 	@RequestMapping("/test")
     public ModelAndView handleRequest() throws Exception {
-        InternalUser listUsers = internalUserDao.findUserById(10002);
+        List<BankAccount> listUsers = bankAccountDao.findAccountsOfUser(1001);
         ModelAndView model = new ModelAndView("test_internalusers_list");
         model.addObject("userList", listUsers);
         return model;
