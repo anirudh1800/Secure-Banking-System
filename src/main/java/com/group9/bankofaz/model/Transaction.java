@@ -41,12 +41,12 @@ public class Transaction{
 	private String status;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "accno", insertable = false, updatable = false)
-	private BankAccount from;
+    @JoinColumn(name = "fromacc")
+	private BankAccount fromacc;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "accno")
-	private BankAccount to;
+	@JoinColumn(name = "toacc")
+	private BankAccount toacc;
 	
 	@Column(name = "desc")
 	private String desc;
@@ -90,21 +90,21 @@ public class Transaction{
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-	public BankAccount getFrom() {
-		return from;
+	
+	public BankAccount getFromacc() {
+		return fromacc;
 	}
 
-	public void setFrom(BankAccount from) {
-		this.from = from;
+	public void setFromacc(BankAccount fromacc) {
+		this.fromacc = fromacc;
 	}
 
-	public BankAccount getTo() {
-		return to;
+	public BankAccount getToacc() {
+		return toacc;
 	}
 
-	public void setTo(BankAccount to) {
-		this.to = to;
+	public void setToacc(BankAccount toacc) {
+		this.toacc = toacc;
 	}
 
 	public String getDesc() {

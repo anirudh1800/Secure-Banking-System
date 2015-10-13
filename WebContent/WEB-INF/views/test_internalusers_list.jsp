@@ -11,13 +11,15 @@
 <body>
 	<div align="center">
 		<h1>Users List</h1>
-		
+		<table>
 		<c:forEach var="user" items="${userList}" varStatus="status">
 			<tr>
-				<td>${user.accno}</td>
-				<td>${user.acctype}</td>
+				<td>${user.type}</td>
+				<td>${user.amt}</td>
+				<td>${user.status}</td>
 			</tr>
 		</c:forEach>
+		</table>
 	</div>
 </body>
 </html>

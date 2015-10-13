@@ -19,7 +19,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "internaluser")
-public class InternalUser implements AbstractUser{	
+public class InternalUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)

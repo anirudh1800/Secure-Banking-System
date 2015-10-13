@@ -18,6 +18,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "pii")
 public class Pii implements Serializable{
+	
+	private static final long serialVersionUID = 310779046388655840L;
+
 	@Id
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ssn")

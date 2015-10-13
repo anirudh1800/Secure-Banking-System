@@ -10,10 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Any;
-import org.hibernate.annotations.AnyMetaDef;
-import org.hibernate.annotations.MetaValue;
-
 /**
  * @author Chandrani Mukherjee
  *
@@ -23,28 +19,22 @@ import org.hibernate.annotations.MetaValue;
 @Table(name = "task")
 public class Task {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "taskid", nullable = false)
 	private int taskid;
-	
+
 	@Column(name = "message", nullable = false)
 	private String message;
-	
+
 	@Column(name = "status")
 	private String status;
-	
+
 	@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tid")
+	@JoinColumn(name = "tid")
 	private Transaction tid;
-	
-	@Any (metaColumn = @Column(name = "tasktype"))
-	@AnyMetaDef(idType = "int", metaType = "string",
-	metaValues = {
-	@MetaValue(targetEntity = InternalUser.class, value = "direct"),
-	@MetaValue(targetEntity = ExternalUser.class, value = "merchant")
-	})	
-    @JoinColumn(name = "userid")
-	private AbstractUser assigneeid;
+
+	@Column(name = "assigneeid")
+	private int assigneeid;
 
 	public int getTaskid() {
 		return taskid;
@@ -78,12 +68,11 @@ public class Task {
 		this.tid = tid;
 	}
 
-	public AbstractUser getAssigneeid() {
+	public int getAssigneeid() {
 		return assigneeid;
 	}
-
-	public void setAssigneeid(AbstractUser assigneeid) {
+	
+	public void setAssigneeid(int assigneeid) {
 		this.assigneeid = assigneeid;
 	}
-	
 }

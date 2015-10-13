@@ -5,7 +5,6 @@ package com.group9.bankofaz.dao;
 
 import java.util.List;
 
-import com.group9.bankofaz.model.AbstractUser;
 import com.group9.bankofaz.model.Task;
 
 /**
@@ -21,5 +20,5 @@ public interface TaskDAO {
 
 	public void delete(Task task);
 
-	public List<Task> findNewTasksAssignedToUser(AbstractUser abstractuser);
+	public List<Task> findNewTasksAssignedToUser(int id);
 }

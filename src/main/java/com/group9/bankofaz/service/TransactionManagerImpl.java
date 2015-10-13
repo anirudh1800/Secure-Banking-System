@@ -30,8 +30,8 @@ import com.group9.bankofaz.dao.TaskDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
 import com.group9.bankofaz.exception.EmployeeListException;
 import com.group9.bankofaz.exception.IllegalTransactionException;
-import com.group9.bankofaz.model.AbstractUser;
 import com.group9.bankofaz.model.BankAccount;
+import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Task;
 import com.group9.bankofaz.model.Transaction;;
@@ -79,18 +79,19 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		
 		Task task = processingTaskQueue.getFirst();
 		Transaction transaction = task.getTid();
-		AbstractUser user;
+		InternalUser internalUser;
+		ExternalUser externalUser;
 		
 		switch (transaction.getType()) {
 
 		case "transfer":
 			if (transaction.getAmt() > criticalAmt) {
-				user = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
+				internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 			} else {
-				user = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
+				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 			}
 
-			task.setAssigneeid(user);
+			task.setAssigneeid(internalUser.getUserid());
 			transaction.setStatus("pending");
 
 			taskDao.update(task);
@@ -99,20 +100,27 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			break;
 
 		case "payment":
-			user = transaction.getTo().getUserid();
+			if(task.getAssigneeid() == 0){
+				externalUser = transaction.getToacc().getUserid();
 
-			task.setAssigneeid(user);
-			transaction.setStatus("pending");
-
+				task.setAssigneeid(externalUser.getUserid());
+				transaction.setStatus("processing");
+			}else{
+				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
+				
+				task.setAssigneeid(internalUser.getUserid());
+				transaction.setStatus("pending");				
+			}
+			
 			taskDao.update(task);
 			transactionDao.update(transaction);
 			
 			break;
 
 		case "review":
-			user = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
+			internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 			
-			task.setAssigneeid(user);
+			task.setAssigneeid(internalUser.getUserid());
 			transaction.setStatus("pending");
 
 			taskDao.update(task);
@@ -121,9 +129,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 		case "openacc":
 		case "delacc":
-			user = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
+			internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 
-			task.setAssigneeid(user);
+			task.setAssigneeid(internalUser.getUserid());
 			transaction.setStatus("pending");
 
 			taskDao.update(task);
@@ -224,8 +232,8 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			try {
 				tx.begin();
 
-				BankAccount fromAccount = transaction.getFrom();
-			    BankAccount toAccount = transaction.getTo();
+				BankAccount fromAccount = transaction.getFromacc();
+			    BankAccount toAccount = transaction.getToacc();
 
 				if (!toAccount.getStatus().equals("active") || !fromAccount.getStatus().equals("active")) {
 					

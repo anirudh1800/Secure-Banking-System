@@ -5,11 +5,12 @@ import java.util.List;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.Transaction;
 
 @Repository
+@Transactional
 public class TransactionDAOImpl implements TransactionDAO {
 
 	private SessionFactory sessionFactory;
@@ -40,9 +41,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 	}
 
 	@Override
-	public List<Transaction> findTransactionsOfUser(BankAccount bankaccount) {
+	public List<Transaction> findTransactionsOfAccount(String accno) {
 		List<Transaction> list = sessionFactory.getCurrentSession()
-				.createQuery("from transaction where from = '" + bankaccount.getAccno() + "' ").list();
+				.createQuery("from Transaction where fromacc = '" + accno + "' or toacc = '"+ accno +"'").list();
 		return list;
 	}
 

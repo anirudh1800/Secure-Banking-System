@@ -18,7 +18,7 @@ import java.sql.Blob;
 
 @Entity
 @Table(name = "externaluser")
-public class ExternalUser implements AbstractUser{	
+public class ExternalUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)
