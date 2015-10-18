@@ -10,7 +10,6 @@ import com.group9.bankofaz.model.Pii;;
 
 @Repository
 public class PiiDAOImpl implements PiiDAO{
-
 	private SessionFactory sessionFactory;
 	
 	@Autowired

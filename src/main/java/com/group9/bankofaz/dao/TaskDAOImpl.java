@@ -12,9 +12,8 @@ import com.group9.bankofaz.model.Task;
 @Repository
 @Transactional
 public class TaskDAOImpl implements TaskDAO {
-
 	private SessionFactory sessionFactory;
-
+	
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
@@ -43,7 +42,7 @@ public class TaskDAOImpl implements TaskDAO {
 	@Override
 	public List<Task> findNewTasksAssignedToUser(int id) {
 		List<Task> list = sessionFactory.getCurrentSession()
-				.createQuery("from Task where assigneeid. = " + id + " and status = 'notcompleted'").list();
+				.createQuery("from Task where assigneeid = " + id + " and status = 'notcompleted'").list();
 		return list;
 	}
 

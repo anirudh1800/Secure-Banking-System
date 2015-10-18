@@ -8,19 +8,15 @@ package com.group9.bankofaz.service;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
+import javax.annotation.PostConstruct;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +36,12 @@ import com.group9.bankofaz.model.Transaction;;
 @Service
 @Scope("singleton")
 public class TransactionManagerImpl implements Runnable, TransactionManagerService{
+	
+	@Autowired
+	private ApplicationContext appContext;
+	
+	private SessionFactory factory = null;
+	
 	@Autowired
 	private InternalUserDAO internalUserDao;	
 
@@ -52,10 +54,11 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	@Autowired
 	private BankAccountDAO bankAccountDao;
 	
-	private ArrayDeque<Task> processingTaskQueue;
-	private ArrayList<Integer> regularEmployeeList;
-	private ArrayList<Integer> systemManagerList;
-	private final float criticalAmt = 500.00f;
+	
+	private Deque<Task> processingTaskQueue;
+	private List<Integer> regularEmployeeList;
+	private List<Integer> systemManagerList;
+	private final static float criticalAmt = 500.00f;
 	private Random rand;
 	
 /*  Pop a task from the queue and assign the task to an employee based on following parameter
@@ -74,15 +77,17 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	@Override
 	public void scheduleTask(){
 		
-		if(processingTaskQueue.size() == 0)
+		if(processingTaskQueue.size() == 0){
 			return;
+		}
 		
 		Task task = processingTaskQueue.getFirst();
 		Transaction transaction = task.getTid();
 		InternalUser internalUser;
 		ExternalUser externalUser;
 		
-		switch (transaction.getType()) {
+		String type = transaction.getTransType();
+		switch (type) {
 
 		case "transfer":
 			if (transaction.getAmt() > criticalAmt) {
@@ -92,7 +97,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			}
 
 			task.setAssigneeid(internalUser.getUserid());
-			transaction.setStatus("pending");
+			transaction.setTransStatus("pending");
 
 			taskDao.update(task);
 			transactionDao.update(transaction);
@@ -104,12 +109,12 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 				externalUser = transaction.getToacc().getUserid();
 
 				task.setAssigneeid(externalUser.getUserid());
-				transaction.setStatus("processing");
+				transaction.setTransStatus("processing");
 			}else{
 				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 				
 				task.setAssigneeid(internalUser.getUserid());
-				transaction.setStatus("pending");				
+				transaction.setTransStatus("pending");				
 			}
 			
 			taskDao.update(task);
@@ -121,7 +126,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 			
 			task.setAssigneeid(internalUser.getUserid());
-			transaction.setStatus("pending");
+			transaction.setTransStatus("pending");
 
 			taskDao.update(task);
 			transactionDao.update(transaction);			
@@ -132,7 +137,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 
 			task.setAssigneeid(internalUser.getUserid());
-			transaction.setStatus("pending");
+			transaction.setTransStatus("pending");
 
 			taskDao.update(task);
 			transactionDao.update(transaction);
@@ -161,8 +166,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			}
 			List<InternalUser> list = internalUserDao.findAllRegEmployees();
 
-			if (list == null)
+			if (list == null){
 				throw new EmployeeListException("Error in retrieving regular employees list");
+			}
 
 			for (InternalUser user : list) {
 				regularEmployeeList.add(user.getUserid());
@@ -198,6 +204,11 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	@Override
 	public boolean submitTransaction(Transaction transaction){
 		transactionDao.add(transaction);
+		
+		if(transaction.getTransType().equals("credit") || transaction.getTransType().equals("debit")){
+			return performTransaction(transaction);
+		}
+		
 		Task newTask = new Task();
 		
 		newTask.setTid(transaction);
@@ -225,143 +236,102 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  * 4) on exception return false else true  
  */
 	@Override
-	public boolean performTransaction(Transaction transaction){
+	public boolean performTransaction(Transaction transaction) {
 		try {
-			UserTransaction tx = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
-			String transType = transaction.getType();
-			try {
-				tx.begin();
 
-				BankAccount fromAccount = transaction.getFromacc();
-			    BankAccount toAccount = transaction.getToacc();
+			String transType = transaction.getTransType();
 
-				if (!toAccount.getStatus().equals("active") || !fromAccount.getStatus().equals("active")) {
-					
-					transaction.setStatus("declined");
-					transactionDao.update(transaction);
+			factory.getCurrentSession().beginTransaction();
 
-					tx.commit();
-					return false;
-				}
+			BankAccount fromAccount = transaction.getFromacc();
+			BankAccount toAccount = transaction.getToacc();
 
-				float amount;
-				float balance;
+			if (!toAccount.getStatus().equals("active") || !fromAccount.getStatus().equals("active")) {
 
-				switch (transType) {
-				case "credit":
-					amount = transaction.getAmt();
-					balance = fromAccount.getBalance();
+				transaction.setTransStatus("declined");
+				transactionDao.update(transaction);
 
-					balance += amount;
+				factory.getCurrentSession().getTransaction().commit();
+				return false;
+			}
+
+			float amount;
+			float balance;
+
+			switch (transType) {
+			case "credit":
+				amount = transaction.getAmt();
+				balance = fromAccount.getBalance();
+
+				balance += amount;
+
+				fromAccount.setBalance(balance);
+				bankAccountDao.update(fromAccount);
+
+				transaction.setTransStatus("approved");
+				transactionDao.update(transaction);
+				break;
+
+			case "debit":
+				amount = transaction.getAmt();
+				balance = fromAccount.getBalance();
+
+				if (amount <= balance) {
+					balance = balance - amount;
 
 					fromAccount.setBalance(balance);
 					bankAccountDao.update(fromAccount);
 
-					transaction.setStatus("approved");
-					transactionDao.update(transaction);
+					transaction.setTransStatus("approved");
+				} else {
+					transaction.setTransStatus("declined");
+				}
+
+				transactionDao.update(transaction);
+				break;
+
+			case "transfer":
+				switch (transaction.getTransDesc()) {
+				case "internal":
+					if (fromAccount.getUserid().getUserid() == toAccount.getUserid().getUserid()) {
+						if (fromAccount.getAccno() != toAccount.getAccno()) {
+							amount = transaction.getAmt();
+
+							float balance1 = fromAccount.getBalance();
+							float balance2 = toAccount.getBalance();
+
+							if (amount <= balance1) {
+								balance1 = balance1 - amount;
+								balance2 = balance2 + amount;
+
+								fromAccount.setBalance(balance1);
+								toAccount.setBalance(balance2);
+
+								bankAccountDao.update(fromAccount);
+								bankAccountDao.update(toAccount);
+
+								transaction.setTransStatus("approved");
+							} else {
+								transaction.setTransStatus("declined");
+							}
+							transactionDao.update(transaction);
+						} else {
+							transaction.setTransStatus("declined");
+							transactionDao.update(transaction);
+							factory.getCurrentSession().getTransaction().commit();
+
+							throw new IllegalTransactionException("Not valid transaction");
+						}
+					} else {
+						transaction.setTransStatus("declined");
+						transactionDao.update(transaction);
+						factory.getCurrentSession().getTransaction().commit();
+
+						throw new IllegalTransactionException("Not valid transaction");
+					}
 					break;
 
-				case "debit":
-					amount = transaction.getAmt();
-					balance = fromAccount.getBalance();
-
-					if (amount <= balance) {
-						balance = balance - amount;
-
-						fromAccount.setBalance(balance);
-						bankAccountDao.update(fromAccount);
-
-						transaction.setStatus("approved");
-
-					} else {
-						transaction.setStatus("declined");
-					}
-
-					transactionDao.update(transaction);
-
-				case "transfer":
-					switch (transaction.getDesc()) {
-					case "internal":
-						if (fromAccount.getUserid().getUserid() == toAccount.getUserid().getUserid()) {
-							if (fromAccount.getAccno() != toAccount.getAccno()) {
-								amount = transaction.getAmt();
-
-								float balance1 = fromAccount.getBalance();
-								float balance2 = toAccount.getBalance();
-
-								if (amount <= balance1) {
-									balance1 = balance1 - amount;
-									balance2 = balance2 + amount;
-
-									fromAccount.setBalance(balance1);
-									toAccount.setBalance(balance2);
-
-									bankAccountDao.update(fromAccount);
-									bankAccountDao.update(toAccount);
-
-									transaction.setStatus("approved");
-								} else {
-									transaction.setStatus("declined");
-								}
-								transactionDao.update(transaction);
-							} else {
-								transaction.setStatus("declined");
-								transactionDao.update(transaction);
-								tx.commit();
-
-								throw new IllegalTransactionException("Not valid transaction");
-							}
-						} else {
-							transaction.setStatus("declined");
-							transactionDao.update(transaction);
-							tx.commit();
-
-							throw new IllegalTransactionException("Not valid transaction");
-						}
-						break;
-
-					case "external":
-						if (fromAccount.getUserid().getUserid() != toAccount.getUserid().getUserid()) {
-							if (fromAccount.getAcctype().equals("checking")
-									&& toAccount.getAcctype().equals("checking")) {
-								amount = transaction.getAmt();
-
-								float balance1 = fromAccount.getBalance();
-								float balance2 = toAccount.getBalance();
-
-								if (amount <= balance1) {
-									balance1 = balance1 - amount;
-									balance2 = balance2 + amount;
-
-									fromAccount.setBalance(balance1);
-									toAccount.setBalance(balance2);
-
-									bankAccountDao.update(fromAccount);
-									bankAccountDao.update(toAccount);
-
-									transaction.setStatus("approved");
-								} else {
-									transaction.setStatus("declined");
-								}
-								transactionDao.update(transaction);
-							} else {
-								transaction.setStatus("declined");
-								transactionDao.update(transaction);
-								tx.commit();
-
-								throw new IllegalTransactionException("Not valid transaction");
-							}
-						} else {
-							transaction.setStatus("declined");
-							transactionDao.update(transaction);
-							tx.commit();
-
-							throw new IllegalTransactionException("Not valid transaction");
-						}
-						break;
-					}
-
-				case "payment":
+				case "external":
 					if (fromAccount.getUserid().getUserid() != toAccount.getUserid().getUserid()) {
 						if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
 							amount = transaction.getAmt();
@@ -379,91 +349,114 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 								bankAccountDao.update(fromAccount);
 								bankAccountDao.update(toAccount);
 
-								transaction.setStatus("approved");
+								transaction.setTransStatus("approved");
 							} else {
-								transaction.setStatus("declined");
+								transaction.setTransStatus("declined");
 							}
 							transactionDao.update(transaction);
 						} else {
-							transaction.setStatus("declined");
+							transaction.setTransStatus("declined");
 							transactionDao.update(transaction);
-							tx.commit();
+							factory.getCurrentSession().getTransaction().commit();
 
 							throw new IllegalTransactionException("Not valid transaction");
 						}
 					} else {
-						transaction.setStatus("declined");
+						transaction.setTransStatus("declined");
 						transactionDao.update(transaction);
-						tx.commit();
+						factory.getCurrentSession().getTransaction().commit();
 
 						throw new IllegalTransactionException("Not valid transaction");
 					}
 					break;
 
-				case "review":
-					transaction.setStatus("approved");
-					transactionDao.update(transaction);
-					tx.commit();
-					break;
+				}
+				break;
 
-				case "openacc":
-					fromAccount.setStatus("active");
-					bankAccountDao.update(fromAccount);
+			case "payment":
+				if (fromAccount.getUserid().getUserid() != toAccount.getUserid().getUserid()) {
+					if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
+						amount = transaction.getAmt();
 
-					transaction.setStatus("approved");
-					transactionDao.update(transaction);
-					break;
+						float balance1 = fromAccount.getBalance();
+						float balance2 = toAccount.getBalance();
 
-				case "delacc":
-					if (fromAccount.getBalance() == 0) {
-						fromAccount.setStatus("inactive");
-						bankAccountDao.update(fromAccount);
-						transaction.setStatus("approved");
+						if (amount <= balance1) {
+							balance1 = balance1 - amount;
+							balance2 = balance2 + amount;
+
+							fromAccount.setBalance(balance1);
+							toAccount.setBalance(balance2);
+
+							bankAccountDao.update(fromAccount);
+							bankAccountDao.update(toAccount);
+
+							transaction.setTransStatus("approved");
+						} else {
+							transaction.setTransStatus("declined");
+						}
+						transactionDao.update(transaction);
 					} else {
-						transaction.setStatus("declined");
+						transaction.setTransStatus("declined");
+						transactionDao.update(transaction);
+						factory.getCurrentSession().getTransaction().commit();
+
+						throw new IllegalTransactionException("Not valid transaction");
 					}
-
+				} else {
+					transaction.setTransStatus("declined");
 					transactionDao.update(transaction);
-					break;
-
-				default:
-					transaction.setStatus("declined");
-					transactionDao.update(transaction);
-					tx.commit();
+					factory.getCurrentSession().getTransaction().commit();
 
 					throw new IllegalTransactionException("Not valid transaction");
+				}
+				break;
 
+			case "review":
+				transaction.setTransStatus("approved");
+				transactionDao.update(transaction);
+				factory.getCurrentSession().getTransaction().commit();
+				break;
+
+			case "openacc":
+				fromAccount.setStatus("active");
+				bankAccountDao.update(fromAccount);
+
+				transaction.setTransStatus("approved");
+				transactionDao.update(transaction);
+				break;
+
+			case "delacc":
+				if (fromAccount.getBalance() == 0) {
+					fromAccount.setStatus("inactive");
+					bankAccountDao.update(fromAccount);
+					transaction.setTransStatus("approved");
+				} else {
+					transaction.setTransStatus("declined");
 				}
-				tx.commit();
-			} catch (RuntimeException e) {
-				try {
-					tx.rollback();
-				} catch (IllegalStateException | SecurityException | SystemException e1) {
-					e1.printStackTrace();
-					return false;
-				}
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicMixedException e) {
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicRollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (RollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (SystemException e) {
-				e.printStackTrace();
-				return false;
-			} catch (NotSupportedException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IllegalTransactionException e) {
-				e.printStackTrace();
+
+				transactionDao.update(transaction);
+				break;
+
+			default:
+				transaction.setTransStatus("declined");
+				transactionDao.update(transaction);
+				factory.getCurrentSession().getTransaction().commit();
+
+				throw new IllegalTransactionException("Not valid transaction");
+
+			}
+			factory.getCurrentSession().getTransaction().commit();
+		} catch (RuntimeException e) {
+			try {
+				factory.getCurrentSession().getTransaction().rollback();
+			} catch (IllegalStateException | SecurityException e1) {
+				e1.printStackTrace();
 				return false;
 			}
-		} catch (NamingException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IllegalTransactionException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -476,45 +469,24 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  */
 	@Override
 	public boolean updateTransaction(Transaction transaction){
-		if (transaction.getStatus().equals("approved") || transaction.getStatus().equals("declined")) {
+		if (transaction.getTransStatus().equals("approved") || transaction.getTransStatus().equals("declined")) {
 			return false;
 		} else {
 
-			UserTransaction tx;
+			
 			try {
-				tx = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
-			} catch (NamingException e) {
-				e.printStackTrace();
-				return false;
-			}
-			try {
-				tx.begin();
+				factory.getCurrentSession().beginTransaction();
 
 				transactionDao.update(transaction);
 
-				tx.commit();
+				factory.getCurrentSession().getTransaction().commit();
 			}catch (RuntimeException e) {
 				try {
-					tx.rollback();
-				} catch (IllegalStateException | SecurityException | SystemException e1) {
+					factory.getCurrentSession().getTransaction().rollback();
+				} catch (IllegalStateException | SecurityException e1) {
 					e1.printStackTrace();
 					return false;
 				}
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicMixedException e) {
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicRollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (RollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (SystemException e) {
-				e.printStackTrace();
-				return false;
-			} catch (NotSupportedException e) {
 				e.printStackTrace();
 				return false;
 			}
@@ -527,44 +499,21 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  */
 	@Override
 	public boolean cancelTransaction(Transaction transaction){
-		if (transaction.getStatus().equals("pending") || transaction.getStatus().equals("processing")) {
-			
-			UserTransaction tx;
-			try {
-				tx = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
-			} catch (NamingException e) {
-				e.printStackTrace();
-				return false;
-			}
+		if (transaction.getTransStatus().equals("pending") || transaction.getTransStatus().equals("processing")) {
 			
 			try {
-				tx.begin();
+				factory.getCurrentSession().beginTransaction();
 
 				transactionDao.delete(transaction);
 
-				tx.commit();
+				factory.getCurrentSession().getTransaction().commit();
 			}catch (RuntimeException e) {
 				try {
-					tx.rollback();
-				} catch (IllegalStateException | SecurityException | SystemException e1) {
+					factory.getCurrentSession().getTransaction().rollback();
+				} catch (IllegalStateException | SecurityException e1) {
 					e1.printStackTrace();
 					return false;
 				}
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicMixedException e) {
-				e.printStackTrace();
-				return false;
-			} catch (HeuristicRollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (RollbackException e) {
-				e.printStackTrace();
-				return false;
-			} catch (SystemException e) {
-				e.printStackTrace();
-				return false;
-			} catch (NotSupportedException e) {
 				e.printStackTrace();
 				return false;
 			}
@@ -593,10 +542,13 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			}
 		}catch(InterruptedException e){
 			e.printStackTrace();
+			counter = 0;
 		}
 	}
 	
-	public void TransactionManager() {
-		updateEmployeeList();
-	}		
+	@PostConstruct
+	public void initIt() throws Exception {
+	  factory = (SessionFactory) appContext.getBean("sessionFactory");
+	  new Thread((Runnable) appContext.getBean("transactionManagerService")).start();;
+	}
 }

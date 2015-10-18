@@ -46,4 +46,22 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<resource-env-ref>
+		<description>DB Connection </description>
+		<resource-env-ref-name>jdbc/bankofazdb</resource-env-ref-name>
+		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
+	<resource-env-ref>
+		<description>JTA transaction manager</description>
+		<resource-env-ref-name>jta/UserTransaction</resource-env-ref-name>
+		<resource-env-ref-type>javax.transaction.UserTransaction</resource-env-ref-type>
+	</resource-env-ref>
+
+	<resource-env-ref>
+		<description>JTA Transaction Synchronization Registry</description>
+		<resource-env-ref-name>TransactionSynchronizationRegistry</resource-env-ref-name>
+		<resource-env-ref-type>javax.transaction.TransactionSynchronizationRegistry</resource-env-ref-type>
+	</resource-env-ref>
+
 </web-app>	

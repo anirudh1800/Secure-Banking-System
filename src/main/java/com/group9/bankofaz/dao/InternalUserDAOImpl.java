@@ -14,12 +14,12 @@ import com.group9.bankofaz.model.InternalUser;
 @Transactional
 public class InternalUserDAOImpl implements InternalUserDAO {
 	private SessionFactory sessionFactory;
-
+	
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
-
+	
 	@Override
 	public void add(InternalUser internaluser) {
 		this.sessionFactory.getCurrentSession().save(internaluser);

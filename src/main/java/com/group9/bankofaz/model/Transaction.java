@@ -27,18 +27,18 @@ public class Transaction{
 	@Column(name = "tid", nullable = false)
 	private int tid;
 	
-	@Column(name = "datetime", columnDefinition="DATETIME", nullable = false)
+	@Column(name = "transdate", columnDefinition="DATETIME", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date datetime;
+	private Date transdate;
 	
-	@Column(name = "type", nullable = false)
-	private String type;
+	@Column(name = "transtype", nullable = false)
+	private String transtype;
 	
 	@Column(name = "amt", nullable = false)
 	private float amt;
 	
-	@Column(name = "status")
-	private String status;
+	@Column(name = "transstatus")
+	private String transstatus;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fromacc")
@@ -48,8 +48,8 @@ public class Transaction{
 	@JoinColumn(name = "toacc")
 	private BankAccount toacc;
 	
-	@Column(name = "desc")
-	private String desc;
+	@Column(name = "transdesc")
+	private String transdesc;
 
 	public int getTid() {
 		return tid;
@@ -59,20 +59,20 @@ public class Transaction{
 		this.tid = tid;
 	}
 
-	public Date getDatetime() {
-		return datetime;
+	public Date getTransDate() {
+		return transdate;
 	}
 
-	public void setDatetime(Date datetime) {
-		this.datetime = datetime;
+	public void setTransDate(Date transdate) {
+		this.transdate = transdate;
 	}
 
-	public String getType() {
-		return type;
+	public String getTransType() {
+		return transtype;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTransType(String transtype) {
+		this.transtype = transtype;
 	}
 
 	public float getAmt() {
@@ -83,12 +83,12 @@ public class Transaction{
 		this.amt = amt;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getTransStatus() {
+		return transstatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setTransStatus(String transstatus) {
+		this.transstatus = transstatus;
 	}
 	
 	public BankAccount getFromacc() {
@@ -107,12 +107,12 @@ public class Transaction{
 		this.toacc = toacc;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getTransDesc() {
+		return transdesc;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setTransDesc(String transdesc) {
+		this.transdesc = transdesc;
 	}
 	
 	

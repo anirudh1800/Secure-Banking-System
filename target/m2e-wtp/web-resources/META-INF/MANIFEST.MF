@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: Anirudh Ruia Gali
+Built-By: anirudhruia
 Build-Jdk: 1.8.0_60
 Created-By: Maven Integration for Eclipse
 

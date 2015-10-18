@@ -20,9 +20,9 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 	private SessionFactory sessionFactory;
 	
 	@Autowired
-	public void setSessionFactory(SessionFactory sf){
-        this.sessionFactory = sf;
-    }
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
+	}
 
 	@Override
 	public void add(ExternalUser externaluser) {

@@ -13,13 +13,14 @@ import com.group9.bankofaz.model.BankAccount;;
 @Repository
 @Transactional
 public class BankAccountDAOImpl implements BankAccountDAO {	
+	
 	private SessionFactory sessionFactory;
 	
 	@Autowired
-    public void setSessionFactory(SessionFactory sf){
-        this.sessionFactory = sf;
-    }
-
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
+	}
+	
 	@Override
 	public void add(BankAccount bankaccount) {		
 		sessionFactory.getCurrentSession().save(bankaccount);		

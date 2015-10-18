@@ -3,10 +3,10 @@
  */
 package com.group9.bankofaz.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.TaskDAO;
-import com.group9.bankofaz.model.Task;
+import com.group9.bankofaz.dao.TransactionDAO;
+import com.group9.bankofaz.model.BankAccount;
+import com.group9.bankofaz.model.Transaction;
+import com.group9.bankofaz.service.TransactionManagerService;
 
 /**
  * @author Anirudh Ruia Gali
@@ -26,7 +30,16 @@ import com.group9.bankofaz.model.Task;
 public class LoginController {
 	
 	@Autowired
+	BankAccountDAO bankAccountDao;
+	
+	@Autowired
 	TaskDAO taskDao;
+	
+	@Autowired
+	TransactionDAO transactionDao;
+	
+	@Autowired
+	TransactionManagerService transactionManagerService;
 	
 	@RequestMapping("/login")  
 	 public ModelAndView getLoginForm(  
@@ -59,12 +72,31 @@ public class LoginController {
 		return null;
 	} 
 	
-	
 	@RequestMapping("/test")
     public ModelAndView handleRequest() throws Exception {
-        List<Task> listUsers = taskDao.findNewTasksAssignedToUser(1001);
-        ModelAndView model = new ModelAndView("test_internalusers_list");
-        model.addObject("userList", listUsers);
+        List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
+        BankAccount fromacc = null;
+        
+        for(BankAccount account: accounts){
+        	if(account.getAcctype().equals("checking")){
+        		fromacc = account;
+        	}
+        }
+        
+	    Date dateobj = new Date();
+        
+        Transaction transaction = new Transaction();
+		transaction.setTransType("credit");
+		transaction.setAmt(100);
+		transaction.setTransStatus("processing");
+		transaction.setFromacc(fromacc);
+		transaction.setToacc(fromacc);
+		transaction.setTransDate(dateobj);
+		
+		boolean sucess = transactionManagerService.submitTransaction(transaction);
+		
+		ModelAndView model = new ModelAndView("test_internalusers_list");
+        model.addObject("userList", sucess);
         return model;
     }
 

@@ -26,10 +26,14 @@
 		<property name="configLocation" value="/WEB-INF/config/hibernate.cfg.xml" />
 	</bean>
 
+	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<context:annotation-config />
 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -38,5 +42,12 @@
 		<property name="username" value="dbuser" />
 		<property name="password" value="tR$qCR8j" />
 	</bean>
+	
+	<bean id="internalUserDao" class="com.group9.bankofaz.dao.InternalUserDAOImpl"/>
+	<bean id="transactionDao" class="com.group9.bankofaz.dao.TransactionDAOImpl"/>
+	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl"/>
+	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl"/>
+	
+	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl"/>
 
 </beans>

@@ -8,13 +8,14 @@ import com.group9.bankofaz.model.GovAgency;
 
 @Repository
 public class GovAgencyDAOImpl implements GovAgencyDAO {
+	
 	private SessionFactory sessionFactory;
 
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
-
+	
 	@Override
 	public void add(GovAgency govagency) {
 		this.sessionFactory.getCurrentSession().save(govagency);

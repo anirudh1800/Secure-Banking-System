@@ -9,12 +9,12 @@ import com.group9.bankofaz.model.Users;
 
 @Repository
 public class UsersDAOImpl implements UsersDAO{	
-    private SessionFactory sessionFactory;     
-    
-    @Autowired
-    public void setSessionFactory(SessionFactory sf){
-        this.sessionFactory = sf;
-    }
+	private SessionFactory sessionFactory;     
+	
+	@Autowired
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
+	}
 
 	@Override
 	public void add(Users user) {

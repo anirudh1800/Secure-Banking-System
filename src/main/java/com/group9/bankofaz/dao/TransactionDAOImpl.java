@@ -12,7 +12,6 @@ import com.group9.bankofaz.model.Transaction;
 @Repository
 @Transactional
 public class TransactionDAOImpl implements TransactionDAO {
-
 	private SessionFactory sessionFactory;
 	
 	@Autowired

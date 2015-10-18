@@ -10,7 +10,6 @@ import com.group9.bankofaz.model.Logs;
 
 @Repository
 public class LogsDAOImpl implements LogsDAO{
-	
 	private SessionFactory sessionFactory;
 	
 	@Autowired

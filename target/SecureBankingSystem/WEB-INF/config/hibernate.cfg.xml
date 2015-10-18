@@ -12,15 +12,22 @@
 		<property name="hibernate.connection.username">dbuser</property>
 		<property name="hibernate.connection.password">tR$qCR8j</property>
 		<property name="hibernate.show_sql">true</property>
-		
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.use_sql_comments">true</property>
+
+		<property name="hibernate.c3p0.min_size">5</property>
+		<property name="hibernate.c3p0.max_size">20</property>
+		<property name="hibernate.c3p0.timeout">300</property>
+		<property name="hibernate.c3p0.max_statements">50</property>
+		<property name="hibernate.c3p0.idle_test_period">3000</property>
+
 		<!-- JTA details -->
-		<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JTATransactionFactory</property>
+		<property name="hibernate.transaction.factory_class">org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory</property>
 		<property name="hibernate.transaction.manager_lookup_class">org.springframework.transaction.jta.JtaTransactionManager</property>
 		<property name="jta.UserTransaction">java:comp/UserTransaction</property>
-		
+
 
 		<!-- Mappings for annotated classes -->
-		<mapping class="com.group9.bankofaz.model.AbstractUser" />
 		<mapping class="com.group9.bankofaz.model.Users" />
 		<mapping class="com.group9.bankofaz.model.ExternalUser" />
 		<mapping class="com.group9.bankofaz.model.InternalUser" />
@@ -31,6 +38,5 @@
 		<mapping class="com.group9.bankofaz.model.Pii" />
 		<mapping class="com.group9.bankofaz.model.Logs" />
 		<mapping class="com.group9.bankofaz.model.Authorizes" />
-		
 	</session-factory>
 </hibernate-configuration>

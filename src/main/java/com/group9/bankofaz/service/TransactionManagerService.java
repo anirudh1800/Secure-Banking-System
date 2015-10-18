@@ -9,6 +9,7 @@ import com.group9.bankofaz.model.Transaction;
  * @author Anirudh Ruia Gali
  *
  */
+
 public interface TransactionManagerService {
 	public void scheduleTask();
 

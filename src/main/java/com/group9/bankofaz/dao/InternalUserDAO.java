@@ -5,6 +5,8 @@ package com.group9.bankofaz.dao;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.group9.bankofaz.model.InternalUser;
 
 /**
