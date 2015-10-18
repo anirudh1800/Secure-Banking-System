@@ -24,9 +24,9 @@ public class Logs {
 	@Column(name = "description", nullable = false)
 	private String description;
 	
-	@Column(name = "datetime", columnDefinition="DATETIME", nullable = false)
+	@Column(name = "entrytime", columnDefinition="DATETIME", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date datetime;
+	private Date entrytime;
 
 	public String getAccno() {
 		return accno;
@@ -44,12 +44,12 @@ public class Logs {
 		this.description = description;
 	}
 
-	public Date getDatetime() {
-		return datetime;
+	public Date getEntrytime() {
+		return entrytime;
 	}
 
-	public void setDatetime(Date datetime) {
-		this.datetime = datetime;
+	public void setEntrytime(Date datetime) {
+		this.entrytime = datetime;
 	}
 	
 }

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.27, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.25, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: 
 -- ------------------------------------------------------
--- Server version	5.6.27
+-- Server version	5.6.25-0ubuntu0.15.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,32 +23,65 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `bankofazdb` /*!40100 DEFAULT CHARACTER
 
 USE `bankofazdb`;
 
-
 --
--- Table structure for table `users`
+-- Table structure for table `authorizes`
 --
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `authorizes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `username` varchar(30) NOT NULL,
-  `password` char(56) NOT NULL,
-  `authority` varchar(16) NOT NULL DEFAULT '1',
-  `enabled` int(1) NOT NULL,
-  PRIMARY KEY (`username`),
-  UNIQUE KEY `email` (`username`)
+CREATE TABLE `authorizes` (
+  `userid` int(11) NOT NULL,
+  `empid` int(11) NOT NULL,
+  `tid` int(11) NOT NULL,
+  `start_datetime` datetime NOT NULL,
+  `end_datetime` datetime NOT NULL,
+  KEY `fk_Authorizes_1_idx` (`userid`),
+  KEY `fk_Authorizes_2_idx` (`empid`),
+  KEY `fk_Authorizes_3_idx` (`tid`),
+  CONSTRAINT `fk_Authorizes_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Authorizes_2` FOREIGN KEY (`empid`) REFERENCES `internaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Authorizes_3` FOREIGN KEY (`tid`) REFERENCES `transaction` (`tid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `authorizes`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('gali.anirudh@gmail.com','1234','ROLE_EMPLOYEE',1),('nomail1@gmail.com','1234','ROLE_MERCHANT',1),('nomail3@gmail.com','1234','ROLE_INDIVIDUAL',1),('nomail@gmail.com','1234','ROLE_INDIVIDUAL',1),('ssgrp9@gmail.com','1234','ROLE_EMPLOYEE',1),('testmail2@gmail.com','1234','ROLE_ADMIN',1),('testmail@gmail.com','1234','ROLE_MANAGER',1);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+LOCK TABLES `authorizes` WRITE;
+/*!40000 ALTER TABLE `authorizes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `authorizes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `bankaccount`
+--
+
+DROP TABLE IF EXISTS `bankaccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bankaccount` (
+  `accno` varchar(9) NOT NULL,
+  `balance` float NOT NULL,
+  `acctype` varchar(8) NOT NULL,
+  `opendate` datetime NOT NULL,
+  `userid` int(11) NOT NULL,
+  `accstatus` varchar(8) NOT NULL DEFAULT 'inactive',
+  PRIMARY KEY (`accno`),
+  KEY `fk_BankAccount_1_idx` (`userid`),
+  CONSTRAINT `fk_BankAccount_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bankaccount`
+--
+
+LOCK TABLES `bankaccount` WRITE;
+/*!40000 ALTER TABLE `bankaccount` DISABLE KEYS */;
+INSERT INTO `bankaccount` VALUES ('852810001',20,'checking','2014-11-11 12:45:34',1001,'active'),('852810002',0,'savings','2014-11-11 12:45:34',1002,'active'),('852810003',150,'savings','2014-11-11 12:45:34',1001,'active'),('852810004',110,'checking','2015-11-11 12:45:34',1002,'active'),('852810005',0,'checking','2015-11-11 12:45:34',1003,'inactive');
+/*!40000 ALTER TABLE `bankaccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -72,7 +105,7 @@ CREATE TABLE `externaluser` (
   `usertype` varchar(10) NOT NULL,
   `publickey` blob NOT NULL,
   `ssn` varchar(9) NOT NULL,
-  `name` varchar(30) DEFAULT NULL,
+  `bname` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`userid`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   CONSTRAINT `fk_externaluser_1` FOREIGN KEY (`email`) REFERENCES `users` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -87,37 +120,6 @@ LOCK TABLES `externaluser` WRITE;
 /*!40000 ALTER TABLE `externaluser` DISABLE KEYS */;
 INSERT INTO `externaluser` VALUES (1001,'adam','','carter','nomail@gmail.com','1255 University Dr','','tempe','az','85281','individual','1234xyz','123456789',NULL),(1002,'paul','','weather','nomail1@gmail.com','16000 West Heaven Rd','','mesa','az','85281','business','helloworld','456123789','TACOBELL'),(1003,'rachael','','depp','nomail3@gmail.com','Tomorrow Land','','','ca','52000','individual','jlkjlkdjlkjdlksjdl','456123780',NULL);
 /*!40000 ALTER TABLE `externaluser` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
---
--- Table structure for table `bankaccount`
---
-
-DROP TABLE IF EXISTS `bankaccount`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `bankaccount` (
-  `accno` varchar(9) NOT NULL,
-  `balance` float NOT NULL,
-  `acctype` varchar(8) NOT NULL,
-  `opendate` datetime NOT NULL,
-  `userid` int(11) NOT NULL,
-  `status` varchar(8) NOT NULL DEFAULT 'inactive',
-  PRIMARY KEY (`accno`),
-  KEY `fk_BankAccount_1_idx` (`userid`),
-  CONSTRAINT `fk_BankAccount_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `bankaccount`
---
-
-LOCK TABLES `bankaccount` WRITE;
-/*!40000 ALTER TABLE `bankaccount` DISABLE KEYS */;
-INSERT INTO `bankaccount` VALUES ('852810001',30,'checking','2014-11-11 12:45:34',1001,'active'),('852810002',0,'savings','2014-11-11 12:45:34',1002,'active'),('852810003',50,'savings','2014-11-11 12:45:34',1001,'active'),('852810004',0,'checking','2015-11-11 12:45:34',1002,'active'),('852810005',0,'checking','2015-11-11 12:45:34',1003,'inactive');
-/*!40000 ALTER TABLE `bankaccount` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -181,37 +183,6 @@ INSERT INTO `internaluser` VALUES (10001,'test','','bankofaz','ssgrp9@gmail.com'
 UNLOCK TABLES;
 
 --
--- Table structure for table `authorizes`
---
-
-DROP TABLE IF EXISTS `authorizes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `authorizes` (
-  `userid` int(11) NOT NULL,
-  `empid` int(11) NOT NULL,
-  `tid` int(11) NOT NULL,
-  `start_datetime` datetime NOT NULL,
-  `end_datetime` datetime NOT NULL,
-  KEY `fk_Authorizes_1_idx` (`userid`),
-  KEY `fk_Authorizes_2_idx` (`empid`),
-  KEY `fk_Authorizes_3_idx` (`tid`),
-  CONSTRAINT `fk_Authorizes_1` FOREIGN KEY (`userid`) REFERENCES `externaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Authorizes_2` FOREIGN KEY (`empid`) REFERENCES `internaluser` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Authorizes_3` FOREIGN KEY (`tid`) REFERENCES `transaction` (`tid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `authorizes`
---
-
-LOCK TABLES `authorizes` WRITE;
-/*!40000 ALTER TABLE `authorizes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `authorizes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `logs`
 --
 
@@ -221,7 +192,7 @@ DROP TABLE IF EXISTS `logs`;
 CREATE TABLE `logs` (
   `logid` int(11) NOT NULL,
   `description` varchar(45) NOT NULL,
-  `datetime` datetime NOT NULL,
+  `entrytime` datetime NOT NULL,
   PRIMARY KEY (`logid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -293,13 +264,12 @@ CREATE TABLE `task` (
   `message` varchar(45) NOT NULL DEFAULT 'general',
   `status` varchar(13) NOT NULL,
   `tid` int(11) DEFAULT NULL,
-  `assigneeid` int(11) NOT NULL,
-  `tasktype` varchar(45) NOT NULL,
+  `assigneeid` int(11) DEFAULT NULL,
   PRIMARY KEY (`taskid`),
   KEY `fk_Task_1_idx` (`tid`),
   KEY `fk_Task_2_idx` (`assigneeid`),
   CONSTRAINT `fk_Task_1` FOREIGN KEY (`tid`) REFERENCES `transaction` (`tid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +278,7 @@ CREATE TABLE `task` (
 
 LOCK TABLES `task` WRITE;
 /*!40000 ALTER TABLE `task` DISABLE KEYS */;
-INSERT INTO `task` VALUES (1,'general','completed',3,1001,'direct'),(2,'general','completed',4,1002,'merchant'),(3,' ','notcompleted',7,1001,'direct');
+INSERT INTO `task` VALUES (1,'general','completed',3,1001),(2,'general','completed',4,1002),(3,' general','notcompleted',7,1001),(12,'general','completed',30,10002),(13,'general','notcompleted',31,10001),(14,'general','notcompleted',32,10002),(15,'general','notcompleted',33,1002);
 /*!40000 ALTER TABLE `task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -321,19 +291,19 @@ DROP TABLE IF EXISTS `transaction`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `transaction` (
   `tid` int(11) NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
-  `type` varchar(8) NOT NULL,
+  `transdate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `transtype` varchar(8) NOT NULL,
   `amt` float DEFAULT NULL,
-  `status` varchar(10) DEFAULT NULL,
-  `from` varchar(9) DEFAULT NULL,
-  `to` varchar(9) DEFAULT NULL,
-  `desc` varchar(45) DEFAULT NULL,
+  `transstatus` varchar(10) DEFAULT NULL,
+  `fromacc` varchar(9) DEFAULT NULL,
+  `toacc` varchar(9) DEFAULT NULL,
+  `transdesc` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`tid`),
-  KEY `fk_Transaction_1_idx` (`from`),
-  KEY `fk_Transaction_2_idx` (`to`),
-  CONSTRAINT `fk_Transaction_1` FOREIGN KEY (`from`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Transaction_2` FOREIGN KEY (`to`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+  KEY `fk_Transaction_1_idx` (`fromacc`),
+  KEY `fk_Transaction_2_idx` (`toacc`),
+  CONSTRAINT `fk_Transaction_1` FOREIGN KEY (`fromacc`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Transaction_2` FOREIGN KEY (`toacc`) REFERENCES `bankaccount` (`accno`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,7 +312,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,'2015-11-11 12:45:34','credit',100,'approved','852810001','852810001',''),(2,'2015-11-12 12:45:34','debit',20,'approved','852810001','852810001',NULL),(3,'2015-11-13 12:45:34','transfer',50,'approved','852810001','852810003','internal'),(4,'2015-11-14 12:45:34','payment',31,'declined','852810001','852810004','TACOBELL'),(5,'2015-11-15 12:45:34','debit',50,'declined','852810001','852810001',''),(6,'2015-11-15 12:45:34','review',0,'processing','852810001','852810001',''),(7,'2015-11-11 12:45:34','openacc',0,'processing','852810005','852810005',NULL);
+INSERT INTO `transaction` VALUES (1,'2015-11-11 12:45:34','credit',100,'approved','852810001','852810001',''),(2,'2015-11-12 12:45:34','debit',20,'approved','852810001','852810001',NULL),(3,'2015-11-13 12:45:34','transfer',50,'approved','852810001','852810003','internal'),(4,'2015-11-14 12:45:34','payment',31,'declined','852810001','852810004','TACOBELL'),(5,'2015-11-15 12:45:34','debit',50,'declined','852810001','852810001',''),(6,'2015-11-15 12:45:34','review',0,'processing','852810001','852810001',''),(7,'2015-11-11 12:45:34','openacc',0,'processing','852810005','852810005',NULL),(20,'2015-10-18 00:39:25','credit',100,'approved','852810001','852810001',NULL),(21,'2015-10-18 00:46:45','credit',100,'approved','852810001','852810001',NULL),(22,'2015-10-18 01:16:16','credit',100,'approved','852810001','852810001',NULL),(23,'2015-10-18 01:17:10','debit',100,'approved','852810001','852810001',NULL),(30,'2015-10-18 14:02:31','transfer',100,'approved','852810001','852810003','internal'),(31,'2015-10-18 14:20:46','transfer',100,'approved','852810001','852810004','external'),(32,'2015-10-18 14:30:17','transfer',100,'declined','852810001','852810004','external'),(33,'2015-10-18 14:39:42','payment',10,'approved','852810001','852810004','TACOBELL');
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,6 +340,33 @@ CREATE TABLE `userotp` (
 LOCK TABLES `userotp` WRITE;
 /*!40000 ALTER TABLE `userotp` DISABLE KEYS */;
 /*!40000 ALTER TABLE `userotp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `username` varchar(30) NOT NULL,
+  `passwd` char(80) NOT NULL,
+  `authority` varchar(16) NOT NULL DEFAULT '1',
+  `enabled` int(1) NOT NULL,
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `email` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('gali.anirudh@gmail.com','1234','ROLE_EMPLOYEE',1),('nomail1@gmail.com','1234','ROLE_MERCHANT',1),('nomail3@gmail.com','1234','ROLE_INDIVIDUAL',1),('nomail@gmail.com','1234','ROLE_INDIVIDUAL',1),('ssgrp9@gmail.com','1234','ROLE_EMPLOYEE',1),('testmail2@gmail.com','1234','ROLE_ADMIN',1),('testmail@gmail.com','1234','ROLE_MANAGER',1);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -652,7 +649,7 @@ CREATE TABLE `innodb_index_stats` (
 
 LOCK TABLES `innodb_index_stats` WRITE;
 /*!40000 ALTER TABLE `innodb_index_stats` DISABLE KEYS */;
-INSERT INTO `innodb_index_stats` VALUES ('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','n_diff_pfx01',0,1,'DB_ROW_ID'),('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'userid'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'userid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'empid'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'empid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'tid'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'tid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','n_diff_pfx01',5,1,'accno'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','size',1,NULL,'Number of pages in the index'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_diff_pfx01',3,1,'userid'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_diff_pfx02',5,1,'userid,accno'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','size',1,NULL,'Number of pages in the index'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','n_diff_pfx01',2,1,'userid'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','size',1,NULL,'Number of pages in the index'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','n_diff_pfx01',2,1,'email'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','size',1,NULL,'Number of pages in the index'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','n_diff_pfx01',0,1,'username'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','size',1,NULL,'Number of pages in the index'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','n_diff_pfx01',4,1,'userid'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','size',1,NULL,'Number of pages in the index'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','n_diff_pfx01',4,1,'email'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','size',1,NULL,'Number of pages in the index'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','n_diff_pfx01',0,1,'logid'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','size',1,NULL,'Number of pages in the index'),('bankofazdb','pii','PRIMARY','2015-09-19 02:30:54','n_diff_pfx01',2,1,'ssn'),('bankofazdb','pii','PRIMARY','2015-09-19 02:30:54','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','pii','PRIMARY','2015-09-19 02:30:54','size',1,NULL,'Number of pages in the index'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','n_diff_pfx01',0,1,'DB_ROW_ID'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','PRIMARY','2015-10-01 09:18:20','n_diff_pfx01',3,1,'taskid'),('bankofazdb','task','PRIMARY','2015-10-01 09:18:20','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','PRIMARY','2015-10-01 09:18:20','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','fk_Task_1_idx','2015-10-01 09:18:20','n_diff_pfx01',3,1,'tid'),('bankofazdb','task','fk_Task_1_idx','2015-10-01 09:18:20','n_diff_pfx02',3,1,'tid,taskid'),('bankofazdb','task','fk_Task_1_idx','2015-10-01 09:18:20','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','fk_Task_1_idx','2015-10-01 09:18:20','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','fk_Task_2_idx','2015-10-01 09:18:20','n_diff_pfx01',2,1,'assigneeid'),('bankofazdb','task','fk_Task_2_idx','2015-10-01 09:18:20','n_diff_pfx02',3,1,'assigneeid,taskid'),('bankofazdb','task','fk_Task_2_idx','2015-10-01 09:18:20','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','fk_Task_2_idx','2015-10-01 09:18:20','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','PRIMARY','2015-10-01 09:04:52','n_diff_pfx01',7,1,'tid'),('bankofazdb','transaction','PRIMARY','2015-10-01 09:04:52','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','PRIMARY','2015-10-01 09:04:52','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-01 09:04:52','n_diff_pfx01',2,1,'from'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-01 09:04:52','n_diff_pfx02',7,1,'from,tid'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-01 09:04:52','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-01 09:04:52','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-01 09:04:52','n_diff_pfx01',3,1,'to'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-01 09:04:52','n_diff_pfx02',7,1,'to,tid'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-01 09:04:52','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-01 09:04:52','size',1,NULL,'Number of pages in the index'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','n_diff_pfx01',0,1,'email'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','size',1,NULL,'Number of pages in the index'),('bankofazdb','users','PRIMARY','2015-10-05 20:14:45','n_diff_pfx01',7,1,'username'),('bankofazdb','users','PRIMARY','2015-10-05 20:14:45','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','users','PRIMARY','2015-10-05 20:14:45','size',1,NULL,'Number of pages in the index'),('bankofazdb','users','email','2015-10-05 20:14:45','n_diff_pfx01',7,1,'username'),('bankofazdb','users','email','2015-10-05 20:14:45','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','users','email','2015-10-05 20:14:45','size',1,NULL,'Number of pages in the index');
+INSERT INTO `innodb_index_stats` VALUES ('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','n_diff_pfx01',0,1,'DB_ROW_ID'),('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','GEN_CLUST_INDEX','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'userid'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'userid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_1_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'empid'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'empid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_2_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_diff_pfx01',0,1,'tid'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_diff_pfx02',0,1,'tid,DB_ROW_ID'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','authorizes','fk_Authorizes_3_idx','2015-09-18 08:41:44','size',1,NULL,'Number of pages in the index'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','n_diff_pfx01',5,1,'accno'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','bankaccount','PRIMARY','2015-10-01 09:06:41','size',1,NULL,'Number of pages in the index'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_diff_pfx01',3,1,'userid'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_diff_pfx02',5,1,'userid,accno'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','bankaccount','fk_BankAccount_1_idx','2015-10-01 09:06:41','size',1,NULL,'Number of pages in the index'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','n_diff_pfx01',2,1,'userid'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','externaluser','PRIMARY','2015-09-30 22:06:38','size',1,NULL,'Number of pages in the index'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','n_diff_pfx01',2,1,'email'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','externaluser','email_UNIQUE','2015-09-30 22:06:38','size',1,NULL,'Number of pages in the index'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','n_diff_pfx01',0,1,'username'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','govagency','PRIMARY','2015-09-19 02:12:45','size',1,NULL,'Number of pages in the index'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','n_diff_pfx01',4,1,'userid'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','internaluser','PRIMARY','2015-10-01 06:28:29','size',1,NULL,'Number of pages in the index'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','n_diff_pfx01',4,1,'email'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','internaluser','email_UNIQUE','2015-10-01 06:28:29','size',1,NULL,'Number of pages in the index'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','n_diff_pfx01',0,1,'logid'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','logs','PRIMARY','2015-09-19 03:37:47','size',1,NULL,'Number of pages in the index'),('bankofazdb','pii','PRIMARY','2015-10-17 10:55:34','n_diff_pfx01',2,1,'ssn'),('bankofazdb','pii','PRIMARY','2015-10-17 10:55:34','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','pii','PRIMARY','2015-10-17 10:55:34','size',1,NULL,'Number of pages in the index'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','n_diff_pfx01',0,1,'DB_ROW_ID'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','scratchcodes','GEN_CLUST_INDEX','2015-10-02 20:16:18','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','PRIMARY','2015-10-18 21:37:25','n_diff_pfx01',7,1,'taskid'),('bankofazdb','task','PRIMARY','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','PRIMARY','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','fk_Task_1_idx','2015-10-18 21:37:25','n_diff_pfx01',7,1,'tid'),('bankofazdb','task','fk_Task_1_idx','2015-10-18 21:37:25','n_diff_pfx02',7,1,'tid,taskid'),('bankofazdb','task','fk_Task_1_idx','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','fk_Task_1_idx','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','task','fk_Task_2_idx','2015-10-18 21:37:25','n_diff_pfx01',4,1,'assigneeid'),('bankofazdb','task','fk_Task_2_idx','2015-10-18 21:37:25','n_diff_pfx02',7,1,'assigneeid,taskid'),('bankofazdb','task','fk_Task_2_idx','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','task','fk_Task_2_idx','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','PRIMARY','2015-10-18 21:37:25','n_diff_pfx01',15,1,'tid'),('bankofazdb','transaction','PRIMARY','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','PRIMARY','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-18 21:37:25','n_diff_pfx01',2,1,'fromacc'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-18 21:37:25','n_diff_pfx02',15,1,'fromacc,tid'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','fk_Transaction_1_idx','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-18 21:37:25','n_diff_pfx01',4,1,'toacc'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-18 21:37:25','n_diff_pfx02',15,1,'toacc,tid'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-18 21:37:25','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','transaction','fk_Transaction_2_idx','2015-10-18 21:37:25','size',1,NULL,'Number of pages in the index'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','n_diff_pfx01',0,1,'email'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','userotp','PRIMARY','2015-10-02 20:47:18','size',1,NULL,'Number of pages in the index'),('bankofazdb','users','PRIMARY','2015-10-17 11:01:09','n_diff_pfx01',7,1,'username'),('bankofazdb','users','PRIMARY','2015-10-17 11:01:09','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','users','PRIMARY','2015-10-17 11:01:09','size',1,NULL,'Number of pages in the index'),('bankofazdb','users','email','2015-10-17 11:01:09','n_diff_pfx01',7,1,'username'),('bankofazdb','users','email','2015-10-17 11:01:09','n_leaf_pages',1,NULL,'Number of leaf pages in the index'),('bankofazdb','users','email','2015-10-17 11:01:09','size',1,NULL,'Number of pages in the index');
 /*!40000 ALTER TABLE `innodb_index_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -680,7 +677,7 @@ CREATE TABLE `innodb_table_stats` (
 
 LOCK TABLES `innodb_table_stats` WRITE;
 /*!40000 ALTER TABLE `innodb_table_stats` DISABLE KEYS */;
-INSERT INTO `innodb_table_stats` VALUES ('bankofazdb','authorizes','2015-09-18 08:41:44',0,1,3),('bankofazdb','bankaccount','2015-10-01 09:06:41',5,1,1),('bankofazdb','externaluser','2015-09-30 22:06:38',2,1,1),('bankofazdb','govagency','2015-09-19 02:12:45',0,1,0),('bankofazdb','internaluser','2015-10-01 06:28:29',4,1,1),('bankofazdb','logs','2015-09-19 03:37:47',0,1,0),('bankofazdb','pii','2015-09-19 02:30:54',2,1,0),('bankofazdb','scratchcodes','2015-10-02 20:16:18',0,1,0),('bankofazdb','task','2015-10-01 09:18:20',3,1,2),('bankofazdb','transaction','2015-10-01 09:04:52',7,1,2),('bankofazdb','userotp','2015-10-02 20:47:18',0,1,0),('bankofazdb','users','2015-10-05 20:14:45',7,1,1);
+INSERT INTO `innodb_table_stats` VALUES ('bankofazdb','authorizes','2015-09-18 08:41:44',0,1,3),('bankofazdb','bankaccount','2015-10-01 09:06:41',5,1,1),('bankofazdb','externaluser','2015-09-30 22:06:38',2,1,1),('bankofazdb','govagency','2015-09-19 02:12:45',0,1,0),('bankofazdb','internaluser','2015-10-01 06:28:29',4,1,1),('bankofazdb','logs','2015-09-19 03:37:47',0,1,0),('bankofazdb','pii','2015-10-17 10:55:34',2,1,0),('bankofazdb','scratchcodes','2015-10-02 20:16:18',0,1,0),('bankofazdb','task','2015-10-18 21:37:25',7,1,2),('bankofazdb','transaction','2015-10-18 21:37:25',15,1,2),('bankofazdb','userotp','2015-10-02 20:47:18',0,1,0),('bankofazdb','users','2015-10-17 11:01:09',7,1,1);
 /*!40000 ALTER TABLE `innodb_table_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1236,4 +1233,4 @@ CREATE TABLE IF NOT EXISTS `slow_log` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-05 15:00:01
+-- Dump completed on 2015-10-18 15:03:13

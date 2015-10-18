@@ -74,30 +74,38 @@ public class LoginController {
 	
 	@RequestMapping("/test")
     public ModelAndView handleRequest() throws Exception {
-        List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
-        BankAccount fromacc = null;
-        BankAccount toacc = null;
+       List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
+        BankAccount fromacc = new BankAccount();
+        BankAccount toacc = new BankAccount();
         
-        for(BankAccount account: accounts){
+        
+       for(BankAccount account: accounts){
         	if(account.getAcctype().equals("checking")){
         		fromacc = account;
-        	}else{
-        		toacc = account;
         	}
         }
-        
+       
+       accounts = bankAccountDao.findAccountsOfUser(1002);
+       
+       for(BankAccount account: accounts){
+       	if(account.getAcctype().equals("checking")){
+       		toacc = account;
+       	}
+       }
+     
 	    Date dateobj = new Date();
         
         Transaction transaction = new Transaction();
-		transaction.setTransType("transfer");
-		transaction.setAmt(100);
+        transaction.setTid(33);
+		transaction.setTransType("payment");
+		transaction.setAmt(10);
 		transaction.setTransStatus("processing");
 		transaction.setFromacc(fromacc);
 		transaction.setToacc(toacc);
 		transaction.setTransDate(dateobj);
-		transaction.setTransDesc("internal");
+		transaction.setTransDesc("TACOBELL");
 		
-		boolean sucess = transactionManagerService.submitTransaction(transaction);
+		boolean sucess = transactionManagerService.performTransaction(transaction);
 		
 		ModelAndView model = new ModelAndView("test_internalusers_list");
         model.addObject("userList", sucess);

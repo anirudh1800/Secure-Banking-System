@@ -61,8 +61,8 @@ public class ExternalUser{
 	@Column(name = "ssn", nullable = false)
 	private String ssn;
 	
-	@Column(name = "name")
-	private String name;
+	@Column(name = "bname")
+	private String bname;
 
 	public int getUserid() {
 		return userid;
@@ -168,12 +168,12 @@ public class ExternalUser{
 		this.ssn = ssn;
 	}
 
-	public String getName() {
-		return name;
+	public String getBName() {
+		return bname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setBName(String name) {
+		this.bname = name;
 	}
 	
 }

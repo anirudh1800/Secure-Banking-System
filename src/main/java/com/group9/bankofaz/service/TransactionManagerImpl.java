@@ -90,8 +90,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			if (transaction.getAmt() > criticalAmt) {
 				internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 			} else {
-				int index = rand.nextInt(regularEmployeeList.size());
-				internalUser = internalUserDao.findUserById(regularEmployeeList.get(index));
+				internalUser = internalUserDao.findUserById(regularEmployeeList.get( rand.nextInt(regularEmployeeList.size())));
 			}
 
 			task.setAssigneeid(internalUser.getUserid());
@@ -105,9 +104,10 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		case "payment":
 			if(task.getAssigneeid() == 0){
 				externalUser = transaction.getToacc().getUserid();
-
+				
 				task.setAssigneeid(externalUser.getUserid());
 				transaction.setTransStatus("processing");
+	
 			}else{
 				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 				
@@ -246,7 +246,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			BankAccount fromAccount = transaction.getFromacc();
 			BankAccount toAccount = transaction.getToacc();
 
-			if (!toAccount.getStatus().equals("active") || !fromAccount.getStatus().equals("active")) {
+			if (!toAccount.getAccStatus().equals("active") || !fromAccount.getAccStatus().equals("active")) {
 
 				transaction.setTransStatus("declined");
 				transactionDao.update(transaction);
@@ -411,7 +411,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 				break;
 
 			case "openacc":
-				fromAccount.setStatus("active");
+				fromAccount.setAccStatus("active");
 				bankAccountDao.update(fromAccount);
 
 				transaction.setTransStatus("approved");
@@ -420,7 +420,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 			case "delacc":
 				if (fromAccount.getBalance() == 0) {
-					fromAccount.setStatus("inactive");
+					fromAccount.setAccStatus("inactive");
 					bankAccountDao.update(fromAccount);
 					transaction.setTransStatus("approved");
 				} else {

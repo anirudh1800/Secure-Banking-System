@@ -38,8 +38,8 @@ public class BankAccount {
     @JoinColumn(name = "userid")
 	private ExternalUser userid;
 	
-	@Column(name ="status", nullable = false)
-	private String status;
+	@Column(name ="accstatus", nullable = false)
+	private String accstatus;
 
 	public String getAccno() {
 		return accno;
@@ -61,8 +61,8 @@ public class BankAccount {
 		return userid;
 	}
 	
-	public String getStatus(){
-		return status;
+	public String getAccStatus(){
+		return accstatus;
 	}
 
 	public void setAccno(String accno) {
@@ -85,8 +85,8 @@ public class BankAccount {
 		this.userid = userid;
 	}
 	
-	public void setStatus(String status){
-		this.status = status;
+	public void setAccStatus(String status){
+		this.accstatus = status;
 	}
 	
 }
