@@ -455,6 +455,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	}
 	
 /* 1) Cancel the transaction if it is still either in pending or processing stage
+ 	WARNING: delete all tasks relating the transaction when executing this method
  */
 	@Override
 	@Transactional

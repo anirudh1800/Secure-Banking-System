@@ -96,16 +96,16 @@ public class LoginController {
 	    Date dateobj = new Date();
         
         Transaction transaction = new Transaction();
-        transaction.setTid(33);
+        transaction.setTid(34);
 		transaction.setTransType("payment");
-		transaction.setAmt(10);
+		transaction.setAmt(12);
 		transaction.setTransStatus("processing");
 		transaction.setFromacc(fromacc);
 		transaction.setToacc(toacc);
 		transaction.setTransDate(dateobj);
 		transaction.setTransDesc("TACOBELL");
 		
-		boolean sucess = transactionManagerService.performTransaction(transaction);
+		boolean sucess = transactionManagerService.updateTransaction(transaction);
 		
 		ModelAndView model = new ModelAndView("test_internalusers_list");
         model.addObject("userList", sucess);
