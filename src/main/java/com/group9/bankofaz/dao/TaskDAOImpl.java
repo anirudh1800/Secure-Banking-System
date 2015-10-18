@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.group9.bankofaz.model.Task;
 
 @Repository
-@Transactional
 public class TaskDAOImpl implements TaskDAO {
 	private SessionFactory sessionFactory;
 	
@@ -20,26 +19,31 @@ public class TaskDAOImpl implements TaskDAO {
 	}
 
 	@Override
+	@Transactional
 	public void add(Task task) {
 		sessionFactory.getCurrentSession().save(task);
 	}
 
 	@Override
+	@Transactional
 	public void update(Task task) {
 		sessionFactory.getCurrentSession().update(task);
 	}
 
 	@Override
+	@Transactional
 	public void persist(Task task) {
 		sessionFactory.getCurrentSession().persist(task);
 	}
 
 	@Override
+	@Transactional
 	public void delete(Task task) {
 		sessionFactory.getCurrentSession().delete(task);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Task> findNewTasksAssignedToUser(int id) {
 		List<Task> list = sessionFactory.getCurrentSession()
 				.createQuery("from Task where assigneeid = " + id + " and status = 'notcompleted'").list();

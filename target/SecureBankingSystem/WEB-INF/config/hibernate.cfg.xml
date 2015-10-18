@@ -22,10 +22,8 @@
 		<property name="hibernate.c3p0.idle_test_period">3000</property>
 
 		<!-- JTA details -->
-		<property name="hibernate.transaction.factory_class">org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory</property>
-		<property name="hibernate.transaction.manager_lookup_class">org.springframework.transaction.jta.JtaTransactionManager</property>
-		<property name="jta.UserTransaction">java:comp/UserTransaction</property>
-
+		<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+		<property name="hibernate.current_session_context_class">thread</property>
 
 		<!-- Mappings for annotated classes -->
 		<mapping class="com.group9.bankofaz.model.Users" />

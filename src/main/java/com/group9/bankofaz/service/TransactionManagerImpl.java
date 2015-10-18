@@ -14,11 +14,11 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.InternalUserDAO;
@@ -30,8 +30,7 @@ import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Task;
-import com.group9.bankofaz.model.Transaction;;
-
+import com.group9.bankofaz.model.Transaction;
 
 @Service
 @Scope("singleton")
@@ -39,8 +38,6 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	
 	@Autowired
 	private ApplicationContext appContext;
-	
-	private SessionFactory factory = null;
 	
 	@Autowired
 	private InternalUserDAO internalUserDao;	
@@ -54,12 +51,11 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	@Autowired
 	private BankAccountDAO bankAccountDao;
 	
-	
 	private Deque<Task> processingTaskQueue;
 	private List<Integer> regularEmployeeList;
 	private List<Integer> systemManagerList;
 	private final static float criticalAmt = 500.00f;
-	private Random rand;
+	private Random rand = new Random();
 	
 /*  Pop a task from the queue and assign the task to an employee based on following parameter
  *	1) Transaction type
@@ -75,13 +71,14 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  */	
 	
 	@Override
+	@Transactional
 	public void scheduleTask(){
 		
 		if(processingTaskQueue.size() == 0){
 			return;
 		}
 		
-		Task task = processingTaskQueue.getFirst();
+		Task task = processingTaskQueue.pollFirst();
 		Transaction transaction = task.getTid();
 		InternalUser internalUser;
 		ExternalUser externalUser;
@@ -93,7 +90,8 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			if (transaction.getAmt() > criticalAmt) {
 				internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 			} else {
-				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
+				int index = rand.nextInt(regularEmployeeList.size());
+				internalUser = internalUserDao.findUserById(regularEmployeeList.get(index));
 			}
 
 			task.setAssigneeid(internalUser.getUserid());
@@ -152,6 +150,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  * 2) On exception return false else true
  */	
 	@Override
+	@Transactional(readOnly = true)
 	public boolean updateEmployeeList(){		
 		try {
 			if (processingTaskQueue == null) {
@@ -171,6 +170,8 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			}
 
 			for (InternalUser user : list) {
+				if(regularEmployeeList.contains(user.getUserid()))
+					continue;
 				regularEmployeeList.add(user.getUserid());
 			}
 
@@ -186,6 +187,8 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 				throw new EmployeeListException("Error in retrieving system managers list");
 
 			for (InternalUser user : list) {
+				if(systemManagerList.contains(user.getUserid()))
+					continue;
 				systemManagerList.add(user.getUserid());
 			}
 
@@ -200,9 +203,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  * 2) Create a task with status not completed and associate it to that transaction
  * 3) Push into the processing queue
  */
-	
 	@Override
-	public boolean submitTransaction(Transaction transaction){
+	@Transactional
+	public boolean submitTransaction(Transaction transaction) throws IllegalTransactionException{
 		transactionDao.add(transaction);
 		
 		if(transaction.getTransType().equals("credit") || transaction.getTransType().equals("debit")){
@@ -236,12 +239,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  * 4) on exception return false else true  
  */
 	@Override
-	public boolean performTransaction(Transaction transaction) {
-		try {
-
+	@Transactional
+	public boolean performTransaction(Transaction transaction) throws IllegalTransactionException {
 			String transType = transaction.getTransType();
-
-			factory.getCurrentSession().beginTransaction();
 
 			BankAccount fromAccount = transaction.getFromacc();
 			BankAccount toAccount = transaction.getToacc();
@@ -251,7 +251,6 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 				transaction.setTransStatus("declined");
 				transactionDao.update(transaction);
 
-				factory.getCurrentSession().getTransaction().commit();
 				return false;
 			}
 
@@ -318,14 +317,12 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 						} else {
 							transaction.setTransStatus("declined");
 							transactionDao.update(transaction);
-							factory.getCurrentSession().getTransaction().commit();
 
 							throw new IllegalTransactionException("Not valid transaction");
 						}
 					} else {
 						transaction.setTransStatus("declined");
 						transactionDao.update(transaction);
-						factory.getCurrentSession().getTransaction().commit();
 
 						throw new IllegalTransactionException("Not valid transaction");
 					}
@@ -357,14 +354,12 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 						} else {
 							transaction.setTransStatus("declined");
 							transactionDao.update(transaction);
-							factory.getCurrentSession().getTransaction().commit();
 
 							throw new IllegalTransactionException("Not valid transaction");
 						}
 					} else {
 						transaction.setTransStatus("declined");
 						transactionDao.update(transaction);
-						factory.getCurrentSession().getTransaction().commit();
 
 						throw new IllegalTransactionException("Not valid transaction");
 					}
@@ -399,14 +394,12 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 					} else {
 						transaction.setTransStatus("declined");
 						transactionDao.update(transaction);
-						factory.getCurrentSession().getTransaction().commit();
 
 						throw new IllegalTransactionException("Not valid transaction");
 					}
 				} else {
 					transaction.setTransStatus("declined");
 					transactionDao.update(transaction);
-					factory.getCurrentSession().getTransaction().commit();
 
 					throw new IllegalTransactionException("Not valid transaction");
 				}
@@ -415,7 +408,6 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			case "review":
 				transaction.setTransStatus("approved");
 				transactionDao.update(transaction);
-				factory.getCurrentSession().getTransaction().commit();
 				break;
 
 			case "openacc":
@@ -441,25 +433,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			default:
 				transaction.setTransStatus("declined");
 				transactionDao.update(transaction);
-				factory.getCurrentSession().getTransaction().commit();
 
 				throw new IllegalTransactionException("Not valid transaction");
-
 			}
-			factory.getCurrentSession().getTransaction().commit();
-		} catch (RuntimeException e) {
-			try {
-				factory.getCurrentSession().getTransaction().rollback();
-			} catch (IllegalStateException | SecurityException e1) {
-				e1.printStackTrace();
-				return false;
-			}
-			e.printStackTrace();
-			return false;
-		} catch (IllegalTransactionException e) {
-			e.printStackTrace();
-			return false;
-		}
 		return true;
 	}
 	
@@ -468,55 +444,23 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
  * 3) on exception return false else true  
  */
 	@Override
+	@Transactional
 	public boolean updateTransaction(Transaction transaction){
 		if (transaction.getTransStatus().equals("approved") || transaction.getTransStatus().equals("declined")) {
 			return false;
 		} else {
-
-			
-			try {
-				factory.getCurrentSession().beginTransaction();
-
 				transactionDao.update(transaction);
-
-				factory.getCurrentSession().getTransaction().commit();
-			}catch (RuntimeException e) {
-				try {
-					factory.getCurrentSession().getTransaction().rollback();
-				} catch (IllegalStateException | SecurityException e1) {
-					e1.printStackTrace();
-					return false;
-				}
-				e.printStackTrace();
-				return false;
-			}
 		}
-
 		return true;
 	}
 	
 /* 1) Cancel the transaction if it is still either in pending or processing stage
  */
 	@Override
+	@Transactional
 	public boolean cancelTransaction(Transaction transaction){
-		if (transaction.getTransStatus().equals("pending") || transaction.getTransStatus().equals("processing")) {
-			
-			try {
-				factory.getCurrentSession().beginTransaction();
-
-				transactionDao.delete(transaction);
-
-				factory.getCurrentSession().getTransaction().commit();
-			}catch (RuntimeException e) {
-				try {
-					factory.getCurrentSession().getTransaction().rollback();
-				} catch (IllegalStateException | SecurityException e1) {
-					e1.printStackTrace();
-					return false;
-				}
-				e.printStackTrace();
-				return false;
-			}
+		if (transaction.getTransStatus().equals("pending") || transaction.getTransStatus().equals("processing")) {			
+					transactionDao.delete(transaction);
 		}else{
 			return false;
 		}
@@ -534,11 +478,11 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			while(true){
 				if(counter == 0){
 					updateEmployeeList();
-					counter = (counter + 1) % 1000;
 				}
 				scheduleTask();
-				Thread.sleep(1000*60*10);
+				Thread.sleep(1000);
 				scheduleTask();
+				counter = (counter + 1) % 1000;
 			}
 		}catch(InterruptedException e){
 			e.printStackTrace();
@@ -548,7 +492,6 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	
 	@PostConstruct
 	public void initIt() throws Exception {
-	  factory = (SessionFactory) appContext.getBean("sessionFactory");
 	  new Thread((Runnable) appContext.getBean("transactionManagerService")).start();;
 	}
 }

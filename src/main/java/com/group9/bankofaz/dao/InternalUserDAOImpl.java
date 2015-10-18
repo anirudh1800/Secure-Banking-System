@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.group9.bankofaz.model.InternalUser;
 
 @Repository
-@Transactional
 public class InternalUserDAOImpl implements InternalUserDAO {
 	private SessionFactory sessionFactory;
 	
@@ -21,26 +20,31 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	}
 	
 	@Override
+	@Transactional
 	public void add(InternalUser internaluser) {
 		this.sessionFactory.getCurrentSession().save(internaluser);
 	}
 
 	@Override
+	@Transactional
 	public void update(InternalUser internaluser) {
 		this.sessionFactory.getCurrentSession().update(internaluser);		
 	}
 
 	@Override
+	@Transactional
 	public void persist(InternalUser internaluser) {
 		this.sessionFactory.getCurrentSession().persist(internaluser);		
 	}
 
 	@Override
+	@Transactional
 	public void delete(InternalUser internaluser) {
 		this.sessionFactory.getCurrentSession().delete(internaluser);		
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InternalUser findUserByEmail(String email) {
 		Session session = this.sessionFactory.getCurrentSession();
 		InternalUser intUser = (InternalUser) session.createQuery("from InternalUser where email.username = :email")
@@ -50,13 +54,15 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<InternalUser> findAllRegEmployees() {
 		Session session = this.sessionFactory.getCurrentSession();		
-		List<InternalUser> usersList = session.createQuery("from InternalUser where accessprivilege = 'RE1' or accessprivilege = 'RE2'").list();
+			List<InternalUser> usersList = session.createQuery("from InternalUser where accessprivilege = 'RE1' or accessprivilege = 'RE2'").list();
 		return usersList;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<InternalUser> findAllSystemManagers() {
 		Session session = this.sessionFactory.getCurrentSession();		
 		List<InternalUser> usersList = session.createQuery("from InternalUser where accessprivilege = 'SM'").list();
@@ -64,6 +70,7 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InternalUser findSysAdmin() {
 		Session session = this.sessionFactory.getCurrentSession();		
 		InternalUser user = (InternalUser) session.createQuery("from InternalUser where accessprivilege = 'SA'").uniqueResult();
@@ -71,6 +78,7 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public InternalUser findUserById(int id) {
 		Session session = this.sessionFactory.getCurrentSession();      
 		InternalUser user = (InternalUser) session.createQuery("from InternalUser where userid = :id")

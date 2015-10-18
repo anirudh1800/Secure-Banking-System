@@ -76,22 +76,26 @@ public class LoginController {
     public ModelAndView handleRequest() throws Exception {
         List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
         BankAccount fromacc = null;
+        BankAccount toacc = null;
         
         for(BankAccount account: accounts){
         	if(account.getAcctype().equals("checking")){
         		fromacc = account;
+        	}else{
+        		toacc = account;
         	}
         }
         
 	    Date dateobj = new Date();
         
         Transaction transaction = new Transaction();
-		transaction.setTransType("credit");
+		transaction.setTransType("transfer");
 		transaction.setAmt(100);
 		transaction.setTransStatus("processing");
 		transaction.setFromacc(fromacc);
-		transaction.setToacc(fromacc);
+		transaction.setToacc(toacc);
 		transaction.setTransDate(dateobj);
+		transaction.setTransDesc("internal");
 		
 		boolean sucess = transactionManagerService.submitTransaction(transaction);
 		

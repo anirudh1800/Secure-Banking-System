@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.group9.bankofaz.model.Transaction;
 
 @Repository
-@Transactional
 public class TransactionDAOImpl implements TransactionDAO {
 	private SessionFactory sessionFactory;
 	
@@ -20,26 +19,31 @@ public class TransactionDAOImpl implements TransactionDAO {
 	}
 
 	@Override
+	@Transactional
 	public void add(Transaction transaction) {
 		sessionFactory.getCurrentSession().save(transaction);
 	}
 
 	@Override
+	@Transactional
 	public void update(Transaction transaction) {
 		sessionFactory.getCurrentSession().update(transaction);
 	}
 
 	@Override
+	@Transactional
 	public void persist(Transaction transaction) {
 		sessionFactory.getCurrentSession().persist(transaction);
 	}
 
 	@Override
+	@Transactional
 	public void delete(Transaction transaction) {
 		sessionFactory.getCurrentSession().delete(transaction);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<Transaction> findTransactionsOfAccount(String accno) {
 		List<Transaction> list = sessionFactory.getCurrentSession()
 				.createQuery("from Transaction where fromacc = '" + accno + "' or toacc = '"+ accno +"'").list();

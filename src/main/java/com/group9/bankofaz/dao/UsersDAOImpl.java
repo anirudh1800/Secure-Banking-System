@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.model.Users;
 
@@ -17,12 +18,14 @@ public class UsersDAOImpl implements UsersDAO{
 	}
 
 	@Override
+	@Transactional
 	public void add(Users user) {
 		Session session = this.sessionFactory.getCurrentSession();
         session.save(user);
 	}
 
 	@Override
+	@Transactional
 	public void update(Users user) {
 		Session session = this.sessionFactory.getCurrentSession();
         session.update(user);
@@ -30,12 +33,14 @@ public class UsersDAOImpl implements UsersDAO{
 	
 
 	@Override
+	@Transactional
 	public void delete(Users user) {
 		Session session = this.sessionFactory.getCurrentSession();
 		session.delete(user);	
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Users findUsersByEmail(String email) {
 		Session session = this.sessionFactory.getCurrentSession();      
 		Users user = (Users) session.createQuery("from Users where username = :user")
@@ -45,9 +50,9 @@ public class UsersDAOImpl implements UsersDAO{
 	}
 
 	@Override
+	@Transactional
 	public void persist(Users users) {
 		Session session = this.sessionFactory.getCurrentSession();
 		session.persist(users);
 	}
-	
 }

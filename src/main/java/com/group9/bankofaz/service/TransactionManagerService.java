@@ -3,6 +3,7 @@
  */
 package com.group9.bankofaz.service;
 
+import com.group9.bankofaz.exception.IllegalTransactionException;
 import com.group9.bankofaz.model.Transaction;
 
 /**
@@ -15,9 +16,9 @@ public interface TransactionManagerService {
 
 	public boolean updateEmployeeList();
 
-	public boolean submitTransaction(Transaction transaction);
+	public boolean submitTransaction(Transaction transaction) throws IllegalTransactionException;
 
-	public boolean performTransaction(Transaction transaction);
+	public boolean performTransaction(Transaction transaction) throws IllegalTransactionException;
 
 	public boolean updateTransaction(Transaction transaction);
 

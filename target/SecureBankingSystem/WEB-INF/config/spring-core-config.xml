@@ -16,23 +16,24 @@
 	http://www.springframework.org/schema/task 
 	http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
-	<context:component-scan base-package="com.group9.bankofaz.controller" />
-	<context:component-scan base-package="com.group9.bankofaz.dao" />
-	<context:component-scan base-package="com.group9.bankofaz.model" />
-	<context:component-scan base-package="com.group9.bankofaz.service" />
-	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="configLocation" value="/WEB-INF/config/hibernate.cfg.xml" />
 	</bean>
 
-	
+	<context:component-scan base-package="com.group9.bankofaz.controller" />
+	<context:component-scan base-package="com.group9.bankofaz.model" />
+	<context:component-scan base-package="com.group9.bankofaz.dao" />
+	<context:component-scan base-package="com.group9.bankofaz.service" />
+
+
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	
+
 	<context:annotation-config />
 
 	<bean id="dataSource"
@@ -42,12 +43,12 @@
 		<property name="username" value="dbuser" />
 		<property name="password" value="tR$qCR8j" />
 	</bean>
-	
-	<bean id="internalUserDao" class="com.group9.bankofaz.dao.InternalUserDAOImpl"/>
-	<bean id="transactionDao" class="com.group9.bankofaz.dao.TransactionDAOImpl"/>
-	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl"/>
-	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl"/>
-	
-	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl"/>
+
+	<bean id="internalUserDao" class="com.group9.bankofaz.dao.InternalUserDAOImpl" />
+	<bean id="transactionDao" class="com.group9.bankofaz.dao.TransactionDAOImpl" />
+	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl" />
+	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl" />
+
+	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl" />
 
 </beans>
