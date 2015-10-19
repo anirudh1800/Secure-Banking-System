@@ -21,6 +21,7 @@
 		<property name="configLocation" value="/WEB-INF/config/hibernate.cfg.xml" />
 	</bean>
 
+	<context:component-scan base-package="com.group9.bankofaz.component" />
 	<context:component-scan base-package="com.group9.bankofaz.controller" />
 	<context:component-scan base-package="com.group9.bankofaz.model" />
 	<context:component-scan base-package="com.group9.bankofaz.dao" />
@@ -44,12 +45,33 @@
 		<property name="password" value="tR$qCR8j" />
 	</bean>
 
+	<bean id="usersDao" class="com.group9.bankofaz.dao.UsersDAOImpl" />
+	<bean id="externalUserDao" class="com.group9.bankofaz.dao.ExternalUserDAOImpl" />
 	<bean id="internalUserDao" class="com.group9.bankofaz.dao.InternalUserDAOImpl" />
 	<bean id="transactionDao" class="com.group9.bankofaz.dao.TransactionDAOImpl" />
 	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl" />
 	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl" />
 
-	<bean id = "loginService" class = "com.group9.bankofaz.service.LoginServiceImpl"/>
+	<bean id="loginService" class="com.group9.bankofaz.service.LoginServiceImpl" />
+	<bean id="registerService" class="com.group9.bankofaz.service.RegistrationServiceImpl" />
 	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl" />
-	
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="donotreplyboabank9@gmail.com" />
+		<property name="password" value="group9SSproject" />
+
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.host">smtp.gmail.com</prop>
+				<prop key="mail.smtp.port">587</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+
 </beans>

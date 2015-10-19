@@ -8,16 +8,21 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.group9.bankofaz.dao.UserOtpDAO;
 import com.group9.bankofaz.dao.UserOtpDAOImpl;
+import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.model.UserOtp;
+import com.group9.bankofaz.model.Users;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder;
+
+import com.group9.bankofaz.component.BOASendMail;
 
 /**
  * @authors Reshma Venkat
@@ -26,19 +31,26 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorConfig.GoogleAuthenticato
 
 @Service
 public class LoginServiceImpl implements LoginService {
+	@Autowired
+	private BOASendMail boaSendEmail;
+
+	@Autowired
+	private UsersDAO usersDao;
+
 	UserOtpDAO userOtpDao;
-	UserOtp userOtp;	
+	UserOtp userOtp;
 	GoogleAuthenticatorConfigBuilder configBuilder;
 	GoogleAuthenticatorConfig config;
 	GoogleAuthenticator gAuth;
-	
+
 	@Override
 	public boolean validateOtp(String username, int verificationCode) {
 		userOtp = userOtpDao.get(username);
 		boolean isCodeValid = false;
-		
-		if(userOtp!=null){
-			isCodeValid = (userOtp.getValidationcode() == verificationCode) && (new Date().getTime() <= userOtp.getValidity() ) ? true: false; 
+
+		if (userOtp != null) {
+			isCodeValid = (userOtp.getValidationcode() == verificationCode)
+					&& (new Date().getTime() <= userOtp.getValidity()) ? true : false;
 		}
 		return isCodeValid;
 	}
@@ -50,18 +62,26 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public boolean sendEmail(String emailId, String key) {
-		// TODO Auto-generated method stub
-		return true;
+	public void sendEmail(String emailId, String password) {
+		String subject = "Password Reset";
+		String msgBody = "Hi," + "\n"
+				+ "It's unfortunate that you lost your password. We have reset your password. Your new password is "
+				+ password + " . You can use this password for further communication. " + "\n" + "Best," + "\n"
+				+ "The Bank of Arizona Accounts team";
+		boaSendEmail.SendMailToCustomer(emailId, subject, msgBody);
 	}
-	
+
 	@PostConstruct
 	public void initIt() throws Exception {
-		configBuilder =  new GoogleAuthenticatorConfigBuilder()
-                .setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(30))
-                .setWindowSize(50).setKeyRepresentation(KeyRepresentation.BASE64);
+		configBuilder = new GoogleAuthenticatorConfigBuilder().setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(30))
+				.setWindowSize(50).setKeyRepresentation(KeyRepresentation.BASE64);
 		config = configBuilder.build();
 		gAuth = new GoogleAuthenticator(config);
 		userOtpDao = new UserOtpDAOImpl();
+	}
+
+	@Override
+	public void updateLoginInfo(Users users) {
+		usersDao.update(users);
 	}
 }

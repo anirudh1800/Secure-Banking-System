@@ -4,11 +4,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Login Page</title>
+<style type="text/css">
+.error {
+	color: red;
+	text-align: center;
+}
+</style>
 </head>
-<body>${message}
+<body>
 	<h2 align="center">
 		Bank of Arizona<br> <br>
 	</h2>
+
+	<div class="error">${message}</div>
 	<div
 		style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
 		<form method="post" action="<c:url value='j_spring_security_check' />">
@@ -30,6 +38,8 @@
 			<input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
 		</form>
+
+
 		<br>
 	</div>
 </body>
