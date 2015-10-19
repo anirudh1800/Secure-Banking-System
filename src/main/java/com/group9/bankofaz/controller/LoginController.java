@@ -3,10 +3,8 @@
  */
 package com.group9.bankofaz.controller;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.TaskDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
-import com.group9.bankofaz.model.BankAccount;
-import com.group9.bankofaz.model.Transaction;
+import com.group9.bankofaz.service.LoginService;
 import com.group9.bankofaz.service.TransactionManagerService;
 
 /**
@@ -28,6 +25,9 @@ import com.group9.bankofaz.service.TransactionManagerService;
 
 @Controller
 public class LoginController {
+	
+	@Autowired
+	LoginService loginService;
 	
 	@Autowired
 	BankAccountDAO bankAccountDao;
@@ -74,7 +74,8 @@ public class LoginController {
 	
 	@RequestMapping("/test")
     public ModelAndView handleRequest() throws Exception {
-       List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
+		
+       /*List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
         BankAccount fromacc = new BankAccount();
         BankAccount toacc = new BankAccount();
         
@@ -106,9 +107,12 @@ public class LoginController {
 		transaction.setTransDesc("TACOBELL");
 		
 		boolean sucess = transactionManagerService.updateTransaction(transaction);
+*/		
+		int otp = loginService.generateOTP("gali.anirudh@gmail.com");
 		
+		boolean otp1 = loginService.validateOtp("gali.anirudh@gmail.com", otp);
 		ModelAndView model = new ModelAndView("test_internalusers_list");
-        model.addObject("userList", sucess);
+        model.addObject("userList", otp1);
         return model;
     }
 

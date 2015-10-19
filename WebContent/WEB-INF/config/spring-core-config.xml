@@ -49,6 +49,7 @@
 	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl" />
 	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl" />
 
+	<bean id = "loginService" class = "com.group9.bankofaz.service.LoginServiceImpl"/>
 	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl" />
-
+	
 </beans>

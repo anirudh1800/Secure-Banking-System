@@ -1,69 +1,47 @@
 package com.group9.bankofaz.model;
 
+import java.util.Date;
+
 /**
  * @author Anirudh Ruia Gali
  *
  */
 
-public class UserOtp{
+public class UserOtp {
 	private String email;
-	private String  otp;
-	private int  validationcode;	
-	private int scratchid;
-	
-	/**
-	 * @return the email
-	 */
+	private String secretkey;
+	private int validationcode;
+	private long validity;
+
 	public String getEmail() {
 		return email;
 	}
 
-	/**
-	 * @param email the email to set
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	/**
-	 * @return the otp
-	 */
-	public String getOtp() {
-		return otp;
+	public String getSecretKey() {
+		return secretkey;
 	}
 
-	/**
-	 * @param otp the otp to set
-	 */
-	public void setOtp(String otp) {
-		this.otp = otp;
+	public void setSecretKey(String secretkey) {
+		this.secretkey = secretkey;
 	}
 
-	/**
-	 * @return the validationcode
-	 */
 	public int getValidationcode() {
 		return validationcode;
 	}
 
-	/**
-	 * @param validationcode the validationcode to set
-	 */
 	public void setValidationcode(int validationcode) {
 		this.validationcode = validationcode;
 	}
 
-	/**
-	 * @return the scratchid
-	 */
-	public int getScratchid() {
-		return scratchid;
+	public void setValidity(long validity) {
+		this.validity = validity;
 	}
 
-	/**
-	 * @param scratchid the scratchid to set
-	 */
-	public void setScratchid(int scratchid) {
-		this.scratchid = scratchid;
-	}	
+	public long getValidity() {
+		return validity;
+	}
 }

@@ -8,6 +8,9 @@ package com.group9.bankofaz.service;
  *
  */
 public interface LoginService {
-	public String sendPassword(String email, String password);
-}
+	public boolean validateOtp(String username, int verificationCode);
 
+	public int generateOTP(String username);
+
+	public boolean sendEmail(String email, String key);
+}
