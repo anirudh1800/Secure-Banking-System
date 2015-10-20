@@ -8,7 +8,8 @@
  http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
 	<http pattern="/" security="none" />
-	<http pattern="/registration/reg_vaildate" security="none" />
+	<http pattern="/registration" security="none" />
+	<http pattern="/registration/reg_validate" security="none" />
 
 	<http auto-config="true" use-expressions="true">
 		<session-management>
@@ -18,12 +19,16 @@
 
 		<access-denied-handler error-page="/403page" />
 
-		<intercept-url pattern="/otp**"
+		<intercept-url pattern="/login/otp"
 			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+		
+		<intercept-url pattern="/login/otp/validate"
+			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+		
 
 		<form-login login-page='/login' username-parameter="email"
 			password-parameter="passwd" login-processing-url="/j_spring_security_check"
-			default-target-url="/otp" authentication-failure-url="/login?authfailed" />
+			default-target-url="/login/otp" authentication-failure-url="/login?authfailed" />
 		<csrf />
 		<logout logout-url="/j_spring_security_logout"
 			logout-success-url="/login?logout" invalidate-session="false" />

@@ -6,15 +6,14 @@ package com.group9.bankofaz.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 
 import com.group9.bankofaz.component.SessionDetails;
 import com.group9.bankofaz.model.Users;
@@ -46,15 +45,20 @@ public class LoginController {
 
 				if (sessionDetails.getFailureAttempts() == 3) {
 					Users updateuser = new Users();
-					String password = generatePassword();
+					String password = loginService.generatePassword();
 					StandardPasswordEncoder encryption = new StandardPasswordEncoder();
 					updateuser.setUsername(sessionDetails.getUsername());
 					updateuser.setPassword(encryption.encode(password));
 					updateuser.setAuthority("ROLE_INDIVIDUAL");
 					updateuser.setEnabled(1);
 
+					message = "Hi," + "\n"
+							+ "It's unfortunate that you lost your password. We have reset your password. Your new password is "
+							+ password + " . You can use this password for further communication. " + "\n" + "Best,"
+							+ "\n" + "The Bank of Arizona Accounts team";
+
 					loginService.updateLoginInfo(updateuser);
-					loginService.sendEmail(sessionDetails.getUsername(), password);
+					loginService.sendEmail(sessionDetails.getUsername(), message, "Bank of Arizona Password Reset");
 				}
 				message = "Your password was reset. A temporary password was mailed to your email-id";
 
@@ -68,18 +72,24 @@ public class LoginController {
 		return new ModelAndView("login", "message", message);
 	}
 
-	@RequestMapping("otp")
+	@RequestMapping("/login/otp")
 	public ModelAndView geOtpView(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		session.setAttribute("BOAUsername", username);
-
+		String message ="Your one-time password for current login: "+ loginService.generateOTP(username);
+		loginService.sendEmail(username, message, "Bank of Arizona OTP");
 		return new ModelAndView("otp");
 	}
-
-	public String generatePassword() {
-		return RandomStringUtils.randomAlphanumeric(10);
-
+	
+	@RequestMapping("/login/otp/validate")
+	public ModelAndView validateOtp(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		String username = (String) session.getAttribute("BOAUsername");
+		boolean isCodeValid = loginService.validateOtp(username, Integer.valueOf(request.getParameter("OTP").toString()));
+		ModelAndView model = new ModelAndView("test_internalusers_list");
+		model.addObject("userList", isCodeValid);
+		return  model;
 	}
 
 	@RequestMapping("403page")

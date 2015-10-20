@@ -16,5 +16,7 @@ public interface LoginService {
 
 	public int generateOTP(String username);
 
-	public void sendEmail(String email, String key);
+	public void sendEmail(String email, String message, String subject);
+	
+	public String generatePassword();
 }

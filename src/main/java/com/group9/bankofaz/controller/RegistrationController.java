@@ -23,6 +23,7 @@ import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.RegistrationService;
 
 @Controller
+@RequestMapping("/registration")
 public class RegistrationController {
 	@Autowired
 	RegistrationService registerService;
@@ -32,12 +33,12 @@ public class RegistrationController {
 
 	private Pattern email_pattern = Pattern.compile(EMAIL_PATTERN);;
 
-	@RequestMapping("registration")
+	@RequestMapping(method = RequestMethod.GET) 
 	public ModelAndView RegistrationPage() {
 		return new ModelAndView("registration");
 	}
 
-	@RequestMapping(value = "reg_validate", method = RequestMethod.POST)
+	@RequestMapping(value = "/reg_validate", method = RequestMethod.POST)
 	public ModelAndView addUser(HttpServletRequest request) {
 		// capture form fields
 		String firstName = request.getParameter("First_Name").toString();

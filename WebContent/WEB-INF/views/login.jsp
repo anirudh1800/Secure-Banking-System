@@ -19,7 +19,8 @@
 	<div class="error">${message}</div>
 	<div
 		style="font-family: verdana; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">
-		<form method="post" action="<c:url value='j_spring_security_check' />">
+		<form name="LoginForm" method="post"
+			action="<c:url value='j_spring_security_check' />">
 			<table align="center">
 				<tr>
 					<td align="left">Email</td>
@@ -38,8 +39,6 @@
 			<input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
 		</form>
-
-
 		<br>
 	</div>
 </body>

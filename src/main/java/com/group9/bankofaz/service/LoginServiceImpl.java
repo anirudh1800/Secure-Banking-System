@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,13 +63,8 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void sendEmail(String emailId, String password) {
-		String subject = "Password Reset";
-		String msgBody = "Hi," + "\n"
-				+ "It's unfortunate that you lost your password. We have reset your password. Your new password is "
-				+ password + " . You can use this password for further communication. " + "\n" + "Best," + "\n"
-				+ "The Bank of Arizona Accounts team";
-		boaSendEmail.SendMailToCustomer(emailId, subject, msgBody);
+	public void sendEmail(String emailId, String message, String subject) {
+		boaSendEmail.SendMailToCustomer(emailId, subject, message);
 	}
 
 	@PostConstruct
@@ -83,5 +79,11 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public void updateLoginInfo(Users users) {
 		usersDao.update(users);
+	}
+	
+	@Override
+	public String generatePassword() {
+		return RandomStringUtils.randomAlphanumeric(10);
+
 	}
 }
