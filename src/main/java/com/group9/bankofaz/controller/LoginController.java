@@ -3,6 +3,7 @@
  */
 package com.group9.bankofaz.controller;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -77,19 +78,31 @@ public class LoginController {
 		HttpSession session = request.getSession(true);
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		session.setAttribute("BOAUsername", username);
-		String message ="Your one-time password for current login: "+ loginService.generateOTP(username);
+		String message = "Your one-time password for current login: " + loginService.generateOTP(username);
 		loginService.sendEmail(username, message, "Bank of Arizona OTP");
 		return new ModelAndView("otp");
 	}
-	
+
 	@RequestMapping("/login/otp/validate")
 	public ModelAndView validateOtp(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		String username = (String) session.getAttribute("BOAUsername");
-		boolean isCodeValid = loginService.validateOtp(username, Integer.valueOf(request.getParameter("OTP").toString()));
-		ModelAndView model = new ModelAndView("test_internalusers_list");
-		model.addObject("userList", isCodeValid);
-		return  model;
+		boolean isCodeValid = loginService.validateOtp(username,
+				Integer.valueOf(request.getParameter("OTP").toString()));
+
+		if (isCodeValid) {
+			ModelAndView model = new ModelAndView("test_internalusers_list");
+			model.addObject("userList", isCodeValid);
+			return model;
+		} else {
+			try {
+				request.logout();
+			} catch (ServletException e) {
+				e.printStackTrace();
+			}
+			return new ModelAndView("redirect:/login");
+		}
+
 	}
 
 	@RequestMapping("403page")
