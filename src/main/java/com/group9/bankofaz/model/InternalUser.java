@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 /**
  * @author Chandrani Mukherjee
@@ -19,6 +21,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "internaluser")
+@DynamicUpdate
+@SelectBeforeUpdate 
 public class InternalUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -146,6 +150,14 @@ public class InternalUser{
 
 	public void setSsn(String ssn) {
 		this.ssn = ssn;
+	}
+	
+	public String getAcessPrivilege(){
+		return  accessprivilege;
+	}
+	
+	public void setAcessPrivilege(String accessprivilege){
+		this.accessprivilege = accessprivilege;
 	}
 	
 }

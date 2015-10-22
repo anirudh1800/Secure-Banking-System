@@ -27,7 +27,7 @@ public class PiiDAOImpl implements PiiDAO{
 	@Override
 	@Transactional
 	public void update(Pii pii) {
-		sessionFactory.getCurrentSession().update(pii);
+		sessionFactory.getCurrentSession().merge(pii);
 	}
 
 	@Override

@@ -2,11 +2,14 @@ package com.group9.bankofaz.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.Transaction;
 
 @Repository
@@ -27,7 +30,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 	@Override
 	@Transactional
 	public void update(Transaction transaction) {
-		sessionFactory.getCurrentSession().update(transaction);
+		sessionFactory.getCurrentSession().merge(transaction);
 	}
 
 	@Override
@@ -39,7 +42,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 	@Override
 	@Transactional
 	public void delete(Transaction transaction) {
-		sessionFactory.getCurrentSession().delete(transaction);
+		Query query = sessionFactory.getCurrentSession().createQuery("delete Transaction where tid = :ID");
+		query.setParameter("ID", transaction.getTid());
+		query.executeUpdate();
 	}
 
 	@Override
@@ -49,5 +54,16 @@ public class TransactionDAOImpl implements TransactionDAO {
 				.createQuery("from Transaction where fromacc = '" + accno + "' or toacc = '"+ accno +"'").list();
 		return list;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Transaction findTransactionById(int id) {
+		Session session = this.sessionFactory.getCurrentSession();      
+		Transaction transaction = (Transaction) session.createQuery("from Transaction where tid = :id")
+				.setInteger("id", id)
+				.uniqueResult();
+		return transaction;
+	}
+
 
 }

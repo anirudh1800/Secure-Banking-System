@@ -37,7 +37,5 @@ public class LogsDAOImpl implements LogsDAO{
 		List<Logs> list = sessionFactory.getCurrentSession().createQuery("from logs where datetime > "+start+" && datetime < "+end).list();
 		return list;
 	}
-
-	
 	
 }

@@ -8,7 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 /**
  * @author Chandrani Mukherjee
@@ -17,6 +21,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "task")
+@DynamicUpdate
+@SelectBeforeUpdate 
 public class Task {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +35,7 @@ public class Task {
 	@Column(name = "status")
 	private String status;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "tid")
 	private Transaction tid;
 

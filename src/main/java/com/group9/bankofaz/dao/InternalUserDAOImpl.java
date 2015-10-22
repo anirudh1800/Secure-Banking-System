@@ -28,7 +28,7 @@ public class InternalUserDAOImpl implements InternalUserDAO {
 	@Override
 	@Transactional
 	public void update(InternalUser internaluser) {
-		this.sessionFactory.getCurrentSession().update(internaluser);		
+		this.sessionFactory.getCurrentSession().merge(internaluser);		
 	}
 
 	@Override

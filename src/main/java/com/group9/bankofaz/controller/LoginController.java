@@ -3,6 +3,9 @@
  */
 package com.group9.bankofaz.controller;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,8 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.group9.bankofaz.component.SessionDetails;
+import com.group9.bankofaz.dao.BankAccountDAO;
+import com.group9.bankofaz.dao.InternalUserDAO;
+import com.group9.bankofaz.dao.TransactionDAO;
+import com.group9.bankofaz.model.BankAccount;
+import com.group9.bankofaz.model.Transaction;
 import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.LoginService;
+import com.group9.bankofaz.service.RegularEmployeeService;
+import com.group9.bankofaz.service.TransactionManagerService;
 
 /**
  * @author Vishnu Priya Chandra Sekar
@@ -33,6 +43,21 @@ public class LoginController {
 
 	@Autowired
 	private LoginService loginService;
+	
+	@Autowired
+	private RegularEmployeeService regularEmployeeService;
+	
+	@Autowired
+	private TransactionManagerService transactionManagerService;
+	
+	@Autowired
+	private BankAccountDAO bankAccountDao;
+	
+	@Autowired
+	private TransactionDAO transactionDao;
+	
+	@Autowired
+	private InternalUserDAO internalUserDao;
 
 	@RequestMapping("/login")
 	public ModelAndView getLoginForm(@RequestParam(required = false) String authfailed, String logout,
@@ -112,37 +137,33 @@ public class LoginController {
 
 	@RequestMapping("/test")
 	public ModelAndView handleRequest() throws Exception {
-		/*
-		 * List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
-		 * BankAccount fromacc = new BankAccount(); BankAccount toacc = new
-		 * BankAccount();
-		 * 
-		 * 
-		 * for(BankAccount account: accounts){
-		 * if(account.getAcctype().equals("checking")){ fromacc = account; } }
-		 * 
-		 * accounts = bankAccountDao.findAccountsOfUser(1002);
-		 * 
-		 * for(BankAccount account: accounts){
-		 * if(account.getAcctype().equals("checking")){ toacc = account; } }
-		 * 
-		 * Date dateobj = new Date();
-		 * 
-		 * Transaction transaction = new Transaction(); transaction.setTid(34);
-		 * transaction.setTransType("payment"); transaction.setAmt(12);
-		 * transaction.setTransStatus("processing");
-		 * transaction.setFromacc(fromacc); transaction.setToacc(toacc);
-		 * transaction.setTransDate(dateobj);
-		 * transaction.setTransDesc("TACOBELL");
-		 * 
-		 * boolean sucess =
-		 * transactionManagerService.updateTransaction(transaction);
-		 */
-		int otp = loginService.generateOTP("gali.anirudh@gmail.com");
-
-		boolean otp1 = loginService.validateOtp("gali.anirudh@gmail.com", otp);
+		  List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
+		  BankAccount fromacc = new BankAccount(); BankAccount toacc = new
+		  BankAccount();
+		  
+		  
+		  for(BankAccount account: accounts){
+		  if(account.getAcctype().equals("checking")){ fromacc = account; } }
+		  
+		  accounts = bankAccountDao.findAccountsOfUser(1003);
+		  
+		  for(BankAccount account: accounts){
+		  if(account.getAcctype().equals("checking")){ toacc = account; } }
+		  
+		  Date dateobj = new Date();
+		  
+		  Transaction transaction = new Transaction(); 
+		  
+		  transaction = transactionDao.findTransactionById(35);
+		  
+	     //boolean sucess = transactionManagerService.submitTransaction(transaction);
+		
+		regularEmployeeService.setUser(internalUserDao.findUserById(10002));
+		
+		regularEmployeeService.cancelTransaction(transaction);
+		
 		ModelAndView model = new ModelAndView("test_internalusers_list");
-		model.addObject("userList", otp1);
+		model.addObject("userList", transaction.getTransStatus());
 		return model;
 	}
 

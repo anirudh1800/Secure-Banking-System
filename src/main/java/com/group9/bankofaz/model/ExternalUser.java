@@ -1,15 +1,22 @@
 package com.group9.bankofaz.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import java.sql.Blob;
+import java.util.List;
 
 /**
  * @author Chandrani Mukherjee
@@ -18,6 +25,8 @@ import java.sql.Blob;
 
 @Entity
 @Table(name = "externaluser")
+@DynamicUpdate
+@SelectBeforeUpdate 
 public class ExternalUser{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -63,6 +72,26 @@ public class ExternalUser{
 	
 	@Column(name = "bname")
 	private String bname;
+	
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="userid")
+     public List<BankAccount> account;
+	
+	public String getBname() {
+		return bname;
+	}
+
+	public void setBname(String bname) {
+		this.bname = bname;
+	}
+
+	public List<BankAccount> getAccount() {
+		return account;
+	}
+
+
+	public void setAccount(List<BankAccount> account) {
+		this.account = account;
+	}
 
 	public int getUserid() {
 		return userid;

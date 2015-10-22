@@ -34,7 +34,7 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 	@Override
 	@Transactional
 	public void update(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().update(externaluser);		
+		sessionFactory.getCurrentSession().merge(externaluser);		
 	}
 
 	@Override

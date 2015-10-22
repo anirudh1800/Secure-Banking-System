@@ -206,6 +206,10 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 	@Override
 	@Transactional
 	public boolean submitTransaction(Transaction transaction) throws IllegalTransactionException{
+		if(!isValidTransaction(transaction)){
+			throw new IllegalTransactionException("Transaction not allowed");
+		}
+		
 		transactionDao.add(transaction);
 		
 		if(transaction.getTransType().equals("credit") || transaction.getTransType().equals("debit")){
@@ -224,7 +228,44 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		return true;
 	}
 	
-/* perform the transaction based on each transaction type
+
+	private boolean isValidTransaction(Transaction transaction) {
+		boolean isValid = false;
+
+		switch (transaction.getTransType()) {
+		case "debit":
+		case "credit":
+		case "payment":
+		case "review":
+			isValid = true;
+			break;
+
+		case "transfer":
+			switch (transaction.getTransDesc()) {
+			case "internal":
+			case "external":
+				isValid = true;
+				break;
+			default:
+				isValid = false;
+				break;
+
+			}
+			break;
+		default:
+			break;
+		}
+
+		float amount = transaction.getAmt();
+
+		if (amount < 0 || Float.isNaN(amount))
+			isValid = false;
+
+		return isValid;
+
+	}
+
+	/* perform the transaction based on each transaction type
  * 1) Transaction Type
  *    a) credit/debit
  *    b) transfer

@@ -2,17 +2,19 @@ package com.group9.bankofaz.model;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 /**
  * @author Chandrani Mukherjee
@@ -21,6 +23,8 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "transaction")
+@DynamicUpdate
+@SelectBeforeUpdate 
 public class Transaction{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -40,17 +44,17 @@ public class Transaction{
 	@Column(name = "transstatus")
 	private String transstatus;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne
     @JoinColumn(name = "fromacc")
 	private BankAccount fromacc;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	@JoinColumn(name = "toacc")
 	private BankAccount toacc;
 	
 	@Column(name = "transdesc")
 	private String transdesc;
-
+	
 	public int getTid() {
 		return tid;
 	}
@@ -114,6 +118,5 @@ public class Transaction{
 	public void setTransDesc(String transdesc) {
 		this.transdesc = transdesc;
 	}
-	
 	
 }

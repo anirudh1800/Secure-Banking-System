@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 /**
  * @author Chandrani Mukherjee
  *
@@ -17,6 +20,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "pii")
+@DynamicUpdate
+@SelectBeforeUpdate 
 public class Pii implements Serializable{
 	
 	private static final long serialVersionUID = 310779046388655840L;

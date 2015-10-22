@@ -20,5 +20,9 @@ public interface TaskDAO {
 
 	public void delete(Task task);
 
-	public List<Task> findNewTasksAssignedToUser(int id);
+	public Task findTaskById(int taskid);
+	
+	public List<Task> findNewTasksAssignedToUser(int userid);
+	
+	public Task findNewTaskByTID(int tid);
 }

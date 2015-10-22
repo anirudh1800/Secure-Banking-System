@@ -29,7 +29,7 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	@Override
 	@Transactional
 	public void update(BankAccount bankaccount) {		
-		sessionFactory.getCurrentSession().update(bankaccount);
+		sessionFactory.getCurrentSession().merge(bankaccount);
 	}
 
 	@Override

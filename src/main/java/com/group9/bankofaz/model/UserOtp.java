@@ -1,7 +1,5 @@
 package com.group9.bankofaz.model;
 
-import java.util.Date;
-
 /**
  * @author Anirudh Ruia Gali
  *

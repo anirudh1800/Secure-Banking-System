@@ -27,7 +27,7 @@ public class GovAgencyDAOImpl implements GovAgencyDAO {
 	@Override
 	@Transactional
 	public void update(GovAgency govagency) {
-		this.sessionFactory.getCurrentSession().update(govagency);
+		this.sessionFactory.getCurrentSession().merge(govagency);
 	}
 
 	@Override
