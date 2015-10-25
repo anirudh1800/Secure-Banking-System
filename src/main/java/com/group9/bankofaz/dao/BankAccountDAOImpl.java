@@ -1,19 +1,26 @@
 package com.group9.bankofaz.dao;
 
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.group9.bankofaz.model.BankAccount;;
+import com.group9.bankofaz.interceptor.ILogs;
+import com.group9.bankofaz.model.BankAccount;
+import com.group9.bankofaz.model.Logs;;
 
 @Repository
 public class BankAccountDAOImpl implements BankAccountDAO {	
 	
 	private SessionFactory sessionFactory;
+	
+	@Autowired 
+	private LogsDAO logsDao;
 	
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
@@ -24,24 +31,30 @@ public class BankAccountDAOImpl implements BankAccountDAO {
 	@Transactional
 	public void add(BankAccount bankaccount) {		
 		sessionFactory.getCurrentSession().save(bankaccount);		
+		logIt("add - ",bankaccount);
 	}
 
 	@Override
 	@Transactional
 	public void update(BankAccount bankaccount) {		
 		sessionFactory.getCurrentSession().merge(bankaccount);
+		logIt("update - ",bankaccount);
 	}
 
 	@Override
 	@Transactional
 	public void persist(BankAccount bankaccount) {
 		sessionFactory.getCurrentSession().persist(bankaccount);
+		logIt("persist - ",bankaccount);
 	}
 
 	@Override
 	@Transactional
 	public void delete(BankAccount bankaccount) {
-		sessionFactory.getCurrentSession().delete(bankaccount);
+		logIt("delete - ",bankaccount);
+		Query query = sessionFactory.getCurrentSession().createQuery("delete BankAccount where accno = :ID");
+		query.setParameter("ID", bankaccount.getAccno());
+		query.executeUpdate();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -56,5 +69,12 @@ public class BankAccountDAOImpl implements BankAccountDAO {
         return accountList;
 	}
 	
-
+	public void logIt(String action, ILogs  ilogs){
+		Logs logs = new Logs();
+		Date dateobj = new Date();
+		logs.setCreatedDate(dateobj);
+		logs.setDetail(action + ilogs.getLogDetail());
+		
+		logsDao.add(logs);
+	}
 }

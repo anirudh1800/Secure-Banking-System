@@ -12,19 +12,21 @@ import com.group9.bankofaz.dao.ExternalUserDAO;
 import com.group9.bankofaz.dao.InternalUserDAO;
 import com.group9.bankofaz.dao.TaskDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
+import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.exception.AuthorizationException;
 import com.group9.bankofaz.exception.IllegalTransactionException;
 import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Task;
 import com.group9.bankofaz.model.Transaction;
+import com.group9.bankofaz.model.Users;
 
 /**
  * @author Anirudh Ruia Gali
  *
  */
 @Service
-@Scope("session")
+@Scope("prototype")
 public class SystemManagerImpl implements SystemManagerService {
 	@Autowired
 	private TransactionDAO transactionDao;
@@ -34,6 +36,9 @@ public class SystemManagerImpl implements SystemManagerService {
 
 	@Autowired
 	private InternalUserDAO internalUserDao;
+	
+	@Autowired
+	private UsersDAO usersDao;
 	
 	@Autowired
 	private TransactionManagerService transactionManagerService;
@@ -132,6 +137,16 @@ public class SystemManagerImpl implements SystemManagerService {
 
 	public List<Task> getTasks() {
 		return tasksAssigned;
+	}
+	
+	@Override
+	public void updateInfo(InternalUser user) {
+		internalUserDao.update(user);
+	}
+	
+	@Override
+	public void updatePasswd(Users user) {
+		usersDao.update(user);
 	}
 
 }

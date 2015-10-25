@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 /**
  * @author Chandrani Mukherjee
  *
@@ -22,7 +24,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "pii")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class Pii implements Serializable{
+public class Pii implements Serializable, ILogs{
 	
 	private static final long serialVersionUID = 310779046388655840L;
 
@@ -48,5 +50,21 @@ public class Pii implements Serializable{
 
 	public void setVisastatus(String visastatus) {
 		this.visastatus = visastatus;
+	}
+
+	
+	@Override
+	public Long getId() {
+		return Long.valueOf(ssn.getSsn());
+	}
+
+	@Override
+	public String getLogDetail() {
+	StringBuilder sb = new StringBuilder();
+		
+		sb.append(" pii ").append(" ssn :" ).append(ssn.getSsn())
+		.append(" visastatus :").append(visastatus);
+
+		return sb.toString();
 	}
 }

@@ -25,13 +25,21 @@
 		<intercept-url pattern="/login/otp/validate"
 			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
 		
+		<intercept-url pattern="/employee"
+			access="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+		
+		<intercept-url pattern="/employee/transactionlookup**"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
+		
+		<intercept-url pattern="/employee/transactionlookup/**"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
 
 		<form-login login-page='/login' username-parameter="email"
 			password-parameter="passwd" login-processing-url="/j_spring_security_check"
 			default-target-url="/login/otp" authentication-failure-url="/login?authfailed" />
 		<csrf />
 		<logout logout-url="/j_spring_security_logout"
-			logout-success-url="/login?logout" invalidate-session="false" />
+			logout-success-url="/login" invalidate-session="true" />
 	</http>
 
 	<authentication-manager>
@@ -52,5 +60,4 @@
 
 	<beans:bean id="encoder"
 		class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
-
 </beans:beans>

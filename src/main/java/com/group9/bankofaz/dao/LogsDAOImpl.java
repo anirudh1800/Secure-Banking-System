@@ -11,14 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.group9.bankofaz.model.Logs;
 
 @Repository
-public class LogsDAOImpl implements LogsDAO{
+public class LogsDAOImpl implements LogsDAO {
 	private SessionFactory sessionFactory;
-	
+
+	@Autowired
+	LogsDAO logsDao;
+
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
-	
+
 	@Override
 	@Transactional
 	public void add(Logs logs) {
@@ -26,16 +29,10 @@ public class LogsDAOImpl implements LogsDAO{
 	}
 
 	@Override
-	@Transactional
-	public void persist(Logs logs) {
-		sessionFactory.getCurrentSession().persist(logs);
-	}
-
-	@Override
 	@Transactional(readOnly = true)
-	public List<Logs> findLogs(Date start, Date end) {
-		List<Logs> list = sessionFactory.getCurrentSession().createQuery("from logs where datetime > "+start+" && datetime < "+end).list();
+	public List<Logs> findLogs() {
+		List<Logs> list = sessionFactory.getCurrentSession().createQuery("from Logs").list();
 		return list;
 	}
-	
+
 }

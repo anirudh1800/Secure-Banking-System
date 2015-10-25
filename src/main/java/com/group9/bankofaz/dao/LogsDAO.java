@@ -15,8 +15,6 @@ import com.group9.bankofaz.model.Logs;
  */
 public interface LogsDAO {
 	public void add(Logs logs);
-	
-	public void persist(Logs logs);
 
-	public List<Logs> findLogs(Date start, Date end);
+	public List<Logs> findLogs();
 }

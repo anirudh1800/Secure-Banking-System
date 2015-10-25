@@ -13,8 +13,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+
+import java.beans.Transient;
 import java.sql.Blob;
 import java.util.List;
 
@@ -27,7 +31,7 @@ import java.util.List;
 @Table(name = "externaluser")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class ExternalUser{	
+public class ExternalUser implements ILogs{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)
@@ -73,7 +77,7 @@ public class ExternalUser{
 	@Column(name = "bname")
 	private String bname;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="userid")
+	@OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="userid")
      public List<BankAccount> account;
 	
 	public String getBname() {
@@ -205,4 +209,30 @@ public class ExternalUser{
 		this.bname = name;
 	}
 	
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.userid);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" externaluser ")
+		.append(" userid :" ).append(userid)
+		.append(" firstname : ").append(firstname)
+		.append(" middlename : ").append(middlename)
+		.append(" lastname : ").append(lastname)
+		.append(" email : ").append(email.getUsername())
+		.append(" addressline1 :").append(addressline1)
+		.append(" addressline2 : ").append(addressline2)
+		.append(" city : ").append(city)
+		.append(" state : ").append(state)
+		.append(" zipcode :").append(zipcode)
+		.append(" usertype :").append(usertype);
+
+		return sb.toString();
+	}
 }

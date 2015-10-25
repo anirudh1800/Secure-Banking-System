@@ -1,5 +1,6 @@
 package com.group9.bankofaz.model;
 
+import java.beans.Transient;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,6 +17,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 /**
  * @author Chandrani Mukherjee
  *
@@ -25,7 +28,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "transaction")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class Transaction{	
+public class Transaction implements ILogs{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "tid", nullable = false)
@@ -117,6 +120,29 @@ public class Transaction{
 
 	public void setTransDesc(String transdesc) {
 		this.transdesc = transdesc;
+	}
+	
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.tid);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" transaction " ).append(" tid :" ).append(tid)
+		.append(" transdate : ").append(transdate)
+		.append(" transtype : ").append(transtype)
+		.append(" amt : ").append(amt)
+		.append(" transstatus : ").append(transstatus)
+		.append(" fromacc :").append(fromacc.getAccno())
+		.append(" toacc : ").append(toacc.getAccno())
+		.append(" transdesc : ").append(transdesc);
+
+		return sb.toString();
 	}
 	
 }

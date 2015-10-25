@@ -1,5 +1,7 @@
 package com.group9.bankofaz.model;
 
+import java.beans.Transient;
+
 /**
  * @author Anirudh Ruia Gali
  *
@@ -10,9 +12,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 @Entity
 @Table(name = "users")
-public class Users {	
+public class Users implements ILogs{	
 	@Id	
     @Column(name = "username")
 	private String username;	
@@ -56,6 +60,25 @@ public class Users {
 
 	public void setEnabled(int enabled) {
 		this.enabled = enabled;
+	}
+	
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.username);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" users " ).append(" username :" ).append(username)
+		.append(" passwd : ").append(passwd)
+		.append(" authority : ").append(authority)
+		.append(" enabled : ").append(enabled);
+		
+		return sb.toString();
 	}
 
 }

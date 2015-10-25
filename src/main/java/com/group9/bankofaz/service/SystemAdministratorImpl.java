@@ -12,17 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.group9.bankofaz.dao.InternalUserDAO;
 import com.group9.bankofaz.dao.LogsDAO;
 import com.group9.bankofaz.dao.TaskDAO;
+import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.exception.AuthorizationException;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Task;
+import com.group9.bankofaz.model.Users;
 
 /**
  * @author Anirudh Ruia Gali
  *
  */
 @Service
-@Scope("session")
+@Scope("prototype")
 public class SystemAdministratorImpl implements SystemAdministratorService {
 
 	@Autowired
@@ -37,10 +39,13 @@ public class SystemAdministratorImpl implements SystemAdministratorService {
 	private InternalUser user;
 	private List<Task> tasksAssigned;
 	
+	@Autowired
+	private UsersDAO usersDao;
+	
 	@Override
-	public void setUser(InternalUser user) {
+	public void setUser(String email) {
 		if (this.user == null)
-			this.user = user;
+			this.user = internalUserDao.findUserByEmail(email);
 	}
 	
 	@Override
@@ -70,8 +75,8 @@ public class SystemAdministratorImpl implements SystemAdministratorService {
 	}
 
 	@Override
-	public List<Logs> viewSystemLogs(Date start, Date end) {
-		return logsDao.findLogs(start, end);
+	public List<Logs> viewSystemLogs() {
+		return logsDao.findLogs();
 	}
 	
 	@Transactional
@@ -90,6 +95,16 @@ public class SystemAdministratorImpl implements SystemAdministratorService {
 
 	public List<Task> getTasks() {
 		return tasksAssigned;
+	}
+	
+	@Override
+	public void updateInfo(InternalUser user) {
+		internalUserDao.update(user);
+	}
+	
+	@Override
+	public void updatePasswd(Users user) {
+		usersDao.update(user);
 	}
 
 }

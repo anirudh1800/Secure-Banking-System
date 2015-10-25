@@ -1,5 +1,6 @@
 package com.group9.bankofaz.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,12 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.interceptor.ILogs;
+import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Transaction;
 
 @Repository
 public class TransactionDAOImpl implements TransactionDAO {
 	private SessionFactory sessionFactory;
+	
+	@Autowired 
+	private LogsDAO logsDao;
 	
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
@@ -25,23 +30,27 @@ public class TransactionDAOImpl implements TransactionDAO {
 	@Transactional
 	public void add(Transaction transaction) {
 		sessionFactory.getCurrentSession().save(transaction);
+		logIt("add - ", transaction);
 	}
 
 	@Override
 	@Transactional
 	public void update(Transaction transaction) {
 		sessionFactory.getCurrentSession().merge(transaction);
+		logIt("update - ", transaction);
 	}
 
 	@Override
 	@Transactional
 	public void persist(Transaction transaction) {
 		sessionFactory.getCurrentSession().persist(transaction);
+		logIt("persist - ", transaction);
 	}
 
 	@Override
 	@Transactional
 	public void delete(Transaction transaction) {
+		logIt("delete - ", transaction);
 		Query query = sessionFactory.getCurrentSession().createQuery("delete Transaction where tid = :ID");
 		query.setParameter("ID", transaction.getTid());
 		query.executeUpdate();
@@ -50,8 +59,11 @@ public class TransactionDAOImpl implements TransactionDAO {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Transaction> findTransactionsOfAccount(String accno) {
-		List<Transaction> list = sessionFactory.getCurrentSession()
-				.createQuery("from Transaction where fromacc = '" + accno + "' or toacc = '"+ accno +"'").list();
+		Query query = sessionFactory.getCurrentSession().createQuery("from Transaction where fromacc = :accno1 or toacc = :accno2");
+		query.setString("accno1", accno);
+		query.setString("accno2", accno);
+		@SuppressWarnings("unchecked")
+		List<Transaction> list = query.list();
 		return list;
 	}
 	
@@ -65,5 +77,13 @@ public class TransactionDAOImpl implements TransactionDAO {
 		return transaction;
 	}
 
+	public void logIt(String action, ILogs  ilogs){
+		Logs logs = new Logs();
+		Date dateobj = new Date();
+		logs.setCreatedDate(dateobj);
+		logs.setDetail(action + ilogs.getLogDetail());
+		
+		logsDao.add(logs);
+	}
 
 }

@@ -1,18 +1,20 @@
 package com.group9.bankofaz.model;
 
-import javax.persistence.CascadeType;
+import java.beans.Transient;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+
+import com.group9.bankofaz.interceptor.ILogs;
 
 /**
  * @author Chandrani Mukherjee
@@ -23,7 +25,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "task")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class Task {
+public class Task implements ILogs{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "taskid", nullable = false)
@@ -80,5 +82,25 @@ public class Task {
 	
 	public void setAssigneeid(int assigneeid) {
 		this.assigneeid = assigneeid;
+	}
+	
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.taskid);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" task ").append(" taskid :" ).append(taskid)
+		.append(" message : ").append(message)
+		.append(" status : ").append(status)
+		.append(" tid : ").append(tid.getTid())
+		.append(" assigneeid : ").append(assigneeid);
+
+		return sb.toString();
 	}
 }

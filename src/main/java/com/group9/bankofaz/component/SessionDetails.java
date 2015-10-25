@@ -1,8 +1,10 @@
 package com.group9.bankofaz.component;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("singleton")
 public class SessionDetails {
 	private String username;
 	private int failure;

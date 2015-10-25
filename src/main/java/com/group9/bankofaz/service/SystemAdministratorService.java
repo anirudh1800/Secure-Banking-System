@@ -7,6 +7,8 @@ import java.util.List;
 import com.group9.bankofaz.exception.AuthorizationException;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Logs;
+import com.group9.bankofaz.model.Task;
+import com.group9.bankofaz.model.Users;
 
 /**
  * @author Anirudh Ruia Gali
@@ -19,8 +21,18 @@ public interface SystemAdministratorService {
 
 	public void deleteInternalUserAccount(InternalUser internalUser) throws AuthorizationException;
 
-	public List<Logs> viewSystemLogs(Date start, Date end);
+	public List<Logs> viewSystemLogs();
 	
-	public void setUser(InternalUser user);
+	public void setUser(String email);
+
+	public void completeTask(int taskid);
+	
+	public void updateInfo(InternalUser user);
+	
+	public void updateTasks();
+	
+	public List<Task> getTasks();  
+	
+	public void updatePasswd(Users user);
 
 }

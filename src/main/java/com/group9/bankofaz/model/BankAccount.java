@@ -1,8 +1,8 @@
 package com.group9.bankofaz.model;
 
+import java.beans.Transient;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +16,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 /**
  * @author Chandrani Mukherjee
  *
@@ -25,7 +27,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "bankaccount")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class BankAccount {
+public class BankAccount implements  ILogs{
 	@Id
 	@Column(name = "accno", nullable = false)	
 	private String accno;
@@ -40,7 +42,7 @@ public class BankAccount {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date opendate;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "userid")
 	private ExternalUser userid;
 	
@@ -93,6 +95,28 @@ public class BankAccount {
 	
 	public void setAccStatus(String status){
 		this.accstatus = status;
+	}
+
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.accno);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" bankaccount ")
+		.append(" accno : ").append(accno)
+		.append(" balance : ").append(balance)
+		.append(" acctype : ").append(acctype)
+		.append(" opendate : ").append(opendate)
+		.append(" userid : ").append(userid.getUserid())
+		.append(" accstatus :").append(accstatus);
+
+		return sb.toString();
 	}
 	
 }

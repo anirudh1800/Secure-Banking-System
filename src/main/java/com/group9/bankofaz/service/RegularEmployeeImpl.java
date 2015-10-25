@@ -12,12 +12,14 @@ import com.group9.bankofaz.dao.ExternalUserDAO;
 import com.group9.bankofaz.dao.InternalUserDAO;
 import com.group9.bankofaz.dao.TaskDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
+import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.exception.AuthorizationException;
 import com.group9.bankofaz.exception.IllegalTransactionException;
 import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Task;
 import com.group9.bankofaz.model.Transaction;
+import com.group9.bankofaz.model.Users;
 
 /**
  * @author Anirudh Ruia Gali
@@ -25,7 +27,7 @@ import com.group9.bankofaz.model.Transaction;
  */
 
 @Service
-//@Scope("session")
+@Scope("prototype")
 public class RegularEmployeeImpl implements RegularEmployeeService {
 
 	@Autowired
@@ -36,6 +38,9 @@ public class RegularEmployeeImpl implements RegularEmployeeService {
 
 	@Autowired
 	private InternalUserDAO internalUserDao;
+	
+	@Autowired
+	private UsersDAO usersDao;
 
 	@Autowired
 	private TaskDAO taskDao;
@@ -46,9 +51,10 @@ public class RegularEmployeeImpl implements RegularEmployeeService {
 	private InternalUser user;
 	private List<Task> tasksAssigned;
 
-	public void setUser(InternalUser user) {
+	@Override
+	public void setUser(String email) {
 		if (this.user == null)
-			this.user = user;
+			this.user = internalUserDao.findUserByEmail(email);
 	}
 
 	@Override
@@ -101,7 +107,9 @@ public class RegularEmployeeImpl implements RegularEmployeeService {
 	@Transactional
 	public void authorizeTransaction(Transaction transaction) throws IllegalTransactionException, AuthorizationException {
 		if(user!= null && (user.getAcessPrivilege().equals("RE1")) || user.getAcessPrivilege().equals("RE2")){
-			transactionManagerService.performTransaction(transaction);
+			String status = transaction.getTransStatus();
+			if(status.equals("pending") )
+				transactionManagerService.performTransaction(transaction);
 		}
 		else throw new AuthorizationException("Insufficient privileges to perform the action");
 	}
@@ -153,6 +161,16 @@ public class RegularEmployeeImpl implements RegularEmployeeService {
 
 	public List<Task> getTasks() {
 		return tasksAssigned;
+	}
+
+	@Override
+	public void updateInfo(InternalUser user) {
+		internalUserDao.update(user);
+	}
+	
+	@Override
+	public void updatePasswd(Users user) {
+		usersDao.update(user);
 	}
 
 }

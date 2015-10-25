@@ -3,13 +3,18 @@
  */
 package com.group9.bankofaz.dao;
 
+import java.util.Date;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.group9.bankofaz.interceptor.ILogs;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Logs;
 
 /**
  * @author cmukherj
@@ -21,6 +26,9 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 	private SessionFactory sessionFactory;
 	
 	@Autowired
+	private LogsDAO logsDao;
+	
+	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
 	}
@@ -28,25 +36,31 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 	@Override
 	@Transactional
 	public void add(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().save(externaluser);			
+		sessionFactory.getCurrentSession().save(externaluser);
+		logIt("add - ",externaluser);
 	}
 
 	@Override
 	@Transactional
 	public void update(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().merge(externaluser);		
+		sessionFactory.getCurrentSession().merge(externaluser);
+		logIt("update - ",externaluser);
 	}
 
 	@Override
 	@Transactional
 	public void persist(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().persist(externaluser);		
+		sessionFactory.getCurrentSession().persist(externaluser);
+		logIt("persist - ",externaluser);
 	}
 
 	@Override
 	@Transactional
 	public void delete(ExternalUser externaluser) {
-		sessionFactory.getCurrentSession().delete(externaluser);		
+		logIt("delete - ",externaluser);
+		Query query = sessionFactory.getCurrentSession().createQuery("delete ExternalUser where userid = :ID");
+		query.setParameter("ID", externaluser.getUserid());
+		query.executeUpdate();		
 	}
 
 	@Override
@@ -67,5 +81,14 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 				.setInteger("id", id)
 				.uniqueResult();
 		return user;
+	}
+	
+	public void logIt(String action, ILogs  ilogs){
+		Logs logs = new Logs();
+		Date dateobj = new Date();
+		logs.setCreatedDate(dateobj);
+		logs.setDetail(action + ilogs.getLogDetail());
+		
+		logsDao.add(logs);
 	}
 }

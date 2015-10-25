@@ -1,5 +1,7 @@
 package com.group9.bankofaz.model;
 
+import java.beans.Transient;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,6 +9,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+
+import com.group9.bankofaz.interceptor.ILogs;
 
 /**
  * @author Chandrani Mukherjee
@@ -17,7 +21,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "govagency")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class GovAgency {
+public class GovAgency implements ILogs{
 	@Id
 	@Column(name = "username", nullable = false)	
 	private String username;
@@ -41,4 +45,21 @@ public class GovAgency {
 		this.passwd = passwd;
 	}
 
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.username);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" govagency ").
+		append(" username :" ).append(username)
+		.append(" passwd :").append(passwd);
+
+		return sb.toString();
+	}
 }

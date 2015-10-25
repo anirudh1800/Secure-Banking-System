@@ -22,8 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.group9.bankofaz.component.SessionDetails;
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.InternalUserDAO;
+import com.group9.bankofaz.dao.LogsDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
 import com.group9.bankofaz.model.BankAccount;
+import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Transaction;
 import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.LoginService;
@@ -58,6 +61,9 @@ public class LoginController {
 	
 	@Autowired
 	private InternalUserDAO internalUserDao;
+	
+	@Autowired
+	private LogsDAO logsDao;
 
 	@RequestMapping("/login")
 	public ModelAndView getLoginForm(@RequestParam(required = false) String authfailed, String logout,
@@ -116,9 +122,7 @@ public class LoginController {
 				Integer.valueOf(request.getParameter("OTP").toString()));
 
 		if (isCodeValid) {
-			ModelAndView model = new ModelAndView("test_internalusers_list");
-			model.addObject("userList", isCodeValid);
-			return model;
+			return new ModelAndView("redirect:/employee");
 		} else {
 			try {
 				request.logout();
@@ -137,33 +141,40 @@ public class LoginController {
 
 	@RequestMapping("/test")
 	public ModelAndView handleRequest() throws Exception {
-		  List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
-		  BankAccount fromacc = new BankAccount(); BankAccount toacc = new
-		  BankAccount();
-		  
-		  
-		  for(BankAccount account: accounts){
-		  if(account.getAcctype().equals("checking")){ fromacc = account; } }
-		  
-		  accounts = bankAccountDao.findAccountsOfUser(1003);
-		  
-		  for(BankAccount account: accounts){
-		  if(account.getAcctype().equals("checking")){ toacc = account; } }
-		  
-		  Date dateobj = new Date();
-		  
-		  Transaction transaction = new Transaction(); 
-		  
-		  transaction = transactionDao.findTransactionById(35);
+		List<Logs> logsList = logsDao.findLogs();
+		
+//		  List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
+//		  BankAccount fromacc = new BankAccount(); BankAccount toacc = new  BankAccount();
+//		  
+//		  for(BankAccount account: accounts){
+//		  if(account.getAcctype().equals("checking")){ fromacc = account; } }
+//		  
+//		  accounts = bankAccountDao.findAccountsOfUser(1003);
+//		  
+//		  for(BankAccount account: accounts){
+//		  if(account.getAcctype().equals("checking")){ toacc = account; } }
+//		  
+//		  Date dateobj = new Date();
+//		  
+//		  Transaction transaction = transactionDao.findTransactionById(37);
+//		  
+//		  transaction.setTid(37);
+//		  transaction.setAmt(100);
+//		  transaction.setFromacc(fromacc);
+//		  transaction.setToacc(toacc);
+//		  transaction.setTransType("transfer");
+//		  transaction.setTransStatus("processing");
+//		  transaction.setTransDesc("external");
 		  
 	     //boolean sucess = transactionManagerService.submitTransaction(transaction);
 		
-		regularEmployeeService.setUser(internalUserDao.findUserById(10002));
+		//regularEmployeeService.setUser(internalUserDao.findUserById(10002));
 		
-		regularEmployeeService.cancelTransaction(transaction);
 		
-		ModelAndView model = new ModelAndView("test_internalusers_list");
-		model.addObject("userList", transaction.getTransStatus());
+		//regularEmployeeService.authorizeTransaction(transaction);
+		
+		ModelAndView model = new ModelAndView("logs");
+		model.addObject("logsList", logsList);
 		return model;
 	}
 

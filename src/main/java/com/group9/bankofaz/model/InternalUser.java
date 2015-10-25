@@ -1,5 +1,7 @@
 package com.group9.bankofaz.model;
 
+import java.beans.Transient;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +16,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
+import com.group9.bankofaz.interceptor.ILogs;
+
 /**
  * @author Chandrani Mukherjee
  *
@@ -23,7 +27,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "internaluser")
 @DynamicUpdate
 @SelectBeforeUpdate 
-public class InternalUser{	
+public class InternalUser implements ILogs{	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "userid", nullable = false)
@@ -158,6 +162,32 @@ public class InternalUser{
 	
 	public void setAcessPrivilege(String accessprivilege){
 		this.accessprivilege = accessprivilege;
+	}
+	
+	@Transient
+	@Override
+	public Long getId() {
+		return Long.valueOf(this.userid);
+	}
+
+	@Transient
+	@Override
+	public String getLogDetail() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(" internaluser ").append(" userid :" ).append(userid)
+		.append(" firstname : ").append(firstname)
+		.append(" middlename : ").append(middlename)
+		.append(" lastname : ").append(lastname)
+		.append(" email : ").append(email.getUsername())
+		.append(" addressline1 :").append(addressline1)
+		.append(" addressline2 : ").append(addressline2)
+		.append(" city : ").append(city)
+		.append(" state : ").append(state)
+		.append(" zipcode :").append(zipcode)
+		.append(" accessprivilege :").append(accessprivilege);
+
+		return sb.toString();
 	}
 	
 }

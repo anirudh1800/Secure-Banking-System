@@ -1,17 +1,25 @@
 package com.group9.bankofaz.dao;
 
+import java.util.Date;
+
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.group9.bankofaz.interceptor.ILogs;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Pii;;
 
 
 @Repository
 public class PiiDAOImpl implements PiiDAO{
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	LogsDAO logsDao;
 	
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
@@ -22,30 +30,45 @@ public class PiiDAOImpl implements PiiDAO{
 	@Transactional
 	public void add(Pii pii) {
 		sessionFactory.getCurrentSession().save(pii);
+		logIt("add - ", pii);
 	}
 
 	@Override
 	@Transactional
 	public void update(Pii pii) {
+		logIt("update - ", pii);
 		sessionFactory.getCurrentSession().merge(pii);
 	}
 
 	@Override
 	@Transactional
 	public void persist(Pii pii) {
+		logIt("persist - ", pii);
 		sessionFactory.getCurrentSession().persist(pii);
 	}
 
 	@Override
 	@Transactional
 	public void delete(Pii pii) {
-		sessionFactory.getCurrentSession().delete(pii);
+		logIt("delete - ", pii);
+		Query query = sessionFactory.getCurrentSession().createQuery("delete Pii where ssn = :ID");
+		query.setParameter("ID", pii.getSsn());
+		query.executeUpdate();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Pii findBySSN(ExternalUser externaluser) {
 		return (Pii) sessionFactory.getCurrentSession().get(Pii.class, externaluser.getSsn());	
+	}
+	
+	public void logIt(String action, ILogs  ilogs){
+		Logs logs = new Logs();
+		Date dateobj = new Date();
+		logs.setCreatedDate(dateobj);
+		logs.setDetail(action + ilogs.getLogDetail());
+		
+		logsDao.add(logs);
 	}
 
 }
