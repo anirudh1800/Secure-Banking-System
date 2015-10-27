@@ -11,7 +11,6 @@
 	<http pattern="/reg_validate" security="none" />
 	<http pattern="/registrationSuccessful" security="none" />
 	<http pattern="/resetpwd" security="none" />
-	<http pattern="/otpverification" security="none" />
 	<http pattern="/pay" security="none" />
 	<http pattern="/loginSucessful" security="none" />
 	<http pattern="/boaprivatekey.key" security="none" />

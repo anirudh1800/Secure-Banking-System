@@ -16,5 +16,34 @@
 			<a href="login.html">Click here to Go to our Login Page</a>
 		</h3>
 	</div>
+
+<div>
+<p>
+Testing:<br/>
+
+1)Employee<br/>
+ADMIN<br/>
+email: ssgrp9@gmail.com<br/>
+password: hayden<br/>
+
+Email Password:<br/>
+lKai6M4Quj<br><br>
+
+2)Employee<br/>
+SYSTEM MANAGER<br/>
+email:group9sstestmail@gmail.com<br/>
+password:hayden<br/>
+Email Password:<br/>
+group9ss<br/><br/>
+
+3)Employee 
+REGULAR EMPLOYEE</br>
+email:group9sstestmail1@gmail.com<br/>
+password:hayden<br/>
+Email Password:<br/>
+group9sstest<br/><br/>
+
+</p>
+</div>
 </body>
 </html>

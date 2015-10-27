@@ -154,6 +154,7 @@ public class LoginController {
 				break;
 
 			case "ROLE_EMPLOYEE":
+			case "ROLE_MANAGER":
 			case "ROLE_ADMIN":
 				modelView = new ModelAndView("redirect:/employee");
 				break;
