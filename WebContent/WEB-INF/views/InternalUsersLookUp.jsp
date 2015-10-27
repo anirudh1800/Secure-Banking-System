@@ -96,6 +96,11 @@ table.inner {
 		<input type="submit" id="btnModify"
 			class="btn btn-lg btn-primary btn-block" value="Modify">
 	</form:form>
+	<form:form method="get"
+		action="${pageContext.request.contextPath}/employee">
+		<input type="submit" class="btn btn-lg btn-primary btn-block"
+			value="Back">
+	</form:form>
 
 	<script type="text/javascript">
 		function validateForm() {

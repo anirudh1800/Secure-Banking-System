@@ -17,7 +17,12 @@
 	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <title>Transaction Inquiry</title>
+<style type="text/css">
+.table-nonfluid {
+	width: auto !important;
+}
 
+</style>
 </head>
 
 <body>
@@ -26,16 +31,23 @@
 
 
 	<div align="center">
-
-		<form:form name="form" align="center" width="30%"
-			action="${pageContext.request.contextPath}/employee/transactioninquiry"
-			onsubmit="return validateForm()" method="GET" class="form-inline">
+		<table class="table table-nonfluid">
+			<tr>
+				<td><form:form name="form" 
+						action="${pageContext.request.contextPath}/employee/transactioninquiry"
+						onsubmit="return validateForm()" method="GET" class="form-inline">
 		Bank Account : <input type="text" class="form-control" name="account" />&nbsp;
-		 <input value="View Transactions"
-				class="form-control" type="submit" />
-			<br>
-		</form:form>
-		<br/><br/>
+		 <input value="View Transactions" class="form-control" type="submit" />
+					</form:form></td>
+				<td><form:form method="get" 
+						class="form-inline"
+						action="${pageContext.request.contextPath}/employee">
+						<input type="submit" class="form-control"
+							value="Back">
+					</form:form></td>
+			</tr>
+		</table>
+		<br /> <br />
 
 		<table class="table table-nonfluid">
 			<tr>

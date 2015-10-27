@@ -11,16 +11,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.interceptor.ILogs;
+import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Transaction;
 
 @Repository
 public class TransactionDAOImpl implements TransactionDAO {
 	private SessionFactory sessionFactory;
-	
-	@Autowired 
+
+	@Autowired
 	private LogsDAO logsDao;
-	
+
 	@Autowired
 	public void setSessionFactory(SessionFactory sf) {
 		this.sessionFactory = sf;
@@ -57,32 +58,44 @@ public class TransactionDAOImpl implements TransactionDAO {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public List<Transaction> findTransactionsOfAccount(String accno) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Transaction where fromacc = :accno1 or toacc = :accno2");
+		Query query = sessionFactory.getCurrentSession()
+				.createQuery("from Transaction where fromacc = :accno1 or toacc = :accno2");
 		query.setString("accno1", accno);
 		query.setString("accno2", accno);
 		@SuppressWarnings("unchecked")
 		List<Transaction> list = query.list();
 		return list;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Transaction findTransactionById(int id) {
-		Session session = this.sessionFactory.getCurrentSession();      
+		Session session = this.sessionFactory.getCurrentSession();
 		Transaction transaction = (Transaction) session.createQuery("from Transaction where tid = :id")
-				.setInteger("id", id)
-				.uniqueResult();
+				.setInteger("id", id).uniqueResult();
 		return transaction;
 	}
 
-	public void logIt(String action, ILogs  ilogs){
+	// Added by Chandrani Mukherjee, required by UserOperationsController
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional(readOnly = true)
+	public List<Transaction> findTransactionsOfAccount(BankAccount bankaccount) {
+		List<Transaction> transactionList = sessionFactory.getCurrentSession()
+				.createQuery("from Transaction where fromacc = :fromBankaccount or toacc = :toBankaccount")
+				.setParameter("fromBankaccount", bankaccount).setParameter("toBankaccount", bankaccount).list();
+
+		return transactionList;
+	}
+
+	public void logIt(String action, ILogs ilogs) {
 		Logs logs = new Logs();
 		Date dateobj = new Date();
 		logs.setCreatedDate(dateobj);
 		logs.setDetail(action + ilogs.getLogDetail());
-		
+
 		logsDao.add(logs);
 	}
 

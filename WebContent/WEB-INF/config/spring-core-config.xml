@@ -20,6 +20,11 @@
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="configLocation" value="/WEB-INF/config/hibernate.cfg.xml" />
 	</bean>
+	
+	<!-- max file size in bytes (set to max 20 MB) -->
+	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+		<property value="20971520" name="maxUploadSize"/>
+	</bean>
 
 	<context:component-scan base-package="com.group9.bankofaz.component" />
 	<context:component-scan base-package="com.group9.bankofaz.controller" />

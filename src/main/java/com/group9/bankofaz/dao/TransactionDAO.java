@@ -5,6 +5,7 @@ package com.group9.bankofaz.dao;
 
 import java.util.List;
 
+import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.Transaction;
 
 /**
@@ -23,4 +24,6 @@ public interface TransactionDAO {
 	public List<Transaction> findTransactionsOfAccount(String accno);
 
 	public Transaction findTransactionById(int id);
+
+	public List<Transaction> findTransactionsOfAccount(BankAccount bankaccount);
 }

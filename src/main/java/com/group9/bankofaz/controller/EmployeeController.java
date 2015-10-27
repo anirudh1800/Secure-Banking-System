@@ -130,7 +130,8 @@ public class EmployeeController {
 
 		InternalUser user = internalUserDao.findUserByEmail(username);
 
-		String taskid_str = request.getParameter("taskselected").toString();
+		 
+		String taskid_str = request.getParameter("taskselected");
 		
 		if(taskid_str.equals("")){
 			return new ModelAndView("redirect:/employee");

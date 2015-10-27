@@ -80,7 +80,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		
 		Task task = processingTaskQueue.pollFirst();
 		Transaction transaction = task.getTid();
-		InternalUser internalUser;
+		InternalUser internalUser = null;
 		ExternalUser externalUser;
 		
 		String type = transaction.getTransType();
@@ -88,8 +88,9 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 		case "transfer":
 			if (transaction.getAmt() > criticalAmt) {
-				internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
-			} else {
+		//	All request go to regular employees
+		//		internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
+		//	} else {
 				internalUser = internalUserDao.findUserById(regularEmployeeList.get( rand.nextInt(regularEmployeeList.size())));
 			}
 
@@ -371,7 +372,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 				case "external":
 					if (fromAccount.getUserid().getUserid() != toAccount.getUserid().getUserid()) {
-						if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
+	//					if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
 							amount = transaction.getAmt();
 
 							float balance1 = fromAccount.getBalance();
@@ -392,13 +393,13 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 								transaction.setTransStatus("declined");
 							}
 							transactionDao.update(transaction);
-						} else {
+						/*} else {
 							transaction.setTransStatus("declined");
 							transactionDao.update(transaction);
 
 							throw new IllegalTransactionException("Not valid transaction");
 						}
-					} else {
+*/					} else {
 						transaction.setTransStatus("declined");
 						transactionDao.update(transaction);
 
@@ -411,7 +412,7 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 
 			case "payment":
 				if (fromAccount.getUserid().getUserid() != toAccount.getUserid().getUserid()) {
-					if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
+//					if (fromAccount.getAcctype().equals("checking") && toAccount.getAcctype().equals("checking")) {
 						amount = transaction.getAmt();
 
 						float balance1 = fromAccount.getBalance();
@@ -432,12 +433,12 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 							transaction.setTransStatus("declined");
 						}
 						transactionDao.update(transaction);
-					} else {
-						transaction.setTransStatus("declined");
-						transactionDao.update(transaction);
+	//				} else {
+	//					transaction.setTransStatus("declined");
+	//					transactionDao.update(transaction);
 
-						throw new IllegalTransactionException("Not valid transaction");
-					}
+	//					throw new IllegalTransactionException("Not valid transaction");
+	//				}
 				} else {
 					transaction.setTransStatus("declined");
 					transactionDao.update(transaction);

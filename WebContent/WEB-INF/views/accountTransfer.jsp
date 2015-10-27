@@ -39,7 +39,8 @@
 		<table class="table table-nonfluid">
 			<tr>
 				<td>From Account:</td>
-				<td>${accountNo}<input type="hidden" name="FromAccount"
+				<td>${accountNo}
+				<input type="hidden" name="FromAccount"
 					value="${accountNo}" />
 				</td>
 			</tr>
