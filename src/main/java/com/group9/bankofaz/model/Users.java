@@ -30,6 +30,9 @@ public class Users implements ILogs{
 	@Column(name = "enabled", nullable = false)
 	private int enabled;
 	
+	@Column(name = "failure")
+	private int failure;
+	
 	public String getUsername() {
 		return username;
 	}
@@ -68,6 +71,14 @@ public class Users implements ILogs{
 		return Long.valueOf(this.username);
 	}
 
+	public int getFailure() {
+		return failure;
+	}
+
+	public void setFailure(int failure) {
+		this.failure = failure;
+	}
+	
 	@Transient
 	@Override
 	public String getLogDetail() {
@@ -76,7 +87,8 @@ public class Users implements ILogs{
 		sb.append(" users " ).append(" username :" ).append(username)
 		.append(" passwd : ").append(passwd)
 		.append(" authority : ").append(authority)
-		.append(" enabled : ").append(enabled);
+		.append(" enabled : ").append(enabled)
+		.append(" failures :").append(failure);
 		
 		return sb.toString();
 	}

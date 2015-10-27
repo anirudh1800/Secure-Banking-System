@@ -6,122 +6,122 @@
 
 <html>
 <head>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
 <title>Update Personal Information</title>
 
 <style type="text/css">
-h3 {
-	font-family: Calibri;
-	font-size: 22pt;
-	font-style: normal;
-	font-weight: bold;
-	color: Black;
-	text-align: center;
-	text-decoration: underline
-}
-
-table {
-	font-family: Calibri;
-	color: black;
-	font-size: 11pt;
-	font-style: normal;
-	text-align:;
-	border-collapse: collapse;
-}
-
 table.inner {
 	border: 0px
+}
+
+.table-nonfluid {
+	width: auto !important;
+}
+
+.blank_row {
+	height: 10px;
+	background-color: #FFFFFF;
 }
 </style>
 </head>
 
 <body>
 
-	<h3>Update Your Personal Information</h3>
+	<h3 align="center">Update Your Personal Information</h3>
 
 	<form:form
 		action="${pageContext.request.contextPath}/employee/editinfo/save"
-		name="RForm" method="post" onsubmit="return validateForm()">
+		name="RForm" method="post" onsubmit="return validateForm()"
+		class="form-signin">
+		<div id="errors" style="color: #ff0000">${errors}</div>
 
-		<table align="center" cellpadding="10">
-			<tr>
-				<td colspan="2"><div id="errors" style="color: #ff0000">${errors}</div></td>
-			</tr>
+		<table align="center" class="table table-nonfluid" cellpadding="10">
 			<tr>
 				<td>FIRST NAME *</td>
-				<td><input type="text" name="FName" maxlength="30" value="${user.getFirstname()}"/>(max 30
+				<td><input type="text" name="FName" maxlength="30"  class="form-control" value="${user.getFirstname()}"/>(max 30
 					characters a-z and A-Z)</td>
 			</tr>
 
 			<tr>
 				<td>MIDDLE NAME</td>
-				<td><input type="text" name="MName" maxlength="30"  value="${user.getMiddlename()}"/>(max 30
+				<td><input type="text" name="MName" maxlength="30"  class="form-control" value="${user.getMiddlename()}"/>(max 30
 					characters a-z and A-Z)</td>
 			</tr>
 
 			<tr>
 				<td>LAST NAME *</td>
-				<td><input type="text" name="LName" maxlength="30"   value="${user.getLastname()}"/>(max 30
+				<td><input type="text" name="LName" maxlength="30"    class="form-control" value="${user.getLastname()}"/>(max 30
 					characters a-z and A-Z)</td>
 			</tr>
 
 			<tr>
 				<td>EMAIL ID *</td>
-				<td><input type="text" name="Email" maxlength="100" value="${user.getEmail().getUsername()}" disabled/></td>
+				<td><input type="text" name="Email" maxlength="100"  class="form-control" value="${user.getEmail().getUsername()}" disabled/></td>
 			</tr>
 
 			<tr>
 				<td>Password *</td>
-				<td><input type="password" name="Pass" maxlength="100" value=""/></td>
+				<td><input type="password" name="Pass" maxlength="100"  class="form-control" value=""/></td>
 			</tr>
 
 			<tr>
 				<td>Retype Password *</td>
-				<td><input type="password" name="RPass" maxlength="100" value=""/></td>
+				<td><input type="password" name="RPass" maxlength="100"  class="form-control" value=""/></td>
 			</tr>
 
 			<tr>
 				<td>ADDRESS line 1 *<br />
 				<br />
 				<br /></td>
-				<td><textarea name="Address1" rows="4" cols="15"  value="${user.getAddressline1()}"></textarea></td>
+				<td><textarea name="Address1" rows="4" cols="15"  class="form-control" value="${user.getAddressline1()}"></textarea></td>
 			</tr>
 
 			<tr>
 				<td>ADDRESS line 2 *<br />
 				<br />
 				<br /></td>
-				<td><textarea name="Address2" rows="4" cols="15" value="${user.getAddressline2()}"></textarea></td>
+				<td><textarea name="Address2" rows="4" cols="15" class="form-control" value="${user.getAddressline2()}"></textarea></td>
 			</tr>
 
 			<tr>
 				<td>CITY *</td>
-				<td><input type="text" name="City" maxlength="30" value="${user.getCity()}"/>(max 30
+				<td><input type="text" name="City" maxlength="30" class="form-control" value="${user.getCity()}"/>(max 30
 					characters a-z and A-Z)</td>
 			</tr>
 
 			<tr>
 				<td>ZIP CODE *</td>
-				<td><input type="text" name="Zipcode" maxlength="6" value="${user.getZipcode()}" />(6 digit
+				<td><input type="text" name="Zipcode" maxlength="6" class="form-control" value="${user.getZipcode()}" />(6 digit
 					number)</td>
 			</tr>
 
 
 			<tr>
 				<td>STATE *</td>
-				<td><input type="text" name="State" maxlength="30" value="${user.getState()}"/>(max 30
+				<td><input type="text" name="State" maxlength="30"class="form-control"  value="${user.getState()}"/>(max 30
 					characters a-z and A-Z)</td>
 			</tr>
 
 
 			<tr>
 				<td>SSN *</td>
-				<td><input type="text" name="SSN" maxlength="30" value="${user.getSsn()}"/></td>
+				<td><input type="text" name="SSN" maxlength="30" class="form-control" value="${user.getSsn()}"/></td>
 			</tr>
 
 
 			<tr>
 				<td colspan="2" align="center"><input type="submit"
-					value="Update Info"> 
+					class="form-control" value="Update Info"> 
 				</td>
 			</tr>
 		</table>

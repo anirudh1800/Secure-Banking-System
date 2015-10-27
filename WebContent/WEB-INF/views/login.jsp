@@ -33,14 +33,14 @@
 	</h2>
 
 	<div class="error">${message}</div>
-	<br/>
+	<br />
 	<div class="container">
 		<form name="LoginForm" method="post" class="form-signin"
 			action="<c:url value='j_spring_security_check' />">
 			<table align="center">
 				<tr>
-					<label for="inputEmail" class="sr-only">Email address </label>
-					<td><input type="email" id="inputEmail" name="email"
+					<td><label for="inputEmail" class="sr-only">Email
+							address </label> <input type="email" id="inputEmail" name="email"
 						class="form-control" placeholder="Email address" required
 						autofocus></td>
 				</tr>
@@ -48,24 +48,30 @@
 					<td colspan="2"></td>
 				</tr>
 				<tr>
-					<label for="inputPassword" class="sr-only">Password &nbsp
-						&nbsp &nbsp &nbsp</label>
-					<td align="left"><input type="password" id="inputPassword"
+					<td><label for="inputPassword" class="sr-only">Password
+							&nbsp &nbsp &nbsp &nbsp</label> <input type="password" id="inputPassword"
 						name="passwd" class="form-control" placeholder="Password" required></td>
 				</tr>
 				<tr class="blank_row">
 					<td colspan="2"></td>
 				</tr>
-
+				<tr>
+					<td><a href="ForgotPassword">Forgot Password ?</a></td>
+				</tr>
+				<tr class="blank_row">
+					<td colspan="2"></td>
+				</tr>
 				<tr>
 					<td><button class="btn btn-lg btn-primary btn-block"
 							type="submit">Login</button></td>
 				</tr>
+
 			</table>
 			<br /> <input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
 		</form>
-		<br>
+		<a href="registration">New User ?</a>
+		<br/>
 	</div>
 </body>
 </html>

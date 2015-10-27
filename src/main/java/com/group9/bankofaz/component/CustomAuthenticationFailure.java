@@ -13,6 +13,9 @@ public class CustomAuthenticationFailure implements ApplicationListener<Authenti
 	@Override
 	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
 		Object user = event.getAuthentication().getPrincipal();
+		System.out.println("########### Authentication ##################");
+		System.out.println("in object "+sessionDetails.getUsername());
+		System.out.println("in the form : "+user.toString());
 		if (sessionDetails.getUsername() == null) {
 			sessionDetails.setUsername(user.toString());
 			sessionDetails.setFailureAttempts(1);
@@ -22,7 +25,8 @@ public class CustomAuthenticationFailure implements ApplicationListener<Authenti
 		} else
 			sessionDetails.setFailureAttempts(sessionDetails.getFailureAttempts() + 1);
 
-		System.out.println(" Failed attempts : " + sessionDetails.getFailureAttempts());
+		System.out.println(" In authentication handler"+" Username  : "+ sessionDetails.getUsername()+" Failed attempts : " + sessionDetails.getFailureAttempts());
 
 	}
+	
 }

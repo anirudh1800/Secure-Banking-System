@@ -3,6 +3,8 @@
  */
 package com.group9.bankofaz.dao;
 
+import java.util.List;
+
 import com.group9.bankofaz.model.ExternalUser;
 
 /**
@@ -19,6 +21,10 @@ public interface ExternalUserDAO {
 	public void delete(ExternalUser externaluser);
 
 	public ExternalUser findUserByEmail(String email);
-	
+
 	public ExternalUser findUserById(int id);
+
+	public List<ExternalUser> findUserByUserType(String usertype);
+
+	public ExternalUser findUserByBname(String bname);
 }

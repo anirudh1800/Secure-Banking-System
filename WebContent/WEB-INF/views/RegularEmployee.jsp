@@ -4,37 +4,26 @@
 <%@page session="true"%>
 <html>
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <title>Regular Employee</title>
 
 <style type="text/css">
-h3 {
-	font-family: Calibri;
-	font-size: 22pt;
-	font-style: normal;
-	font-weight: bold;
-	color: Black;
-	text-align: center;
-	text-decoration: underline
-}
-
-table {
-	font-family: Calibri;
-	color: black;
-	font-size: 11pt;
-	font-style: normal;
-	text-align:;
-	border-collapse: collapse;
+.table-nonfluid {
+	width: auto !important;
 }
 
 table.inner {
 	border: 0px
-}
-
-.test {
-	height: 40px;
-	width: 250px;
 }
 </style>
 
@@ -43,47 +32,44 @@ table.inner {
 <body>
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 
-	<h1 align="center" style="font-family: Comic Sans Ms;text-align="center";font-size:20pt;
-	color:#00FF00;>
-		Regular Employee Page</h1>
+	<h1>Regular Employee Page</h1>
 
 	<div style="float: left; width: 30%;">
 		<p align='left'>
-		<table id="table1">
+		<table id="table1" class="table table-nonfluid">
 			<tr>
-				<td><form:form name="tl"
-						method = "post"
+				<td><form:form name="tl" method="post"
 						action="${pageContext.request.contextPath}/employee/transactionlookup">
-						<input class="test" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="Transaction Lookup"
-							value="Transaction Lookup" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit"
+							name="Transaction Lookup" value="Transaction Lookup" />
 					</form:form></td>
 			</tr>
 
 			<tr>
-				<td><form:form name="ti"
-						method = "post"
+				<td><form:form name="ti" method="post"
 						action="${pageContext.request.contextPath}/employee/transactioninquiry">
-						<input class="test" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="Transaction Inquiry"
-							value="Transaction Inquiry" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit"
+							name="Transaction Inquiry" value="Transaction Inquiry" />
 					</form:form></td>
 			</tr>
 
 			<tr>
-				<td><form:form name="ei"
-						method = "post"
+				<td><form:form name="ei" method="post"
 						action="${pageContext.request.contextPath}/employee/editinfo">
-						<input class="test" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="EditInfo" value="Edit Personal Info" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="EditInfo"
+							value="Edit Personal Info" />
 					</form:form></td>
 			</tr>
 
 			<tr>
 				<td><form:form action="${logoutUrl}" method="post"
 						id="logoutForm">
-						<input class="test" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="Logout" value="Log out" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="Logout"
+							value="Log out" />
 						<input type="hidden" name="${_csrf.parameterName}"
 							value="${_csrf.token}" />
 					</form:form></td>
@@ -94,7 +80,7 @@ table.inner {
 	<div style="float: left; width: 50%;">
 		<form:form id="taskForm" method="post"
 			action="${pageContext.request.contextPath}/employee">
-			<table border="1" style="width: 100%">
+			<table border="1" class="table">
 				<tr>
 					<th>Task Id</th>
 					<th>Message</th>
@@ -102,7 +88,7 @@ table.inner {
 					<th>Tid</th>
 					<th>Selected</th>
 				</tr>
-				
+
 				<c:forEach items="${taskList}" var="taskList">
 					<tr>
 						<td><c:out value="${taskList.taskid}" /></td>
@@ -117,11 +103,11 @@ table.inner {
 			<br />
 			<br />
 			<input type="hidden" id="taskselected" name="taskselected" value="">
-			<input type="submit" value="Submit">
+			<input type="submit" class="btn btn-lg btn-primary btn-block"
+				width="30" value="Submit">
 		</form:form>
 
-		<script>	
-		
+		<script>
 			$(document).ready(
 					function() {
 						$("#taskForm").submit(

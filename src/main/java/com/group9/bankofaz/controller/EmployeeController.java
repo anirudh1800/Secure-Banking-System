@@ -67,7 +67,7 @@ public class EmployeeController {
 	private Pattern email_pattern = Pattern.compile(EMAIL_PATTERN);;
 
 	@RequestMapping(value = "/employee", method = RequestMethod.GET)
-	public ModelAndView geEmployeeView(HttpServletRequest request) {
+	public ModelAndView getEmployeeView(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		String username = (String) session.getAttribute("BOAUsername");
 
@@ -130,7 +130,13 @@ public class EmployeeController {
 
 		InternalUser user = internalUserDao.findUserByEmail(username);
 
-		int taskid = Integer.valueOf(request.getParameter("taskselected").toString());
+		String taskid_str = request.getParameter("taskselected").toString();
+		
+		if(taskid_str.equals("")){
+			return new ModelAndView("redirect:/employee");
+		}
+		
+		int taskid = Integer.valueOf(taskid_str);
 
 		ModelAndView modelView = null;
 

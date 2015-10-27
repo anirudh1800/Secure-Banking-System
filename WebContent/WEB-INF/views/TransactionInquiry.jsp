@@ -4,51 +4,40 @@
 <%@page session="true"%>
 <html>
 <head>
+
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 <title>Transaction Inquiry</title>
 
-<style type="text/css">
-h3 {
-	font-family: Calibri;
-	font-size: 22pt;
-	font-style: normal;
-	font-weight: bold;
-	color: Black;
-	text-align: center;
-	text-decoration: underline
-}
-
-table {
-	font-family: Calibri;
-	color: black;
-	font-size: 11pt;
-	font-style: normal;
-	text-align:;
-	border-collapse: collapse;
-}
-
-table.inner {
-	border: 0px
-}
-</style>
 </head>
 
-
-<body align="center">
+<body>
 
 	<h3>Transaction Inquiry</h3>
 
 
 	<div align="center">
 
-		<form:form name="form" align="center"
+		<form:form name="form" align="center" width="30%"
 			action="${pageContext.request.contextPath}/employee/transactioninquiry"
-			onsubmit="return validateForm()" method="GET">
-		Bank Account : <input type="text" name="account" />&nbsp;
-		 <input value="View Transactions" type="submit" />
+			onsubmit="return validateForm()" method="GET" class="form-inline">
+		Bank Account : <input type="text" class="form-control" name="account" />&nbsp;
+		 <input value="View Transactions"
+				class="form-control" type="submit" />
 			<br>
 		</form:form>
+		<br/><br/>
 
-		<table border="1" style="width: 100%">
+		<table class="table table-nonfluid">
 			<tr>
 				<th>Tid</th>
 				<th>Date</th>
@@ -60,10 +49,10 @@ table.inner {
 				<th>Description</th>
 				<c:forEach items="${transactionList}" var="transactionList">
 					<tr>
-						<td><c:out value="${transactionList.getTid()}"/></td>
+						<td><c:out value="${transactionList.getTid()}" /></td>
 						<td><c:out value="${transactionList.getTransDate()}" /></td>
 						<td><c:out value="${transactionList.getTransType()}" /></td>
-						<td><c:out value="${transactionList.getAmt()}"/></td>
+						<td><c:out value="${transactionList.getAmt()}" /></td>
 						<td><c:out value="${transactionList.getTransStatus()}" /></td>
 						<td><c:out value="${transactionList.fromacc.getAccno()}" /></td>
 						<td><c:out value="${transactionList.toacc.getAccno()}" /></td>
@@ -71,8 +60,6 @@ table.inner {
 					</tr>
 				</c:forEach>
 		</table>
-
-
 	</div>
 </body>
 

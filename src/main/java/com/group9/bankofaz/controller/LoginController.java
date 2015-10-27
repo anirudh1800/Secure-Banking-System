@@ -3,35 +3,37 @@
  */
 package com.group9.bankofaz.controller;
 
-import java.util.Date;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.group9.bankofaz.component.SessionDetails;
+import com.group9.bankofaz.component.VerifyRecaptcha;
 import com.group9.bankofaz.dao.BankAccountDAO;
-import com.group9.bankofaz.dao.InternalUserDAO;
-import com.group9.bankofaz.dao.LogsDAO;
-import com.group9.bankofaz.dao.TransactionDAO;
+import com.group9.bankofaz.dao.ExternalUserDAO;
+import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
-import com.group9.bankofaz.model.Logs;
-import com.group9.bankofaz.model.Transaction;
 import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.LoginService;
-import com.group9.bankofaz.service.RegularEmployeeService;
-import com.group9.bankofaz.service.TransactionManagerService;
 
 /**
  * @author Vishnu Priya Chandra Sekar
@@ -46,92 +48,129 @@ public class LoginController {
 
 	@Autowired
 	private LoginService loginService;
-	
+
 	@Autowired
-	private RegularEmployeeService regularEmployeeService;
-	
-	@Autowired
-	private TransactionManagerService transactionManagerService;
-	
+	private UsersDAO usersDao;
+
 	@Autowired
 	private BankAccountDAO bankAccountDao;
-	
+
 	@Autowired
-	private TransactionDAO transactionDao;
-	
-	@Autowired
-	private InternalUserDAO internalUserDao;
-	
-	@Autowired
-	private LogsDAO logsDao;
+	private ExternalUserDAO externalUserDao;
+
+	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+	private Pattern email_pattern = Pattern.compile(EMAIL_PATTERN);
 
 	@RequestMapping("/login")
 	public ModelAndView getLoginForm(@RequestParam(required = false) String authfailed, String logout,
 			HttpSession session) {
-		System.out.println("Controller handler ");
 		String message = "";
 		if (authfailed != null) {
-			if (sessionDetails.getFailureAttempts() == 0) {
-				message = "Sorry ! Log out from other browser/tabs to proceed further";
-			} else if (sessionDetails.getFailureAttempts() >= 3) {
-
+			System.out.println(" Session : " + sessionDetails);
+			System.out.println(" Authfailed value :" + authfailed);
+			System.out.println(" Username : " + sessionDetails.getUsername());
+			if (sessionDetails.getAnothersession() == 0)
+				message = "Log out from other browser";
+			else if (sessionDetails.getUsername().equals("notfound"))
+				message = "Username does not exist";
+			else if (sessionDetails.getFailureAttempts() >= 3) {
+				System.out.println("Failure Attempts in controller : " + sessionDetails.getFailureAttempts());
 				if (sessionDetails.getFailureAttempts() == 3) {
 					Users updateuser = new Users();
-					String password = loginService.generatePassword();
+					String password = generatePassword();
 					StandardPasswordEncoder encryption = new StandardPasswordEncoder();
 					updateuser.setUsername(sessionDetails.getUsername());
 					updateuser.setPassword(encryption.encode(password));
 					updateuser.setAuthority("ROLE_INDIVIDUAL");
 					updateuser.setEnabled(1);
-
-					message = "Hi," + "\n"
-							+ "It's unfortunate that you lost your password. We have reset your password. Your new password is "
-							+ password + " . You can use this password for further communication. " + "\n" + "Best,"
-							+ "\n" + "The Bank of Arizona Accounts team";
-
-					loginService.updateLoginInfo(updateuser);
-					loginService.sendEmail(sessionDetails.getUsername(), message, "Bank of Arizona Password Reset");
+					updateuser.setFailure(0);
+					usersDao.update(updateuser);
+					loginService.sendEmail(sessionDetails.getUsername(), password, "password");
 				}
 				message = "Your password was reset. A temporary password was mailed to your email-id";
 
 			} else
 				message = "Invalid username/password";
+
 		} else if (logout != null) {
-			session.invalidate();
 			System.out.println("Logged successfully");
 			message = "Logged out successfully, login again to continue !";
 		}
 		return new ModelAndView("login", "message", message);
+
 	}
 
-	@RequestMapping("/login/otp")
+	@RequestMapping("/otp")
 	public ModelAndView geOtpView(HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		session.setAttribute("BOAUsername", username);
-		String message = "Your one-time password for current login: " + loginService.generateOTP(username);
-		loginService.sendEmail(username, message, "Bank of Arizona OTP");
+		int otp = loginService.generateOTP(username);
+		loginService.sendEmail(username, "Your otp is " + Integer.toString(otp), "Bank of Arizona OTP");
 		return new ModelAndView("otp");
+
 	}
 
-	@RequestMapping("/login/otp/validate")
-	public ModelAndView validateOtp(HttpServletRequest request) {
+	@RequestMapping(value = "/otpverification", method = RequestMethod.POST)
+	public ModelAndView verifyOtpView(HttpServletRequest request) {
+		String message = "";
 		HttpSession session = request.getSession(true);
-		String username = (String) session.getAttribute("BOAUsername");
-		boolean isCodeValid = loginService.validateOtp(username,
-				Integer.valueOf(request.getParameter("OTP").toString()));
+		String username = session.getAttribute("BOAUsername").toString();
+		String otp_pwd = request.getParameter("passwd").toString();
+		boolean isCodeValid = loginService.validateOtp(username, Integer.parseInt(otp_pwd));
+		System.out.println("Verify : " + isCodeValid);
+		System.out.println("#########################");
+
+		ModelAndView modelView = null;
 
 		if (isCodeValid) {
-			return new ModelAndView("redirect:/employee");
+			System.out.println("In the if part");
+			// Added by Chandrani Mukherjee - putting details in the session
+			// object
+			message = "OTP Validated!";
+			sessionDetails.setUsername(username);
+			sessionDetails.setEnabled(1);
+
+			Users users = usersDao.findUsersByEmail(username);
+
+			switch (users.getAuthority()) {
+			case "ROLE_INDIVIDUAL":
+			case "ROLE_MERCHANT":
+				ExternalUser extUser = externalUserDao.findUserByEmail(username);
+				List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(extUser.getUserid());
+
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("firstName", extUser.getFirstname());
+				map.put("lastName", extUser.getLastname());
+				map.put("bankAccounts", bankAccounts);
+				map.put("message", message);
+
+				modelView = new ModelAndView("customer", map);
+				break;
+
+			case "ROLE_EMPLOYEE":
+			case "ROLE_ADMIN":
+				modelView = new ModelAndView("redirect:/employee");
+				break;
+
+			default:
+				modelView = new ModelAndView("/login");
+				break;
+			}
+
 		} else {
+			message = "Invalid OTP!";
 			try {
 				request.logout();
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
-			return new ModelAndView("redirect:/login");
+			modelView = new ModelAndView("/login", "message", message);
 		}
 
+		return modelView;
 	}
 
 	@RequestMapping("403page")
@@ -139,43 +178,66 @@ public class LoginController {
 		return "redirect:login?denied";
 	}
 
-	@RequestMapping("/test")
-	public ModelAndView handleRequest() throws Exception {
-		List<Logs> logsList = logsDao.findLogs();
-		
-//		  List<BankAccount> accounts = bankAccountDao.findAccountsOfUser(1001);
-//		  BankAccount fromacc = new BankAccount(); BankAccount toacc = new  BankAccount();
-//		  
-//		  for(BankAccount account: accounts){
-//		  if(account.getAcctype().equals("checking")){ fromacc = account; } }
-//		  
-//		  accounts = bankAccountDao.findAccountsOfUser(1003);
-//		  
-//		  for(BankAccount account: accounts){
-//		  if(account.getAcctype().equals("checking")){ toacc = account; } }
-//		  
-//		  Date dateobj = new Date();
-//		  
-//		  Transaction transaction = transactionDao.findTransactionById(37);
-//		  
-//		  transaction.setTid(37);
-//		  transaction.setAmt(100);
-//		  transaction.setFromacc(fromacc);
-//		  transaction.setToacc(toacc);
-//		  transaction.setTransType("transfer");
-//		  transaction.setTransStatus("processing");
-//		  transaction.setTransDesc("external");
-		  
-	     //boolean sucess = transactionManagerService.submitTransaction(transaction);
-		
-		//regularEmployeeService.setUser(internalUserDao.findUserById(10002));
-		
-		
-		//regularEmployeeService.authorizeTransaction(transaction);
-		
-		ModelAndView model = new ModelAndView("logs");
-		model.addObject("logsList", logsList);
-		return model;
+	@RequestMapping("/ForgotPassword")
+	public ModelAndView forgotPasswordPage() {
+		return new ModelAndView("ForgotPassword");
 	}
 
+	public String generatePassword() {
+		return RandomStringUtils.randomAlphanumeric(10);
+
+	}
+
+	@RequestMapping(value = "/resetpwd", method = RequestMethod.POST)
+	public ModelAndView mailpwd(HttpServletRequest request) {
+		String email = request.getParameter("email").toString();
+		StringBuilder errors = new StringBuilder();
+
+		if (!validateField(email, 1, 30, false)) {
+			errors.append("<li>Email Id must not be empty, be between 1-30 characters and not have spaces</li>");
+		}
+		Matcher matcher = email_pattern.matcher(email);
+		if (!matcher.matches()) {
+			errors.append("<li>Email Id must be a proper email address</li>");
+		}
+		String message = new String();
+
+		if (errors.length() > 0) {
+			message = "Invalid email address specified";
+			return new ModelAndView("ForgotPassword", "message", message);
+		}
+		String password = generatePassword();
+
+		Users user = usersDao.findUsersByEmail(email);
+		String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+
+		System.out.println("Recaptcha Response:" + gRecaptchaResponse);
+		try {
+			boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+
+			if (user != null && verify) {
+				StandardPasswordEncoder encryption = new StandardPasswordEncoder();
+				user.setPassword(encryption.encode(password));
+				usersDao.update(user);
+				loginService.sendEmail(email, "Your password: " + password, "Bank of Arizona Password");
+				message = "Your password was reset. A temporary password was mailed to your email-id";
+			} else
+				message = "Username does not exist";
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView("ForgotPassword", "message", message);
+	}
+
+	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
+		if (field == null)
+			return false;
+		if (!spacesAllowed && field.indexOf(" ") != -1)
+			return false;
+		if (field.length() < minSize || field.length() > maxSize)
+			return false;
+
+		return true;
+	}
 }

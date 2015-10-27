@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <beans:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -5,27 +7,56 @@
  http://www.springframework.org/schema/security
  http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
+	<http pattern="/" security="none" />
+	<http pattern="/registration" security="none" />
+	<http pattern="/registration/reg_validate" security="none" />
+
 	<http auto-config="true" use-expressions="true">
-		<session-management invalid-session-url="/login?time=1">
-			<concurrency-control max-sessions="1"
-				expired-url="/login?time=1" />
+		<session-management>
+			<concurrency-control error-if-maximum-exceeded="true"
+				max-sessions="1" expired-url="/login?time=1" />
 		</session-management>
 
 		<access-denied-handler error-page="/403page" />
 
-		<intercept-url pattern="/login**" access="permitAll()" />
-		<intercept-url pattern="/otp**"
+		<intercept-url pattern="/otp"
 			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+		
+		<intercept-url pattern="/otpverification"
+			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+		
+		<intercept-url pattern="/customer**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		<intercept-url pattern="/account**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		<intercept-url pattern="/debit**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		<intercept-url pattern="/credit**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		<intercept-url pattern="/dotransfer**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+
+
+		<intercept-url pattern="/employee"
+			access="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+
+		<intercept-url pattern="/employee/transactionlookup**"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
+
+		<intercept-url pattern="/employee/transactionlookup/**"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
 
 		<form-login login-page='/login' username-parameter="email"
 			password-parameter="passwd" login-processing-url="/j_spring_security_check"
-			default-target-url="/login/otp" authentication-failure-url="/login?authfailed" />
+			default-target-url="/otp" authentication-failure-url="/login?authfailed" />
 		<csrf />
-		<logout logout-url="/j_spring_security_logout" logout-success-url="/login?logout" invalidate-session="true"/>
+		<logout logout-url="/j_spring_security_logout"
+			logout-success-url="/login" invalidate-session="true" />
 	</http>
 
 	<authentication-manager>
 		<authentication-provider>
+			<password-encoder ref="encoder" />
 			<jdbc-user-service data-source-ref="dataSource"
 				users-by-username-query="
          SELECT USERNAME, PASSWD, CASE ENABLED WHEN 1 THEN 'true' ELSE 'false' END 'ENABLED'
@@ -39,5 +70,6 @@
 		</authentication-provider>
 	</authentication-manager>
 
+	<beans:bean id="encoder"
+		class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
 </beans:beans>
-

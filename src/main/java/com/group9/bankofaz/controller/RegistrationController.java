@@ -1,5 +1,6 @@
 package com.group9.bankofaz.controller;
 
+import java.io.IOException;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.group9.bankofaz.component.VerifyRecaptcha;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.Users;
@@ -31,7 +33,7 @@ public class RegistrationController {
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-	private Pattern email_pattern = Pattern.compile(EMAIL_PATTERN);;
+	private Pattern email_pattern = Pattern.compile(EMAIL_PATTERN);
 
 	@RequestMapping(method = RequestMethod.GET) 
 	public ModelAndView RegistrationPage() {
@@ -40,6 +42,17 @@ public class RegistrationController {
 
 	@RequestMapping(value = "/reg_validate", method = RequestMethod.POST)
 	public ModelAndView addUser(HttpServletRequest request) {
+		try {
+			String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+			boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+			
+			if(!verify){
+				return new ModelAndView("redirect:/registration");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		// capture form fields
 		String firstName = request.getParameter("First_Name").toString();
 		String middleName = request.getParameter("Middle_Name").toString();
