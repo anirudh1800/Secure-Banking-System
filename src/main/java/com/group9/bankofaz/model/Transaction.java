@@ -122,6 +122,41 @@ public class Transaction implements ILogs{
 		this.transdesc = transdesc;
 	}
 	
+	// Added by Chandrani Mukherjee - Default named Getters & Setters
+	// Required by JSP page renderings
+		
+		public Date getTransdate() {
+			return transdate;
+		}
+
+		public void setTransdate(Date transdate) {
+			this.transdate = transdate;
+		}
+
+		public String getTranstype() {
+			return transtype;
+		}
+
+		public void setTranstype(String transtype) {
+			this.transtype = transtype;
+		}
+
+		public String getTransstatus() {
+			return transstatus;
+		}
+
+		public void setTransstatus(String transstatus) {
+			this.transstatus = transstatus;
+		}
+
+		public String getTransdesc() {
+			return transdesc;
+		}
+
+		public void setTransdesc(String transdesc) {
+			this.transdesc = transdesc;
+		}
+		
 	@Transient
 	@Override
 	public Long getId() {

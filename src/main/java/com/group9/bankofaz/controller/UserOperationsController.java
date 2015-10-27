@@ -26,7 +26,6 @@ import com.group9.bankofaz.component.SessionDetails;
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.ExternalUserDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
-import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.exception.IllegalTransactionException;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
@@ -42,9 +41,6 @@ public class UserOperationsController {
 
 	@Autowired
 	ExternalUserDAO externalUserDao;
-
-	@Autowired
-	private UsersDAO usersDao;
 
 	@Autowired
 	BankAccountDAO bankAccountDao;
@@ -279,7 +275,7 @@ public class UserOperationsController {
 		debitTransaction.setTransDesc(desc_param);
 		debitTransaction.setFromacc(bankAccount);
 		debitTransaction.setTransStatus("cleared");
-		// debitTransaction.setToacc(bankAccount);
+		debitTransaction.setToacc(bankAccount);
 		debitTransaction.setTransType("debit");
 		transactionDao.update(debitTransaction);
 		bankAccount.setBalance(bankAccount.getBalance() - Float.parseFloat(amt_param));
@@ -406,7 +402,7 @@ public class UserOperationsController {
 		creditTransaction.setAmt(Float.parseFloat(amt_param));
 		creditTransaction.setTransDate(new Date());
 		creditTransaction.setTransDesc(desc_param);
-		// creditTransaction.setFromAccno(bankAccount);
+		creditTransaction.setFromacc(bankAccount);
 		creditTransaction.setTransStatus("cleared");
 		creditTransaction.setToacc(bankAccount);
 		creditTransaction.setTransType("credit");
@@ -629,7 +625,7 @@ public class UserOperationsController {
 		if (str == null)
 			return false;
 		try {
-			double d = Float.parseFloat(str);
+			Float.parseFloat(str);
 		} catch (NumberFormatException nfe) {
 			return false;
 		}

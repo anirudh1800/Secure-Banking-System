@@ -3,43 +3,39 @@
 <%@page session="true"%>
 <html>
 <head>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 <title>System Logs</title>
 
 <style type="text/css">
-	h3{font-family: Calibri; font-size: 22pt; font-style: normal; font-weight: bold; color:Black;
-	text-align: center; text-decoration: underline }
-	table{font-family: Calibri; color:black; font-size: 11pt; font-style: normal;
-	text-align:; border-collapse: collapse;}
-	table.inner{border: 0px}
 </style>
 </head>
 
-<body align="center">
-<h3 >Logs</h3>
+<body>
+	<h2 align="center">Logs</h2>
+	<table class="table table-hover table-bordered">
+		<tr>
+			<th>Log Id</th>
+			<th>Message</th>
+			<th>Date</th>
+		</tr>
 
-<form align="center" name="form" action="/employee" onsubmit="return validateForm()" method="POST">
-	
-	<br><br>
-	<h1>Show the Logs details Here</h1>
-	
-	<table border="1" style="width: 100%">
-				<tr>
-					<th>Log Id</th>
-					<th>Message</th>
-					<th>Date</th>
-				</tr>
-				
-				<c:forEach items="${logsList}" var="logsList">
-					<tr>
-						<td><c:out value="${logsList.getAuditLogId()}" /></td>
-						<td><c:out value="${logsList.getDetail()}" /></td>
-						<td><c:out value="${logsList.getCreatedDate().toString()}" /></td>
-					</tr>
-				</c:forEach>
-			</table>
-	</div>
-
-
-</form>
+		<c:forEach items="${logsList}" var="logsList">
+			<tr>
+				<td><c:out value="${logsList.getAuditLogId()}" /></td>
+				<td><c:out value="${logsList.getDetail()}" /></td>
+				<td><c:out value="${logsList.getCreatedDate().toString()}" /></td>
+			</tr>
+		</c:forEach>
+	</table>
 </body>
 </html>

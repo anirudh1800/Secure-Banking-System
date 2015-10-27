@@ -4,52 +4,47 @@
 <%@page session="true"%>
 <html>
 <head>
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 <title>Transaction Lookup</title>
 
 <style type="text/css">
-h3 {
-	font-family: Calibri;
-	font-size: 22pt;
-	font-style: normal;
-	font-weight: bold;
-	color: Black;
-	text-align: center;
-	text-decoration: underline
-}
-
-table {
-	font-family: Calibri;
-	color: black;
-	font-size: 11pt;
-	font-style: normal;
-	text-align:;
-	border-collapse: collapse;
-}
-
 table.inner {
 	border: 0px
+}
+
+.table-nonfluid {
+	width: auto !important;
 }
 </style>
 
 </head>
 
 
-<body align="center">
-
+<body>
 	<h3>Transaction Lookup</h3>
 
 	<form:form name="form" align="center"
 		action="${pageContext.request.contextPath}/employee/transactionlookup"
-		onsubmit="return validateForm()" method="GET">
-		Transaction ID : <input type="text" name="tid" />&nbsp;
-		 <input value="View Transaction" type="submit" />
+		class="form-inline" onsubmit="return validateForm()" method="GET">
+		Transaction ID : <input type="text" name="tid" class="form-control" />&nbsp;
+		 <input value="View Transaction" type="submit" class="form-control" />
 		<br>
 	</form:form>
 
 	<div align="center">
 		<br> <br>
 		<h1>Show the Transaction details Here</h1>
-		<table border="1" style="width: 100%">
+		<table border="1" class="table table-nonfluid">
 			<tr>
 				<th>Tid</th>
 				<th>Date</th>
@@ -78,27 +73,30 @@ table.inner {
 					value="${transaction.getTransDesc()}" disabled></td>
 			</tr>
 		</table>
-		<br> <br> <br> <br>
+		<br>
 
-		<table>
+		<table class="table table-nonfluid">
 			<tr>
 				<td><form:form method="post" onsubmit="return validateForm1()"
 						action="${pageContext.request.contextPath}/employee/transactionlookup/authorize">
 						<input type="hidden" id="1_" name="Tid_"
 							value="${transaction.getTid()}">
-						<input type="submit" id="btnAuthorize" value="Authorize"> &nbsp;</form:form></td>
+						<input type="submit" class="btn btn-lg btn-primary btn-block"
+							id="btnAuthorize" value="Authorize"> &nbsp;</form:form></td>
 				<td><form:form method="post" onsubmit="return validateForm1()"
 						action="${pageContext.request.contextPath}/employee/transactionlookup/cancel">
 						<input type="hidden" id="2_" name="Tid_"
 							value="${transaction.getTid()}">
-						<input type="submit" id="btnCancel" value="Cancel"> &nbsp;</form:form></td>
+						<input type="submit" id="btnCancel"
+							class="btn btn-lg btn-primary btn-block" value="Cancel"> &nbsp;</form:form></td>
 				<td><form:form method="post" onsubmit="return validateForm1()"
 						action="${pageContext.request.contextPath}/employee/transactionlookup/modify">
 						<input type="hidden" id="3_" name="Tid_"
 							value="${transaction.getTid()}">
 						<input type="hidden" id="amt_" name="Amount_"
 							value="${transaction.getAmt()}" />
-						<input type="submit" id="btnModify" value="Modify">
+						<input type="submit" id="btnModify"
+							class="btn btn-lg btn-primary btn-block" value="Modify">
 					</form:form></td>
 			</tr>
 		</table>
@@ -112,20 +110,21 @@ table.inner {
 				return false;
 			}
 		}
-		
+
 		function validateForm1() {
-			       var x1= document.getElementById("1_").value;
-			       var x2= document.getElementById("2_").value;
-			       var x2= document.getElementById("3_").value;
-			       
-			       if( (x1 == "" || x1 == null) && (x2 == "" || x2 == null) && (x3 == null || x3 == ""))
-			    	   return false;
-			       
-			       document.getElementById("amt_").value = document.getElementById("amt").value; 
-				   
-				   return true;
+			var x1 = document.getElementById("1_").value;
+			var x2 = document.getElementById("2_").value;
+			var x2 = document.getElementById("3_").value;
+
+			if ((x1 == "" || x1 == null) && (x2 == "" || x2 == null)
+					&& (x3 == null || x3 == ""))
+				return false;
+
+			document.getElementById("amt_").value = document
+					.getElementById("amt").value;
+
+			return true;
 		}
-		
 	</script>
 
 </body>

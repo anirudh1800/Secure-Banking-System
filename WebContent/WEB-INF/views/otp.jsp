@@ -30,12 +30,12 @@
 	</h2>
 	<c:if test="${pageContext.request.userPrincipal.name != null}">
 		<h3 align = "center">
-			Welcome  ${pageContext.request.userPrincipal.name} ! &nbsp; &nbsp;<a
+			Welcome  ${pageContext.request.userPrincipal.name}! &nbsp; &nbsp;<a
 				href="javascript:formSubmit()"> Logout</a>
 		</h3>
 	</c:if>
 	<br>
-	<h4 align="center">OTP has been sent to your Email Id</h4>
+	<h5 align="center">OTP has been sent to your Email Id</h5>
 	
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 

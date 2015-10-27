@@ -138,16 +138,19 @@ public class LoginController {
 			switch (users.getAuthority()) {
 			case "ROLE_INDIVIDUAL":
 			case "ROLE_MERCHANT":
-				ExternalUser extUser = externalUserDao.findUserByEmail(username);
-				List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(extUser.getUserid());
-
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("firstName", extUser.getFirstname());
-				map.put("lastName", extUser.getLastname());
-				map.put("bankAccounts", bankAccounts);
-				map.put("message", message);
-
-				modelView = new ModelAndView("customer", map);
+				/*
+				 * ExternalUser extUser =
+				 * externalUserDao.findUserByEmail(username); List<BankAccount>
+				 * bankAccounts =
+				 * bankAccountDao.findAccountsOfUser(extUser.getUserid());
+				 * 
+				 * Map<String, Object> map = new HashMap<String, Object>();
+				 * map.put("firstName", extUser.getFirstname());
+				 * map.put("lastName", extUser.getLastname());
+				 * map.put("bankAccounts", bankAccounts); map.put("message",
+				 * message);
+				 */
+				modelView = new ModelAndView("loginSuccessful");
 				break;
 
 			case "ROLE_EMPLOYEE":
@@ -164,6 +167,7 @@ public class LoginController {
 			message = "Invalid OTP!";
 			try {
 				request.logout();
+				session.invalidate();
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}

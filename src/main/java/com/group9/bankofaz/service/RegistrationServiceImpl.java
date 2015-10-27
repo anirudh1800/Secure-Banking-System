@@ -3,11 +3,20 @@
  */
 package com.group9.bankofaz.service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.util.Random;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.sql.rowset.serial.SerialBlob;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +28,9 @@ import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.Users;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder;
 
 /**
  * @author Anirudh Ruia Gali
@@ -36,6 +48,10 @@ public class RegistrationServiceImpl implements RegistrationService {
 	@Autowired
 	private BankAccountDAO bankAccountDao;
 
+	GoogleAuthenticatorConfigBuilder configBuilder;
+	GoogleAuthenticatorConfig config;
+	GoogleAuthenticator gAuth;	
+	
 	@Override
 	public void addLoginInfo(Users users) {
 		usersDao.add(users);
@@ -66,6 +82,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 	public ExternalUser userIfExists(String email) {
 		return externalUserDao.findUserByEmail(email);
 	}
+	
+	// Added by Chandrani Mukherjee, all users emails should be checked
+	// not only from the external user table
+	@Override
+	@Transactional(readOnly = true)
+	public Users userIfExistsFromAllUsers(String email) {
+		return usersDao.findUsersByEmail(email);
+	}
 
 	public KeyPair generateKeyPair() {
 		KeyPair keyPair = null;
@@ -79,4 +103,28 @@ public class RegistrationServiceImpl implements RegistrationService {
 		return keyPair;
 	}
 
+	@Override
+	public String generateTemporaryKeyFile(PrivateKey key) {
+		try {
+			Random randomGenerator = new Random();
+			int rand = randomGenerator.nextInt();			
+			if (rand<0)
+				rand *= -1;
+			
+			File temp = File.createTempFile(rand + "", ".tmp");
+			byte[] encoded = key.getEncoded();
+			Files.write(Paths.get(temp.getAbsolutePath()), encoded);
+			return temp.getName();
+		} catch(IOException e){    		
+    	    e.printStackTrace();
+    	}
+		return "";
+	}
+	
+	@Override
+	public String getPrivateKeyLocation(String randFile) {
+		String tempDir = System.getProperty("java.io.tmpdir");
+		return tempDir + "/" + randFile;			
+	}	
+	
 }

@@ -8,8 +8,14 @@
  http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
 	<http pattern="/" security="none" />
-	<http pattern="/registration" security="none" />
-	<http pattern="/registration/reg_validate" security="none" />
+	<http pattern="/reg_validate" security="none" />
+	<http pattern="/registrationSuccessful" security="none" />
+	<http pattern="/resetpwd" security="none" />
+	<http pattern="/otpverification" security="none" />
+	<http pattern="/pay" security="none" />
+	<http pattern="/loginSucessful" security="none" />
+	<http pattern="/boaprivatekey.key" security="none" />
+	<http pattern="/edit" security="none" />
 
 	<http auto-config="true" use-expressions="true">
 		<session-management>
@@ -21,37 +27,64 @@
 
 		<intercept-url pattern="/otp"
 			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
-		
+
 		<intercept-url pattern="/otpverification"
 			access="hasAnyRole('ROLE_INDIVIDUAL', 'ROLE_MERCHANT', 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
-		
+
 		<intercept-url pattern="/customer**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+
 		<intercept-url pattern="/account**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+
 		<intercept-url pattern="/debit**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+
 		<intercept-url pattern="/credit**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+
 		<intercept-url pattern="/dotransfer**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
 
-
 		<intercept-url pattern="/employee"
-			access="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN')" />
+			access="hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN') and isFullyAuthenticated()" />
 
 		<intercept-url pattern="/employee/transactionlookup**"
-			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
 
-		<intercept-url pattern="/employee/transactionlookup/**"
-			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER')" />
+		<intercept-url pattern="/employee/transactionlookup/authorize"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/transactionlookup/cancel"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/transactionlookup/modify"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/internaluserlookup**"
+			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/internaluserlookup/save"
+			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/editinfo/"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/editinfo/save"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER', 'ROLE_ADMIN') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/transactioninquiry**"
+			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+
+		<intercept-url pattern="/employee/logs"
+			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />
 
 		<form-login login-page='/login' username-parameter="email"
 			password-parameter="passwd" login-processing-url="/j_spring_security_check"
 			default-target-url="/otp" authentication-failure-url="/login?authfailed" />
 		<csrf />
 		<logout logout-url="/j_spring_security_logout"
-			logout-success-url="/login" invalidate-session="true" />
+			logout-success-url="/login?logout" invalidate-session="true" />
 	</http>
 
 	<authentication-manager>

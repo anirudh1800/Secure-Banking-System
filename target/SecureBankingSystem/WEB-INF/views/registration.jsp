@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@page session="false"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -39,8 +40,8 @@ table.inner {
 <body>
 	<h3 align="center">SIGN UP</h3>
 	<form:form class="form-signin"
-		action="${pageContext.request.contextPath}/registration/reg_validate"
-		name="RForm" method="post" onsubmit="return validateForm()">
+		action="${pageContext.request.contextPath}/reg_validate" name="RForm"
+		method="post" onsubmit="return validateForm()">
 		<table align="center" class="table table-nonfluid" cellpadding="10"
 			width="80%">
 			<tr>
@@ -81,6 +82,26 @@ table.inner {
 			</tr>
 
 			<tr>
+				<td>Account Type *</td>
+				<td><input type="radio" name="AccountType" value="individual"
+					<c:if test="${accountType=='individual' || accountType==null}">
+							checked="checked"
+					</c:if>>Individual
+					&nbsp;&nbsp;&nbsp; <input type="radio" name="AccountType"
+					value="merchant"
+					<c:if test="${accountType=='merchant'}">
+							checked="checked"
+					</c:if>>Merchant
+			</tr>
+
+			<tr>
+				<td>Organization Name</td>
+				<td><input type="text" name="BusinessName" class="form-control"
+					maxlength="30" value="${bName}" /> (Required if Account Type is
+					'Merchant')</td>
+			</tr>
+
+			<tr>
 				<td>ADDRESS line 1 *<br /> <br /> <br /></td>
 				<td><textarea name="Address1" class="form-control" rows="4"
 						cols="15">${addressLine1}</textarea></td>
@@ -103,7 +124,6 @@ table.inner {
 				<td><input type="text" class="form-control" name="Pin_Code"
 					maxlength="6" value="${zipcode}" /> (6 digit number)</td>
 			</tr>
-
 
 			<tr>
 				<td>STATE *</td>

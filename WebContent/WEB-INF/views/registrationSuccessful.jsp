@@ -43,7 +43,7 @@
 	<form action="boaprivatekey.key" class="form-signin" method="POST">
 		<input type="hidden" name="PrivateKey" value="${privateKey}" />
 		<p align="center">
-			<input type="submit" class="form-control" value="Get Private Key" />
+			<input type="submit" class="btn btn-primary" value="Get Private Key" />
 		</p>
 	</form>
 	<br />

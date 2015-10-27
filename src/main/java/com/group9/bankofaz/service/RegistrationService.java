@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package com.group9.bankofaz.service;
 
 import java.security.KeyPair;
@@ -23,7 +21,12 @@ public interface RegistrationService {
 
 	public ExternalUser userIfExists(String email);
 
-	public KeyPair generateKeyPair();
+	public Users userIfExistsFromAllUsers(String email);
 
+	public String generateTemporaryKeyFile(PrivateKey key);
+
+	public String getPrivateKeyLocation(String randFile);
+
+	public KeyPair generateKeyPair();
 
 }
