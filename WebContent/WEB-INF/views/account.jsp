@@ -72,8 +72,8 @@
 			<div class="col-sm-8">
 				<table>
 					<tr>
-						<td valign="top">Account Number: ${accno}<br /> Account
-							Type: ${accountType}<br /> Your Account Balance: ${balance}<br />
+						<td valign="top">Account Number: <c:out value="${accno}"/><br /> Account
+							Type: <c:out value="${accountType}"/><br /> Your Account Balance: <c:out value="${balance}"/><br />
 							<br />
 					</tr>
 					<tr>

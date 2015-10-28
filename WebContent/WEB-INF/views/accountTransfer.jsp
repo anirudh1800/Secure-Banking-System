@@ -39,7 +39,7 @@
 		<table class="table table-nonfluid">
 			<tr>
 				<td>From Account:</td>
-				<td>${accountNo}
+				<td><c:out value="${accountNo}"/>
 				<input type="hidden" name="FromAccount"
 					value="${accountNo}" />
 				</td>
