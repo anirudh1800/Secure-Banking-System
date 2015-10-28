@@ -4,9 +4,6 @@
 package com.group9.bankofaz.controller;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,11 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.group9.bankofaz.component.SessionDetails;
 import com.group9.bankofaz.component.VerifyRecaptcha;
-import com.group9.bankofaz.dao.BankAccountDAO;
-import com.group9.bankofaz.dao.ExternalUserDAO;
 import com.group9.bankofaz.dao.UsersDAO;
-import com.group9.bankofaz.model.BankAccount;
-import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.LoginService;
 
@@ -51,12 +44,6 @@ public class LoginController {
 
 	@Autowired
 	private UsersDAO usersDao;
-
-	@Autowired
-	private BankAccountDAO bankAccountDao;
-
-	@Autowired
-	private ExternalUserDAO externalUserDao;
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -97,6 +84,7 @@ public class LoginController {
 		} else if (logout != null) {
 			System.out.println("Logged successfully");
 			message = "Logged out successfully, login again to continue !";
+			session.invalidate();
 		}
 		return new ModelAndView("login", "message", message);
 

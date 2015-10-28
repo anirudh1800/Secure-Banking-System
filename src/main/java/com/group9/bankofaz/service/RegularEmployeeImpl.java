@@ -27,7 +27,7 @@ import com.group9.bankofaz.model.Users;
  */
 
 @Service
-@Scope("prototype")
+@Scope("session")
 public class RegularEmployeeImpl implements RegularEmployeeService {
 
 	@Autowired

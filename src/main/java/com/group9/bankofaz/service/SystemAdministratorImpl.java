@@ -1,7 +1,6 @@
 
 package com.group9.bankofaz.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import com.group9.bankofaz.model.Users;
  *
  */
 @Service
-@Scope("prototype")
+@Scope("session")
 public class SystemAdministratorImpl implements SystemAdministratorService {
 
 	@Autowired

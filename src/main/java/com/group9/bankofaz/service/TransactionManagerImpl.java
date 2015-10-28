@@ -27,7 +27,6 @@ import com.group9.bankofaz.dao.TransactionDAO;
 import com.group9.bankofaz.exception.EmployeeListException;
 import com.group9.bankofaz.exception.IllegalTransactionException;
 import com.group9.bankofaz.model.BankAccount;
-import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Task;
 import com.group9.bankofaz.model.Transaction;
@@ -81,18 +80,18 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 		Task task = processingTaskQueue.pollFirst();
 		Transaction transaction = task.getTid();
 		InternalUser internalUser = null;
-		ExternalUser externalUser;
+		//ExternalUser externalUser;
 		
 		String type = transaction.getTransType();
 		switch (type) {
 
 		case "transfer":
-			if (transaction.getAmt() > criticalAmt) {
+		//	if (transaction.getAmt() > criticalAmt) {
 		//	All request go to regular employees
 		//		internalUser = internalUserDao.findUserById(systemManagerList.get(rand.nextInt(systemManagerList.size())));
 		//	} else {
 				internalUser = internalUserDao.findUserById(regularEmployeeList.get( rand.nextInt(regularEmployeeList.size())));
-			}
+		//	}
 
 			task.setAssigneeid(internalUser.getUserid());
 			transaction.setTransStatus("pending");
@@ -103,18 +102,20 @@ public class TransactionManagerImpl implements Runnable, TransactionManagerServi
 			break;
 
 		case "payment":
-			if(task.getAssigneeid() == 0){
+			// Payment transferred directly to internal employee
+			/*if(task.getAssigneeid() == 0){
 				externalUser = transaction.getToacc().getUserid();
 				
 				task.setAssigneeid(externalUser.getUserid());
 				transaction.setTransStatus("processing");
 	
 			}else{
+			*/
 				internalUser = internalUserDao.findUserById(regularEmployeeList.get(rand.nextInt(regularEmployeeList.size())));
 				
 				task.setAssigneeid(internalUser.getUserid());
 				transaction.setTransStatus("pending");				
-			}
+		//	}
 			
 			taskDao.update(task);
 			transactionDao.update(transaction);

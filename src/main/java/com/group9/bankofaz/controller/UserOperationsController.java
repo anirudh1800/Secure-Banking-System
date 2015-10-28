@@ -286,7 +286,7 @@ public class UserOperationsController {
 		debitTransaction.setTransDesc(desc_param);
 		debitTransaction.setFromacc(bankAccount);
 		debitTransaction.setTransStatus("cleared");
-		//debitTransaction.setToacc(bankAccount);
+		debitTransaction.setToacc(bankAccount);
 		debitTransaction.setTransType("debit");
 		transactionDao.update(debitTransaction);
 		bankAccount.setBalance(bankAccount.getBalance() - Float.parseFloat(amt_param));
@@ -594,7 +594,7 @@ public class UserOperationsController {
 		transferTransaction.setTransType("transfer");
 		
 		// Added by Anirudh Ruia Gali
-		if(fromBankAccount.getUserid() != toBankAccount.getUserid())
+		if(fromBankAccount.getUserid().getUserid() != toBankAccount.getUserid().getUserid())
 			transferTransaction.setTransDesc("external");
 		else
 			transferTransaction.setTransDesc("internal");
@@ -628,8 +628,6 @@ public class UserOperationsController {
 				
 		return new ModelAndView("account", map);
 	}
-	
-	
 	
 	// HELPER METHODS
 	
@@ -779,8 +777,8 @@ public class UserOperationsController {
 			}
 		}
 		payment.setTransDate(new Date());
-		payment.setTransDesc(description);
 		payment.setTransType("payment");
+		
 		if(Float.parseFloat(amount)> payer.getBalance()){
 			paymentMap.put("message", "Amount exceeds your balance.");
 			return new ModelAndView("payment", paymentMap);
@@ -789,6 +787,7 @@ public class UserOperationsController {
 		payment.setAmt(Float.parseFloat(amount));
 		payment.setFromacc(payer);
 		payment.setToacc(payee);
+		payment.setTransDesc(payee.getUserid().getBName());
 		
 		if (Float.parseFloat(amount) > 500) {
 			payment.setTransStatus("processing");			

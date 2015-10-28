@@ -41,7 +41,7 @@ import com.group9.bankofaz.service.SystemManagerService;
  */
 
 @Controller
-@Scope("request")
+@Scope("session")
 public class EmployeeController {
 	@Autowired
 	InternalUserDAO internalUserDao;
@@ -921,7 +921,6 @@ public class EmployeeController {
 			try {
 				systemAdministratorService.modifyInternalUserAccount(user1);
 			} catch (AuthorizationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
