@@ -628,6 +628,7 @@ public class EmployeeController {
 
 		// passed validation, register user
 		InternalUser internal = new InternalUser();
+		internal.setUserid(user.getUserid());
 		internal.setFirstname(firstName);
 		if (middleName != null)
 			internal.setMiddlename(middleName);
@@ -657,12 +658,12 @@ public class EmployeeController {
 
 			regularEmployeeService.setUser(username);
 
-			regularEmployeeService.updateInfo(user);
+			regularEmployeeService.updateInfo(internal);
 
 			if (!request.getParameter("Pass").toString().equals(""))
 				regularEmployeeService.updatePasswd(users);
 
-			modelView.addObject("user", user);
+			modelView.addObject("user", internal);
 			break;
 
 		case "SM":
@@ -670,12 +671,12 @@ public class EmployeeController {
 
 			systemManagerService.setUser(username);
 
-			systemManagerService.updateInfo(user);
+			systemManagerService.updateInfo(internal);
 
 			if (!request.getParameter("Pass").toString().equals(""))
 				systemManagerService.updatePasswd(users);
 
-			modelView.addObject("user", user);
+			modelView.addObject("user", internal);
 			break;
 
 		case "SA":
@@ -683,12 +684,12 @@ public class EmployeeController {
 
 			systemAdministratorService.setUser(username);
 
+			systemAdministratorService.updateInfo(internal);
+			
 			if (!request.getParameter("Pass").toString().equals(""))
-				systemAdministratorService.updateInfo(user);
-
-			systemAdministratorService.updatePasswd(users);
-
-			modelView.addObject("user", user);
+				systemAdministratorService.updatePasswd(users);
+			
+			modelView.addObject("user", internal);
 			break;
 
 		default:

@@ -33,21 +33,32 @@ table.inner {
 </style>
 </head>
 <body>
+<h2>Welcome ${firstName} ${lastName}</h2>
 	<h3>
 		<a href="account">Back</a>
 	</h3>
 	<h2 align="center">Payment</h2>
 
-	<div id="errors" style="color: #ff0000">${message}</div>
+	<div id="errors" style="color: #ff0000">${errors}</div>
 	<form method="post" action="pay" class="form-signin"
 		enctype="multipart/form-data">
 		<table align="center" class="table table-nonfluid">
+			<tr>
+				<td>From Account:</td>
+				<td><c:out value="${accountNo}" /> <input type="hidden"
+					name="accno" value="${accountNo}" /></td>
+			</tr>
 
 			<tr>
 				<td align="left">Pay to</td>
 				<td align="left"><select name="organization"><c:forEach
-							items="${user}" var="externaluser">
-							<option value="${externaluser.bname}">${externaluser.bname}</option>
+							items="${merchants}" var="externaluser" varStatus="loop">
+							 <option value="${externaluser.bname}"
+							 	<c:if test="${loop.index==0}">
+							 		selected
+							 	</c:if>
+							 >${externaluser.bname}
+							</option>
 						</c:forEach>
 				</select></td>
 			</tr>
@@ -59,7 +70,7 @@ table.inner {
 			<tr>
 				<td align="left">Description</td>
 				<td align="left"><input type="text" class="form-control"
-					size="20" name="description" /></td>
+					maxlength="45" value="${description}" name="description" /></td>
 			</tr>
 			<tr>
 				<td colspan="2"><br /> If transfer amount is more than $500,
@@ -74,8 +85,7 @@ table.inner {
 				<td><a href="account" class="btn" role="button">Cancel</a></td>
 			</tr>
 		</table>
+		<input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
 	</form>
-
-
 </body>
 </html>

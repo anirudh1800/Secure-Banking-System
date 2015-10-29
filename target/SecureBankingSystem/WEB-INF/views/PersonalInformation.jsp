@@ -34,20 +34,21 @@ table.inner {
 	</h3>
 	<h2 align="center">Personal Information</h2>
 	<div id="errors" style="color: #ff0000">${errors}</div>
-	
+
 	<form class="form-signin" action="edit" method="post">
 		<table class="table table-nonfluid" align="center" cellpadding="10">
 			<tr>
 				<td><b>FIRST NAME</b></td>
-				<td><input type="hidden" name="firstname">${firstname}</td>
+				<td><input type="hidden" name="firstname" value="${firstname}">${firstname}</td>
 			</tr>
 			<tr>
 				<td><b>MIDDLE NAME</b></td>
-				<td><input type="hidden" name="middlename">${middlename}</td>
+				<td><input type="hidden" name="middlename"
+					value="${middlename}">${middlename}</td>
 			</tr>
 			<tr>
 				<td><b>LAST NAME</b></td>
-				<td><input type="hidden" name="lastname">${lastname}</td>
+				<td><input type="hidden" name="lastname" value="${lastname}">${lastname}</td>
 			</tr>
 
 			<tr>
@@ -96,6 +97,8 @@ table.inner {
 					type="submit" class="btn btn-primary" value="Save" /></td>
 			</tr>
 		</table>
+		<input type="hidden" name="<c:out value="${_csrf.parameterName}"/>"
+			value="<c:out value="${_csrf.token}"/>" />
 	</form>
 </body>
 </html>

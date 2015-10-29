@@ -299,7 +299,8 @@ public class UserOperationsController {
 		map.put("transactions", transactionDao.findTransactionsOfAccount(bankAccount));
 		map.put("message", "Debit of $" + amt_param + " successful from account " + bankAccount.getAccno());
 		
-		return new ModelAndView("account", map);
+		//return new ModelAndView("account", map);
+		return new ModelAndView("redirect:/account");
 	}
 	
 	// Credit Renderer
@@ -431,7 +432,8 @@ public class UserOperationsController {
 		map.put("transactions", transactionDao.findTransactionsOfAccount(bankAccount));
 		map.put("message", "Credit of $" + amt_param + " successful to account " + bankAccount.getAccno());
 		
-		return new ModelAndView("account", map);
+		//return new ModelAndView("account", map);
+		return new ModelAndView("redirect:/account");
 	}
 	
 	// Account Transfer Renderer
@@ -626,7 +628,9 @@ public class UserOperationsController {
 		map.put("balance", fromBankAccount.getBalance());
 		map.put("transactions", transactionDao.findTransactionsOfAccount(fromBankAccount));
 				
-		return new ModelAndView("account", map);
+		//return new ModelAndView("account", map);
+		
+		return new ModelAndView("redirect:/account");
 	}
 	
 	// HELPER METHODS
@@ -669,11 +673,34 @@ public class UserOperationsController {
 
 	@RequestMapping("/downloadpage")
 	public ModelAndView downloadPage(){
-		BankAccount account=bankAccountDao.getBankAccountWithAccno(userSession.getAccountSelected());
+		if (!userLoggedIn()) {
+			return new ModelAndView("redirect:/login");
+		}
+		
 		ExternalUser user = externalUserDao.findUserByEmail(userSession.getUsername());
+		List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(user.getUserid());
+		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("firstName",user.getFirstname());
-		map.put("lastName",user.getLastname());
+		map.put("firstName", user.getFirstname());
+		map.put("lastName", user.getLastname());
+		map.put("bankAccounts", bankAccounts);
+		
+		// no account selected
+		if (userSession.getAccountSelected() == null || userSession.getAccountSelected().isEmpty()) {
+			map.put("message", "Please Select an account!");
+			return new ModelAndView("customer", map);
+		}
+		
+		BankAccount account=bankAccountDao.getBankAccountWithAccno(userSession.getAccountSelected());
+		
+		if (account == null || account.getUserid().getUserid() != user.getUserid()) {
+			map.put("message", "No record of account with account number " + userSession.getAccountSelected() + " exists!");
+			return new ModelAndView("customer", map);	
+		}
+		
+		//ExternalUser user = externalUserDao.findUserByEmail(userSession.getUsername());
+		//map.put("firstName",user.getFirstname());
+		//map.put("lastName",user.getLastname());
 		map.put("accno",account.getAccno());
 		map.put("accountType", account.getAcctype());
 		map.put("balance",account.getBalance());
@@ -686,12 +713,38 @@ public class UserOperationsController {
 	
 	@RequestMapping("/download")
 	public ModelAndView downloadStatement(HttpServletResponse response) throws IOException{
+		if (!userLoggedIn()) {
+			return new ModelAndView("redirect:/login");
+		}
+		
+		ExternalUser user = externalUserDao.findUserByEmail(userSession.getUsername());
+		List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(user.getUserid());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("firstName", user.getFirstname());
+		map.put("lastName", user.getLastname());
+		map.put("bankAccounts", bankAccounts);
+		
+		// no account selected
+		if (userSession.getAccountSelected() == null || userSession.getAccountSelected().isEmpty()) {
+			map.put("message", "Please Select an account!");
+			return new ModelAndView("customer", map);
+		}
+		
+		BankAccount account=bankAccountDao.getBankAccountWithAccno(userSession.getAccountSelected());
+		
+		if (account == null || account.getUserid().getUserid() != user.getUserid()) {
+			map.put("message", "No record of account with account number " + userSession.getAccountSelected() + " exists!");
+			return new ModelAndView("customer", map);	
+		}
+		
+		
 	   	String filename="Statement.csv";
 	   	String headerKey = "Content-Disposition";
         String headerValue = String.format("attachment; filename=\"%s\"",
                 filename);
         response.setHeader(headerKey, headerValue);
-	   	List<Transaction> trans=transactionDao.findTransactionsOfAccount(userSession.getAccountSelected());
+	   	List<Transaction> trans=transactionDao.findTransactionsOfAccount(account);
 	   	System.out.println("Size of trans : "+trans.size());
 	   	ICsvBeanWriter csvWriter= new CsvBeanWriter(response.getWriter(),CsvPreference.STANDARD_PREFERENCE);
 	   	String[] header ={"transdate","transdesc","transtype","amt"};	
@@ -700,23 +753,201 @@ public class UserOperationsController {
 			csvWriter.write(t, header);
 			System.out.println("size of record : "+t.getTid());
 		}
-			
-			
 		csvWriter.close();
 		return new ModelAndView("downloadpage");
 	}
 	
+	// Make Payment Renderer
 	@RequestMapping(value="/payment",method=RequestMethod.GET)
-	public String makePayment(Model model){
-		ExternalUser externaluser = new ExternalUser();
-		model.addAttribute("externaluser", externaluser);
-		List<ExternalUser> user =externalUserDao.findUserByUserType("merchant");
-		model.addAttribute("user", user);
+	public ModelAndView makePayment(HttpServletRequest request){
+		if (!userLoggedIn()) {
+			return new ModelAndView("redirect:/login");
+		}
 		
-		return "payment";
+		ExternalUser extUser = externalUserDao.findUserByEmail(userSession.getUsername());
+		List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(extUser.getUserid());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("firstName", extUser.getFirstname());
+		map.put("lastName", extUser.getLastname());
+		map.put("bankAccounts", bankAccounts);
+		
+		// no account selected
+		if (userSession.getAccountSelected() == null || userSession.getAccountSelected().isEmpty()) {
+			map.put("message", "Please Select an account!");
+			return new ModelAndView("customer", map);
+		}
+		
+		String accno = userSession.getAccountSelected();
+		BankAccount bankAccount = bankAccountDao.getBankAccountWithAccno(accno);
+		
+		// account info does not exist, or does not belong to the user
+		if (bankAccount == null || bankAccount.getUserid().getUserid() != extUser.getUserid()) {
+			map.put("message", "No record of account with account number " + accno + " exists!");
+			return new ModelAndView("customer", map);	
+		}
+		
+		Map<String, Object> paymentMap = new HashMap<String, Object>();
+		paymentMap.put("firstName", extUser.getFirstname());
+		paymentMap.put("lastName", extUser.getLastname());
+		paymentMap.put("accountNo", accno);		
+		//ExternalUser externaluser = new ExternalUser();		
+		List<ExternalUser> merchants = externalUserDao.findUserByUserType("merchant");
+		paymentMap.put("merchants", merchants);
+				
+		return new ModelAndView("payment", paymentMap);
 	}
-	@RequestMapping(value="/pay",method=RequestMethod.POST)
+	
+	// Make Payment Actuator 
+	@RequestMapping(value="dopayment",method=RequestMethod.POST)
 	public ModelAndView payToOrganization(@RequestParam("PrivateKeyFileLoc") MultipartFile privateKeyFile,HttpServletRequest request){
+		/*if (!userLoggedIn()) {
+			return new ModelAndView("redirect:/login");
+		}*/
+		
+		ExternalUser extUser = externalUserDao.findUserByEmail(userSession.getUsername());
+		List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(extUser.getUserid());
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("firstName", extUser.getFirstname());
+		map.put("lastName", extUser.getLastname());
+		map.put("bankAccounts", bankAccounts);
+		
+		// no account selected
+		if (userSession.getAccountSelected() == null || userSession.getAccountSelected().isEmpty()) {
+			map.put("message", "Please Select an account!");
+			return new ModelAndView("customer", map);
+		}
+		
+		String accno = userSession.getAccountSelected();
+		BankAccount bankAccount = bankAccountDao.getBankAccountWithAccno(accno);
+		
+		// account info does not exist, or does not belong to the user
+		if (bankAccount == null || bankAccount.getUserid().getUserid() != extUser.getUserid()) {
+			map.put("message", "No record of account with account number " + accno + " exists!");
+			return new ModelAndView("customer", map);	
+		}
+		
+		Map<String, Object> paymentMap = new HashMap<String, Object>();
+		paymentMap.put("firstName", extUser.getFirstname());
+		paymentMap.put("lastName", extUser.getLastname());
+		paymentMap.put("accountNo", accno);		
+		//ExternalUser externaluser = new ExternalUser();		
+		List<ExternalUser> merchants = externalUserDao.findUserByUserType("merchant");
+		paymentMap.put("merchants", merchants);
+		
+		
+		// check if required form parameter values are present, and are valid
+		if (request == null) {
+			return new ModelAndView("payment", paymentMap);
+		} 
+		String amount=request.getParameter("amount").toString();
+		String accno_param = request.getParameter("accno").toString();		
+		String description=request.getParameter("description").toString();
+		String payto= request.getParameter("organization").toString();
+		
+		if (!accno_param.equals(accno)) {
+			paymentMap.put("errors", "Account to Make Payment from is not valid");
+			return new ModelAndView("payment", paymentMap);
+		}
+		
+		if (!isNumeric(amount) || !(Float.parseFloat(amount) > 0)) {
+			paymentMap.put("errors", "Amount is not valid. Amount should be a valid number greater than 0.");
+			return new ModelAndView("payment", paymentMap);
+		}
+		
+		if (bankAccount.getBalance() < Float.parseFloat(amount)) {
+			paymentMap.put("errors", "Not sufficient funds to make payment of $" + Float.parseFloat(amount));
+			return new ModelAndView("payment", paymentMap);
+		}
+		
+		if (description.length() > 45) {
+			paymentMap.put("errors", "Description of Transaction cannot be more than 45 characters.");
+			return new ModelAndView("payment", paymentMap);
+		}
+		
+		ExternalUser business=externalUserDao.findUserByBname(payto);
+		if (business==null || !business.getUsertype().equals("merchant")) {
+			paymentMap.put("errors", "Valid Pay To organization not selected.");
+			return new ModelAndView("payment", paymentMap);
+		}
+		BankAccount payee=bankAccountDao.getBankAccountWithAccno(business.getUserid(),"checking");
+		if( payee == null )
+			payee=bankAccountDao.getBankAccountWithAccno(business.getUserid(),"savings");
+		if (payee == null) {
+			paymentMap.put("errors", "Organization selected does not have a valid checing or savings account");
+			return new ModelAndView("payment", paymentMap);
+		}
+		
+		// PKI check		
+		if (Float.parseFloat(amount) > 500) {
+			if (privateKeyFile.isEmpty()) {
+				paymentMap.put("errors", "Private Key must be provided for transactions more than $500");
+				return new ModelAndView("payment", paymentMap);
+			}			
+			else {
+				String privateKeyFileLocation = userOperationsService.getUploadFileLocation();
+				
+				// check if file can be uploaded, if yes upload, if no return
+				if (!userOperationsService.uploadFile(privateKeyFileLocation, privateKeyFile)) {
+					paymentMap.put("errors", "Private Key could not be uploaded. Private Key file must be readable at the given location and be not more than 50 KB");
+					return new ModelAndView("payment", paymentMap);
+				}
+				
+				// check if private key is valid 
+				if (!userOperationsService.compareKeys(extUser, privateKeyFileLocation)) {		
+					// not valid
+					map.put("accno", bankAccount.getAccno());
+					map.put("accountType", bankAccount.getAcctype());
+					map.put("balance", bankAccount.getBalance());
+					map.put("transactions", transactionDao.findTransactionsOfAccount(bankAccount));
+					map.put("message", "<font color=\"red\">Private key authentication failed!</font>. Your payment request cannot be processed.");
+					return new ModelAndView("account", map);
+				}
+			}
+		}
+		// passed validations, initiate Make Payment
+		Transaction payment = new Transaction();
+		payment.setTransDate(new Date());
+		payment.setTransType("payment");
+		payment.setAmt(Float.parseFloat(amount));
+		payment.setFromacc(bankAccount);
+		payment.setToacc(payee);
+		payment.setTransDesc(payee.getUserid().getBName());
+		
+		if (Float.parseFloat(amount) > 500) {
+			payment.setTransStatus("processing");			
+			try {
+				transactionManagerService.submitTransaction(payment);
+				map.put("message", "Private Key authentication is sucssessful. Payment of $" + amount + " scheduled from account " + bankAccount.getAccno() + " to merchant " + payee.getUserid().getBname());
+			} catch (IllegalTransactionException e) {				
+				map.put("message", "Private Key authentication is sucssessful but the payment request could not be processed.");
+			}
+		} 
+		else {
+			// amount less than $500
+			payment.setTransStatus("cleared");
+			transactionDao.update(payment);
+			
+			
+			payee.setBalance(payee.getBalance()+Float.parseFloat(amount));			
+			bankAccount.setBalance(bankAccount.getBalance() - Float.parseFloat(amount));
+			payee.setBalance(payee.getBalance() + Float.parseFloat(amount));
+			bankAccountDao.update(bankAccount);
+			bankAccountDao.update(payee);
+			map.put("message", "Payment of $" + amount + " successful from account " + bankAccount.getAccno() + " to merchant " + payee.getUserid().getBname());
+		}
+				
+				
+		// render message and go to accounts page
+		map.put("accno", bankAccount.getAccno());
+		map.put("accountType", bankAccount.getAcctype());
+		map.put("balance", bankAccount.getBalance());
+		map.put("transactions", transactionDao.findTransactionsOfAccount(bankAccount));
+				
+		return new ModelAndView("account", map);
+		
+		/*
 		if (!userLoggedIn()) {
 			return new ModelAndView("redirect:/login");
 		}
@@ -731,6 +962,9 @@ public class UserOperationsController {
 		ExternalUser customer=externalUserDao.findUserByEmail(userSession.getUsername());
 		BankAccount payer=bankAccountDao.getBankAccountWithAccno(account_no); 
 		BankAccount payee=bankAccountDao.getBankAccountWithAccno(business.getUserid(),"checking");
+		List<ExternalUser> merchants =externalUserDao.findUserByUserType("merchant");
+		paymentMap.put("user", merchants);
+		
 		if( payee == null )
 			payee=bankAccountDao.getBankAccountWithAccno(business.getUserid(),"savings");
 		Transaction payment = new Transaction();
@@ -810,7 +1044,7 @@ public class UserOperationsController {
 		bankAccountDao.update(payee);
 		bankAccountDao.update(payer);
 		return new ModelAndView("payment","message","Paid successfully");
-		}
+		}*/
 		
 	}
 	@RequestMapping("/customerPersonalInfo")
@@ -843,7 +1077,7 @@ public class UserOperationsController {
 		String state=request.getParameter("state");
 		String zipcode=request.getParameter("zip");
 		String ssn=request.getParameter("ssn");
-
+		Map<String, Object> result = new HashMap<String, Object>();
 		StringBuilder errors = new StringBuilder();
 		if (!validateField(address1, 1, 30, true)) {
 
@@ -867,18 +1101,19 @@ public class UserOperationsController {
 			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces</li>");
 		}
 	
+		result.put("firstname", request.getParameter("firstname"));
+		result.put("lastname", request.getParameter("lastname"));
+		result.put("middlename",request.getParameter("middlename"));
+		result.put("email", email);
+		result.put("addressline1",address1);
+		result.put("addressline2",address2);
+		result.put("city", city);
+		result.put("state", state);
+		result.put("zipcode", zipcode);
+		result.put("ssn", ssn);
+		
 		if (errors.length() != 0) { 
-			Map<String, Object> result = new HashMap<String, Object>();
-			result.put("firstname", update.getFirstname());
-			result.put("lastname", update.getLastname());
-			result.put("middlename", update.getMiddlename());
-			result.put("email", email);
-			result.put("addressline1",update.getAddressline1());
-			result.put("addressline2",update.getAddressline2());
-			result.put("city", update.getCity());
-			result.put("state", update.getState());
-			result.put("zipcode", update.getZipcode());
-			result.put("ssn", update.getSsn());
+			
 			result.put("message", errors.toString());
 			return new ModelAndView("PersonalInformation", result);
 		}
@@ -889,8 +1124,10 @@ public class UserOperationsController {
 		update.setState(state);
 		update.setZipcode(zipcode);
 		update.setSsn(ssn);
+		
+		result.put("message","paid successfully");
 		externalUserDao.update(update);
-		return new ModelAndView("PersonalInformation","message","saved successfully");
+		return new ModelAndView("PersonalInformation",result);
 	}
 
 	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {

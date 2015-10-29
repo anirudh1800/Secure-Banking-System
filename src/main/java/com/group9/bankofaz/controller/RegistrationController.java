@@ -260,7 +260,7 @@ public class RegistrationController {
 			return false;
 		if (field.length() < minSize || field.length() > maxSize)
 			return false;
-		
+
 		return true;
 	}
 

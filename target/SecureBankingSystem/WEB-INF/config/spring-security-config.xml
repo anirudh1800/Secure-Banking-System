@@ -9,18 +9,17 @@
 
 	<http pattern="/" security="none" />
 	<http pattern="/reg_validate" security="none" />
+	<http pattern="/registration" security="none" />
 	<http pattern="/registrationSuccessful" security="none" />
 	<http pattern="/resetpwd" security="none" />
-	<http pattern="/pay" security="none" />
 	<http pattern="/loginSucessful" security="none" />
 	<http pattern="/boaprivatekey.key" security="none" />
-	<http pattern="/edit" security="none" />
 
 	<http auto-config="true" use-expressions="true">
-		<session-management>
+		<!-- <session-management>
 			<concurrency-control error-if-maximum-exceeded="true"
 				max-sessions="1" expired-url="/login?time=1" />
-		</session-management>
+		</session-management> -->
 
 		<access-denied-handler error-page="/403page" />
 

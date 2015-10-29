@@ -89,13 +89,13 @@ table.inner {
 			<tr>
 				<td>ADDRESS line 1 *<br /> <br /> <br /></td>
 				<td><textarea name="Address1" rows="4" cols="15"
-						class="form-control" value="${user.getAddressline1()}"></textarea></td>
+						class="form-control" >${user.getAddressline1()}</textarea></td>
 			</tr>
 
 			<tr>
 				<td>ADDRESS line 2 *<br /> <br /> <br /></td>
 				<td><textarea name="Address2" rows="4" cols="15"
-						class="form-control" value="${user.getAddressline2()}"></textarea></td>
+						class="form-control" >${user.getAddressline2()}</textarea></td>
 			</tr>
 
 			<tr>

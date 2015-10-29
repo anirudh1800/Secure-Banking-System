@@ -58,21 +58,18 @@ public class LoginController {
 			System.out.println(" Session : " + sessionDetails);
 			System.out.println(" Authfailed value :" + authfailed);
 			System.out.println(" Username : " + sessionDetails.getUsername());
-			if (sessionDetails.getAnothersession() == 0)
-				message = "Log out from other browser";
-			else if (sessionDetails.getUsername().equals("notfound"))
+			/*if (sessionDetails.getAnothersession() == 0)
+				message = "Close other browsers ";
+			else*/ 
+			if (sessionDetails.getUsername().equals("notfound"))
 				message = "Username does not exist";
 			else if (sessionDetails.getFailureAttempts() >= 3) {
 				System.out.println("Failure Attempts in controller : " + sessionDetails.getFailureAttempts());
 				if (sessionDetails.getFailureAttempts() == 3) {
-					Users updateuser = new Users();
+					Users updateuser = usersDao.findUsersByEmail(sessionDetails.getUsername());
 					String password = generatePassword();
 					StandardPasswordEncoder encryption = new StandardPasswordEncoder();
-					updateuser.setUsername(sessionDetails.getUsername());
 					updateuser.setPassword(encryption.encode(password));
-					updateuser.setAuthority("ROLE_INDIVIDUAL");
-					updateuser.setEnabled(1);
-					updateuser.setFailure(0);
 					usersDao.update(updateuser);
 					loginService.sendEmail(sessionDetails.getUsername(), password, "password");
 				}
@@ -83,7 +80,7 @@ public class LoginController {
 
 		} else if (logout != null) {
 			System.out.println("Logged successfully");
-			message = "Logged out successfully, login again to continue !";
+			message = "Logged out successfully, to login again please restart your browser!";
 			session.invalidate();
 		}
 		return new ModelAndView("login", "message", message);
@@ -108,8 +105,8 @@ public class LoginController {
 		String username = session.getAttribute("BOAUsername").toString();
 		String otp_pwd = request.getParameter("passwd").toString();
 		boolean isCodeValid = loginService.validateOtp(username, Integer.parseInt(otp_pwd));
-		System.out.println("Verify : " + isCodeValid);
-		System.out.println("#########################");
+		/*System.out.println("Verify : " + isCodeValid);
+		System.out.println("#########################");*/
 
 		ModelAndView modelView = null;
 
