@@ -13,6 +13,8 @@
 	http://www.springframework.org/schema/jee/spring-jee-4.0.xsd 
 	http://www.springframework.org/schema/tx 
 	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
 	http://www.springframework.org/schema/task 
 	http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
@@ -21,6 +23,14 @@
 		<property name="configLocation" value="/WEB-INF/config/hibernate.cfg.xml" />
 	</bean>
 
+	<!-- max file size in bytes (set to max 20 MB) -->
+	<bean
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		id="multipartResolver">
+		<property value="20971520" name="maxUploadSize" />
+	</bean>
+
+	<context:annotation-config />
 	<context:component-scan base-package="com.group9.bankofaz.component" />
 	<context:component-scan base-package="com.group9.bankofaz.controller" />
 	<context:component-scan base-package="com.group9.bankofaz.model" />
@@ -35,7 +45,7 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-	<context:annotation-config />
+	<mvc:annotation-driven />
 
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -55,10 +65,10 @@
 
 	<bean id="loginService" class="com.group9.bankofaz.service.LoginServiceImpl" />
 	<bean id="registerService" class="com.group9.bankofaz.service.RegistrationServiceImpl" />
-	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl" />
-	<bean id="regularEmployeeService" class="com.group9.bankofaz.service.RegularEmployeeImpl" />
-	<bean id="systemManagerService" class="com.group9.bankofaz.service.SystemManagerImpl" />
-	<bean id="systemAdministratorService" class="com.group9.bankofaz.service.SystemAdministratorImpl" />
+	<bean id="transactionManagerService" class="com.group9.bankofaz.service.TransactionManagerImpl" scope="singleton"/>
+	<bean id="regularEmployeeService" class="com.group9.bankofaz.service.RegularEmployeeImpl" scope="session"/>
+	<bean id="systemManagerService" class="com.group9.bankofaz.service.SystemManagerImpl" scope="session"/>
+	<bean id="systemAdministratorService" class="com.group9.bankofaz.service.SystemAdministratorImpl" scope="session"/>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
@@ -71,6 +81,8 @@
 				<prop key="mail.transport.protocol">smtp</prop>
 				<prop key="mail.smtp.auth">true</prop>
 				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
 				<prop key="mail.smtp.host">smtp.gmail.com</prop>
 				<prop key="mail.smtp.port">587</prop>
 				<prop key="mail.debug">true</prop>

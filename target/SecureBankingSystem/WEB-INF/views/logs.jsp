@@ -1,10 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@page session="true"%>
 <html>
 <head>
 <link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
 <!-- jQuery library -->
 <script
@@ -12,7 +13,7 @@
 
 <!-- Latest compiled JavaScript -->
 <script
-	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <title>System Logs</title>
 
@@ -37,5 +38,9 @@
 			</tr>
 		</c:forEach>
 	</table>
+	<form:form method="get" class="form-inline"
+		action="${pageContext.request.contextPath}/employee">
+		<input type="submit" class="form-control" value="Back">
+	</form:form>
 </body>
 </html>

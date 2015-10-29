@@ -3,7 +3,7 @@
 <html>
 <head>
 <link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
 <!-- jQuery library -->
 <script
@@ -11,7 +11,7 @@
 
 <!-- Latest compiled JavaScript -->
 <script
-	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>OTP verification Page</title>
 <style type="text/css">
@@ -30,12 +30,12 @@
 	</h2>
 	<c:if test="${pageContext.request.userPrincipal.name != null}">
 		<h3 align = "center">
-			Welcome  ${pageContext.request.userPrincipal.name} ! &nbsp; &nbsp;<a
+			Welcome  ${pageContext.request.userPrincipal.name}! &nbsp; &nbsp;<a
 				href="javascript:formSubmit()"> Logout</a>
 		</h3>
 	</c:if>
 	<br>
-	<h4 align="center">OTP has been sent to your Email Id</h4>
+	<h5 align="center">OTP has been sent to your Email Id</h5>
 	
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 

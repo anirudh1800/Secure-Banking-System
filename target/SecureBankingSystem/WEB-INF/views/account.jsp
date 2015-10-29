@@ -7,7 +7,7 @@
 <html>
 <head>
 <link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
 <!-- jQuery library -->
 <script
@@ -15,7 +15,7 @@
 
 <!-- Latest compiled JavaScript -->
 <script
-	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Bank of Arizona | Account Details Page</title>
@@ -72,8 +72,8 @@
 			<div class="col-sm-8">
 				<table>
 					<tr>
-						<td valign="top">Account Number: ${accno}<br /> Account
-							Type: ${accountType}<br /> Your Account Balance: ${balance}<br />
+						<td valign="top">Account Number: <c:out value="${accno}"/><br /> Account
+							Type: <c:out value="${accountType}"/><br /> Your Account Balance: <c:out value="${balance}"/><br />
 							<br />
 					</tr>
 					<tr>
