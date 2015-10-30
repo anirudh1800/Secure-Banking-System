@@ -801,9 +801,9 @@ public class UserOperationsController {
 	// Make Payment Actuator 
 	@RequestMapping(value="dopayment",method=RequestMethod.POST)
 	public ModelAndView payToOrganization(@RequestParam("PrivateKeyFileLoc") MultipartFile privateKeyFile,HttpServletRequest request){
-		/*if (!userLoggedIn()) {
+		if (!userLoggedIn()) {
 			return new ModelAndView("redirect:/login");
-		}*/
+		}
 		
 		ExternalUser extUser = externalUserDao.findUserByEmail(userSession.getUsername());
 		List<BankAccount> bankAccounts = bankAccountDao.findAccountsOfUser(extUser.getUserid());
@@ -945,8 +945,9 @@ public class UserOperationsController {
 		map.put("balance", bankAccount.getBalance());
 		map.put("transactions", transactionDao.findTransactionsOfAccount(bankAccount));
 				
-		return new ModelAndView("account", map);
+		//return new ModelAndView("account", map);
 		
+		return new ModelAndView("redirect:/account");
 		/*
 		if (!userLoggedIn()) {
 			return new ModelAndView("redirect:/login");

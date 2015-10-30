@@ -29,18 +29,17 @@ public class Pii implements Serializable, ILogs{
 	private static final long serialVersionUID = 310779046388655840L;
 
 	@Id
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ssn")
-	private ExternalUser ssn;
+    @Column(name = "ssn", nullable = false)
+	private String ssn;
 	
 	@Column(name = "visastatus", nullable = false)
 	private String visastatus;
 
-	public ExternalUser getSsn() {
+	public String getSsn() {
 		return ssn;
 	}
 
-	public void setSsn(ExternalUser ssn) {
+	public void setSsn(String ssn) {
 		this.ssn = ssn;
 	}
 
@@ -55,14 +54,14 @@ public class Pii implements Serializable, ILogs{
 	
 	@Override
 	public Long getId() {
-		return Long.valueOf(ssn.getSsn());
+		return Long.valueOf(ssn);
 	}
 
 	@Override
 	public String getLogDetail() {
 	StringBuilder sb = new StringBuilder();
 		
-		sb.append(" pii ").append(" ssn :" ).append(ssn.getSsn())
+		sb.append(" pii ").append(" ssn :" ).append(ssn)
 		.append(" visastatus :").append(visastatus);
 
 		return sb.toString();

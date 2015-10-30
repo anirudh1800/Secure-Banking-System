@@ -19,6 +19,8 @@ public interface PiiDAO {
 
 	public void delete(Pii pii);
 
+	public Pii findBySSN(String ssn);
+	
 	public Pii findBySSN(ExternalUser externaluser);
 
 }

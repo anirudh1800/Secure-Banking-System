@@ -67,6 +67,9 @@ public class InternalUser implements ILogs{
 	@Column(name = "accessprivilege", nullable = false)
 	@ColumnDefault("RE1")
 	private String accessprivilege;
+	
+	@Column(name = "piiaccess", nullable = false)
+	private int piiaccess;
 
 	public int getUserid() {
 		return userid;
@@ -164,6 +167,14 @@ public class InternalUser implements ILogs{
 		this.accessprivilege = accessprivilege;
 	}
 	
+	public int getPiiaccess() {
+		return piiaccess;
+	}
+	
+	public void setPiiacces(int piiaccess) {
+		this.piiaccess = piiaccess;
+	}
+
 	@Transient
 	@Override
 	public Long getId() {
@@ -185,7 +196,8 @@ public class InternalUser implements ILogs{
 		.append(" city : ").append(city)
 		.append(" state : ").append(state)
 		.append(" zipcode :").append(zipcode)
-		.append(" accessprivilege :").append(accessprivilege);
+		.append(" accessprivilege :").append(accessprivilege)
+		.append(" piiacess:").append(piiaccess);
 
 		return sb.toString();
 	}

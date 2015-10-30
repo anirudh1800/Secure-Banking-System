@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.group9.bankofaz.dao.InternalUserDAO;
+import com.group9.bankofaz.dao.PiiDAO;
 import com.group9.bankofaz.dao.TransactionDAO;
 import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.exception.AuthorizationException;
 import com.group9.bankofaz.exception.IllegalTransactionException;
+import com.group9.bankofaz.model.ExternalUser;
 import com.group9.bankofaz.model.InternalUser;
 import com.group9.bankofaz.model.Logs;
+import com.group9.bankofaz.model.Pii;
 import com.group9.bankofaz.model.Task;
 import com.group9.bankofaz.model.Transaction;
 import com.group9.bankofaz.model.Users;
@@ -48,6 +51,9 @@ public class EmployeeController {
 
 	@Autowired
 	TransactionDAO transactionDao;
+
+	@Autowired
+	PiiDAO piiDao;
 
 	@Autowired
 	UsersDAO usersDao;
@@ -130,13 +136,12 @@ public class EmployeeController {
 
 		InternalUser user = internalUserDao.findUserByEmail(username);
 
-		 
 		String taskid_str = request.getParameter("taskselected");
-		
-		if(taskid_str.equals("")){
+
+		if (taskid_str.equals("")) {
 			return new ModelAndView("redirect:/employee");
 		}
-		
+
 		int taskid = Integer.valueOf(taskid_str);
 
 		ModelAndView modelView = null;
@@ -685,10 +690,10 @@ public class EmployeeController {
 			systemAdministratorService.setUser(username);
 
 			systemAdministratorService.updateInfo(internal);
-			
+
 			if (!request.getParameter("Pass").toString().equals(""))
 				systemAdministratorService.updatePasswd(users);
-			
+
 			modelView.addObject("user", internal);
 			break;
 
@@ -785,9 +790,74 @@ public class EmployeeController {
 			modelView = new ModelAndView("InternalUsersLookUp");
 			modelView.addObject("user1", user1);
 			modelView.addObject("email", email);
-			
+
 			break;
 		default:
+			break;
+		}
+
+		return modelView;
+
+	}
+
+	@RequestMapping(value = "/employee/pii", method = RequestMethod.GET)
+	public ModelAndView getPIIwithRequestParameter(@RequestParam("ssn") String ssn, HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		String username = (String) session.getAttribute("BOAUsername");
+
+		InternalUser user = internalUserDao.findUserByEmail(username);
+
+		ModelAndView modelView = null;
+
+		switch (user.getAcessPrivilege()) {
+		case "RE1":
+		case "RE2":
+			Pii pii = piiDao.findBySSN(ssn);
+			modelView = new ModelAndView("PII");
+
+			if (pii != null) {
+				modelView.addObject("ssn", pii.getSsn());
+				modelView.addObject("visastatus", pii.getVisastatus());
+			} else {
+				modelView.addObject("message", "No status found!");
+			}
+
+			break;
+
+		case "SM":
+		case "SA":
+		default:
+			modelView = new ModelAndView("redirect:/employee");
+			break;
+		}
+
+		return modelView;
+
+	}
+
+	@RequestMapping(value = "/employee/pii", method = RequestMethod.POST)
+	public ModelAndView getPIILookup(HttpServletRequest request) {
+		HttpSession session = request.getSession(true);
+		String username = (String) session.getAttribute("BOAUsername");
+
+		InternalUser user = internalUserDao.findUserByEmail(username);
+
+		ModelAndView modelView = null;
+
+		switch (user.getAcessPrivilege()) {
+		case "RE1":
+		case "RE2":
+			if (user.getPiiaccess() == 1) {
+				modelView = new ModelAndView("PII");
+			} else {
+				modelView = new ModelAndView("redirect:/employee");
+			}
+			break;
+
+		case "SM":
+		case "SA":
+		default:
+			modelView = new ModelAndView("redirect:/employee");
 			break;
 		}
 
@@ -846,7 +916,7 @@ public class EmployeeController {
 		String ssn = request.getParameter("SSN").toString();
 		String accessprivilege = request.getParameter("AP");
 		String email = request.getParameter("email_hidden").toString();
-		
+
 		StringBuilder errors = new StringBuilder();
 		if (!validateField(firstName, 1, 30, false)) {
 			errors.append("<li>First Name must not be empty, be between 1-30 characters and not have spaces</li>");
@@ -876,13 +946,14 @@ public class EmployeeController {
 		if (!validateField(ssn, 9, 9, false)) {
 			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces</li>");
 		}
-		
-		if(accessprivilege.equals("SA") || accessprivilege.equals("SM") || accessprivilege.equals("RE1") || accessprivilege.equals("RE2")){
-				
-		}else{
+
+		if (accessprivilege.equals("SA") || accessprivilege.equals("SM") || accessprivilege.equals("RE1")
+				|| accessprivilege.equals("RE2")) {
+
+		} else {
 			errors.append("Undefined access privilege defined");
 		}
-		
+
 		if (errors.length() > 0) {
 			modelView = new ModelAndView("InternalUsersLookUp");
 
@@ -901,9 +972,9 @@ public class EmployeeController {
 			break;
 
 		case "SA":
-			
+
 			InternalUser user1 = new InternalUser();
-			
+
 			user1.setUserid(userid);
 			user1.setFirstname(firstName);
 			user1.setMiddlename(middleName);
@@ -915,7 +986,7 @@ public class EmployeeController {
 			user1.setZipcode(zipcode);
 			user1.setSsn(ssn);
 			user1.setAcessPrivilege(accessprivilege);
-			
+
 			Users users = usersDao.findUsersByEmail(email);
 			user1.setEmail(users);
 
@@ -924,7 +995,7 @@ public class EmployeeController {
 			} catch (AuthorizationException e) {
 				e.printStackTrace();
 			}
-			
+
 			modelView = new ModelAndView("redirect:/employee");
 			break;
 

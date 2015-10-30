@@ -3,6 +3,7 @@ package com.group9.bankofaz.dao;
 import java.util.Date;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.interceptor.ILogs;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.GovAgency;
 import com.group9.bankofaz.model.Logs;
 import com.group9.bankofaz.model.Pii;;
 
@@ -60,6 +62,16 @@ public class PiiDAOImpl implements PiiDAO{
 	@Transactional(readOnly = true)
 	public Pii findBySSN(ExternalUser externaluser) {
 		return (Pii) sessionFactory.getCurrentSession().get(Pii.class, externaluser.getSsn());	
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Pii findBySSN(String ssn1) {
+		Session session = this.sessionFactory.getCurrentSession();
+		Pii pii = (Pii) session.createQuery("from Pii where ssn = :ssn1")
+				.setString("ssn1", ssn1)
+				.uniqueResult();
+		return pii;
 	}
 	
 	public void logIt(String action, ILogs  ilogs){

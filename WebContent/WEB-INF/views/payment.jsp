@@ -40,7 +40,7 @@ table.inner {
 	<h2 align="center">Payment</h2>
 
 	<div id="errors" style="color: #ff0000">${errors}</div>
-	<form method="post" action="dopayment" class="form-signin"
+	<form method="post" action="dopayment?${_csrf.parameterName}=${_csrf.token}" class="form-signin"
 		enctype="multipart/form-data">
 		<table align="center" class="table table-nonfluid">
 			<tr>

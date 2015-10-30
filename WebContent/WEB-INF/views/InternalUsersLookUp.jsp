@@ -48,8 +48,8 @@ table.inner {
 				<th>Address Line 1</th>
 				<th>Address Line 2</th>
 				<th>City</th>
-				<th>State</th>
 				<th>Zipcode</th>
+				<th>State</th>
 				<th>SSN</th>
 				<th>Access Privilege</th>
 			</tr>
