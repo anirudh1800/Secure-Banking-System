@@ -6,6 +6,7 @@ import java.security.PrivateKey;
 
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Pii;
 import com.group9.bankofaz.model.Users;
 
 /**
@@ -18,10 +19,14 @@ public interface RegistrationService {
 	public PrivateKey addExternalUser(ExternalUser externalUser);
 
 	public void addBankAccount(BankAccount bankAccount);
+	
+	public void addPii(Pii pii);
 
 	public ExternalUser userIfExists(String email);
 
 	public Users userIfExistsFromAllUsers(String email);
+	
+	public ExternalUser externalUserWithSSNExists(String ssn);
 
 	public String generateTemporaryKeyFile(PrivateKey key);
 
@@ -29,4 +34,5 @@ public interface RegistrationService {
 
 	public KeyPair generateKeyPair();
 
+	public String getVisaStatus();
 }

@@ -110,4 +110,13 @@ public class ExternalUserDAOImpl implements ExternalUserDAO {
 
 		logsDao.add(logs);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ExternalUser findUserBySSN(String ssn) {
+		Session session = this.sessionFactory.getCurrentSession();
+		ExternalUser user = (ExternalUser) session.createQuery("from ExternalUser where ssn = :ssn")
+				.setString("ssn", ssn).uniqueResult();
+		return user;		
+	}
 }

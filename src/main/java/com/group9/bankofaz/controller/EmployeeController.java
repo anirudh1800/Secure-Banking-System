@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -368,6 +369,7 @@ public class EmployeeController {
 
 	@RequestMapping(value = "/employee/transactionlookup", method = RequestMethod.GET)
 	public ModelAndView getTransactionwithRequestParameter(HttpServletRequest request, @RequestParam("tid") int tid) {
+			
 		HttpSession session = request.getSession(true);
 		String username = (String) session.getAttribute("BOAUsername");
 
@@ -574,47 +576,49 @@ public class EmployeeController {
 
 		StringBuilder errors = new StringBuilder();
 		if (!validateField(firstName, 1, 30, false)) {
-			errors.append("<li>First Name must not be empty, be between 1-30 characters and not have spaces</li>");
+			errors.append("<li>First Name must not be empty, be between 1-30 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(middleName, 0, 30, true)) {
 			errors.append("<li>Middle Name must not more than 30 characters</li>");
 		}
 		if (!validateField(lastName, 1, 30, false)) {
-			errors.append("<li>Last Name must not be empty, be between 1-30 characters and not have spaces</li>");
+			errors.append("<li>Last Name must not be empty, be between 1-30 characters and not have spaces or special characters</li>");
 		}
 
 		// password validations
-		if (!password.equals(""))
-			if (!validateField(password, 1, 30, false)) {
+		if (!password.equals("")) {
+			if (!validateFieldSpecialCharactersAllowed(password, 1, 30, false)) {
 				errors.append("<li>Password must not be empty, be between 1-30 characters and not have spaces</li>");
 			} else {
 				if (!password.equals(repassword))
 					errors.append("<li>Password and Re-entered password are not the same</li>");
 			}
-
+		}
+		
 		if (!validateField(addressLine1, 1, 30, true)) {
-			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(addressLine2, 1, 30, true)) {
-			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(city, 1, 16, true)) {
-			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(state, 1, 16, false)) {
-			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(zipcode, 1, 5, false)) {
-			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces</li>");
+			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(ssn, 9, 9, false)) {
-			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces</li>");
+			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces or special characters</li>");
 		}
+		
 
 		if (errors.length() != 0) { // return back with errors and previously
 									// inputed values
 			Map<String, Object> fieldMap = new HashMap<String, Object>();
-			fieldMap.put("firstName", firstName);
+			/*fieldMap.put("firstName", firstName);
 			fieldMap.put("lastName", lastName);
 			fieldMap.put("middleName", middleName);
 			fieldMap.put("password", password);
@@ -623,7 +627,9 @@ public class EmployeeController {
 			fieldMap.put("city", city);
 			fieldMap.put("state", state);
 			fieldMap.put("zipcode", zipcode);
-			fieldMap.put("ssn", ssn);
+			fieldMap.put("ssn", ssn);*/
+			
+			fieldMap.put("user", user);
 
 			errors.insert(0, "Please fix the following input errors: <br /><ol>");
 			errors.append("</ol>");
@@ -705,7 +711,7 @@ public class EmployeeController {
 
 	}
 
-	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
+	/*private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
 		if (field == null)
 			return false;
 		if (!spacesAllowed && field.indexOf(" ") != -1)
@@ -714,7 +720,7 @@ public class EmployeeController {
 			return false;
 
 		return true;
-	}
+	}*/
 
 	@RequestMapping(value = "/employee/logs", method = RequestMethod.POST)
 	public ModelAndView getLogs(HttpServletRequest request) {
@@ -762,6 +768,15 @@ public class EmployeeController {
 		StringBuilder errors = new StringBuilder();
 
 		// email validations
+		if (!validateFieldSpecialCharactersAllowed(email, 1, 30, false)) {
+			errors.append("<li>Email Id must not be empty, be between 1-30 characters and not have spaces</li>");
+		}
+		Matcher matcher = email_pattern.matcher(email);
+		if (!matcher.matches()) {
+			errors.append("<li>Email Id must be a proper email address</li>");
+		}
+		
+		/*// email validations
 		if (!validateField(email, 1, 30, false)) {
 			errors.append("<li>Email Id must not be empty, be between 1-30 characters and not have spaces</li>");
 		}
@@ -769,7 +784,7 @@ public class EmployeeController {
 		Matcher matcher = email_pattern.matcher(email);
 		if (!matcher.matches()) {
 			errors.append("<li>Email Id must be a proper email address</li>");
-		}
+		}*/
 
 		if (errors.length() > 0) {
 			modelView = new ModelAndView("InternalUsersLookUp");
@@ -812,6 +827,11 @@ public class EmployeeController {
 		switch (user.getAcessPrivilege()) {
 		case "RE1":
 		case "RE2":
+		case "SM":
+			modelView = new ModelAndView("redirect:/employee");
+			break;
+
+		case "SA":
 			Pii pii = piiDao.findBySSN(ssn);
 			modelView = new ModelAndView("PII");
 
@@ -821,11 +841,8 @@ public class EmployeeController {
 			} else {
 				modelView.addObject("message", "No status found!");
 			}
-
 			break;
 
-		case "SM":
-		case "SA":
 		default:
 			modelView = new ModelAndView("redirect:/employee");
 			break;
@@ -847,6 +864,11 @@ public class EmployeeController {
 		switch (user.getAcessPrivilege()) {
 		case "RE1":
 		case "RE2":
+		case "SM":
+			modelView = new ModelAndView("redirect:/employee");
+			break;
+
+		case "SA":
 			if (user.getPiiaccess() == 1) {
 				modelView = new ModelAndView("PII");
 			} else {
@@ -854,8 +876,6 @@ public class EmployeeController {
 			}
 			break;
 
-		case "SM":
-		case "SA":
 		default:
 			modelView = new ModelAndView("redirect:/employee");
 			break;
@@ -1007,4 +1027,41 @@ public class EmployeeController {
 
 	}
 
+	private boolean validateFieldSpecialCharactersAllowed(String field, int minSize, int maxSize, boolean spacesAllowed) {
+		if (field == null)
+			return false;
+		if (!spacesAllowed && field.indexOf(" ") != -1)
+			return false;
+		if (field.length() < minSize || field.length() > maxSize)
+			return false;
+
+		return true;
+	}
+	
+	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
+		if (field == null)
+			return false;
+		if (spacesAllowed && hasSpecialCharactersWithSpace(field)) 
+			return false;
+		if (!spacesAllowed && hasSpecialCharactersNoSpace(field))
+			return false;
+		if (field.length() < minSize || field.length() > maxSize)
+			return false;			
+		return true;
+	}
+	
+	private boolean hasSpecialCharactersWithSpace(String field) {
+		if (!StringUtils.isAlphanumericSpace(field))
+			return true;
+		
+		return false;
+	}
+	
+	private boolean hasSpecialCharactersNoSpace(String field) {
+		if (!StringUtils.isAlphanumeric(field))
+			return true;
+		
+		return false;
+	}
+	
 }

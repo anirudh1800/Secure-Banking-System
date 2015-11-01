@@ -91,6 +91,9 @@
 
 		<intercept-url pattern="/employee/transactioninquiry**"
 			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+			
+		<intercept-url pattern="/employee/pii**"
+			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />
 
 		<intercept-url pattern="/employee/logs"
 			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />

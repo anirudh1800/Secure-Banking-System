@@ -8,10 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,7 @@ import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 import com.group9.bankofaz.component.SessionDetails;
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.ExternalUserDAO;
@@ -62,7 +65,7 @@ public class UserOperationsController {
 	
 	@Autowired
 	TransactionManagerService transactionManagerService;
-	
+			
 	@RequestMapping("/customer")
 	public ModelAndView ExternalUserDashboard(){
 		// HttpSession session= request.getSession(true);
@@ -747,7 +750,7 @@ public class UserOperationsController {
 	   	List<Transaction> trans=transactionDao.findTransactionsOfAccount(account);
 	   	System.out.println("Size of trans : "+trans.size());
 	   	ICsvBeanWriter csvWriter= new CsvBeanWriter(response.getWriter(),CsvPreference.STANDARD_PREFERENCE);
-	   	String[] header ={"transdate","transdesc","transtype","amt"};	
+	   	String[] header ={"transdate","transdesc","transtype","amt", "transstatus"};	
 	   	csvWriter.writeHeader(header);
 		for (Transaction t :trans){
 			csvWriter.write(t, header);
@@ -799,7 +802,7 @@ public class UserOperationsController {
 	}
 	
 	// Make Payment Actuator 
-	@RequestMapping(value="dopayment",method=RequestMethod.POST)
+	@RequestMapping(value="/dopayment",method=RequestMethod.POST)
 	public ModelAndView payToOrganization(@RequestParam("PrivateKeyFileLoc") MultipartFile privateKeyFile,HttpServletRequest request){
 		if (!userLoggedIn()) {
 			return new ModelAndView("redirect:/login");
@@ -948,6 +951,7 @@ public class UserOperationsController {
 		//return new ModelAndView("account", map);
 		
 		return new ModelAndView("redirect:/account");
+		
 		/*
 		if (!userLoggedIn()) {
 			return new ModelAndView("redirect:/login");
@@ -1077,30 +1081,29 @@ public class UserOperationsController {
 		String city=request.getParameter("city");
 		String state=request.getParameter("state");
 		String zipcode=request.getParameter("zip");
-		String ssn=request.getParameter("ssn");
+		String ssn=update.getSsn();
 		Map<String, Object> result = new HashMap<String, Object>();
 		StringBuilder errors = new StringBuilder();
 		if (!validateField(address1, 1, 30, true)) {
-
-			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(address2, 1, 30, true)) {
-			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(city, 1, 16, true)) {
-			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(state, 1, 16, false)) {
 
-			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces or special characters<</li>");
 		}
 		if (!validateField(zipcode, 1, 5, false)) {
 	
-			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces</li>");
+			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces or special characters<</li>");
 		}
-		if (!validateField(ssn, 9, 9, false)) {
+		/*if (!validateField(ssn, 9, 9, false)) {
 			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces</li>");
-		}
+		}*/
 	
 		result.put("firstname", request.getParameter("firstname"));
 		result.put("lastname", request.getParameter("lastname"));
@@ -1113,9 +1116,8 @@ public class UserOperationsController {
 		result.put("zipcode", zipcode);
 		result.put("ssn", ssn);
 		
-		if (errors.length() != 0) { 
-			
-			result.put("message", errors.toString());
+		if (errors.length() != 0) {			
+			result.put("errors", errors.toString());
 			return new ModelAndView("PersonalInformation", result);
 		}
 		update.setAddressline1(address1);
@@ -1124,7 +1126,7 @@ public class UserOperationsController {
 		update.setCity(city);
 		update.setState(state);
 		update.setZipcode(zipcode);
-		update.setSsn(ssn);
+		//update.setSsn(ssn);
 		
 		result.put("message","paid successfully");
 		externalUserDao.update(update);
@@ -1134,11 +1136,28 @@ public class UserOperationsController {
 	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
 		if (field == null)
 			return false;
-		if (!spacesAllowed && field.indexOf(" ") != -1)
+		if (spacesAllowed && hasSpecialCharactersWithSpace(field)) 
+			return false;
+		if (!spacesAllowed && hasSpecialCharactersNoSpace(field))
 			return false;
 		if (field.length() < minSize || field.length() > maxSize)
-			return false;
-
+			return false;			
 		return true;
 	}
+	
+	private boolean hasSpecialCharactersWithSpace(String field) {
+		if (!StringUtils.isAlphanumericSpace(field))
+			return true;
+		
+		return false;
+	}
+	
+	private boolean hasSpecialCharactersNoSpace(String field) {
+		if (!StringUtils.isAlphanumeric(field))
+			return true;
+		
+		return false;
+	}
+	
+	
 }

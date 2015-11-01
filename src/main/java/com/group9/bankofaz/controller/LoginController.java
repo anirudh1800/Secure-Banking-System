@@ -70,6 +70,8 @@ public class LoginController {
 					String password = generatePassword();
 					StandardPasswordEncoder encryption = new StandardPasswordEncoder();
 					updateuser.setPassword(encryption.encode(password));
+					updateuser.setFailure(0);
+					sessionDetails.setFailureAttempts(0);
 					usersDao.update(updateuser);
 					loginService.sendEmail(sessionDetails.getUsername(), password, "password");
 				}
@@ -104,10 +106,25 @@ public class LoginController {
 		HttpSession session = request.getSession(true);
 		String username = session.getAttribute("BOAUsername").toString();
 		String otp_pwd = request.getParameter("passwd").toString();
+		
+		if(!isNumericInteger(otp_pwd)) {
+			message = "Invalid OTP!";
+			try {
+				request.logout();
+				//session.invalidate();
+			} catch (ServletException e) {
+				e.printStackTrace();
+			}
+			return new ModelAndView("/login", "message", message);
+		}
+		
 		boolean isCodeValid = loginService.validateOtp(username, Integer.parseInt(otp_pwd));
 		/*System.out.println("Verify : " + isCodeValid);
 		System.out.println("#########################");*/
 
+		// validations
+		
+		
 		ModelAndView modelView = null;
 
 		if (isCodeValid) {
@@ -153,7 +170,7 @@ public class LoginController {
 			message = "Invalid OTP!";
 			try {
 				request.logout();
-				session.invalidate();
+				// session.invalidate();
 			} catch (ServletException e) {
 				e.printStackTrace();
 			}
@@ -208,9 +225,10 @@ public class LoginController {
 			if (user != null && verify) {
 				StandardPasswordEncoder encryption = new StandardPasswordEncoder();
 				user.setPassword(encryption.encode(password));
+				user.setFailure(0);				
 				usersDao.update(user);
 				loginService.sendEmail(email, "Your password: " + password, "Bank of Arizona Password");
-				message = "Your password was reset. A temporary password was mailed to your email-id";
+				message = "Your password was reset. A temporary password was mailed to your email-id";				
 			} else
 				message = "Username does not exist";
 		} catch (IOException e) {
@@ -228,6 +246,17 @@ public class LoginController {
 		if (field.length() < minSize || field.length() > maxSize)
 			return false;
 
+		return true;
+	}
+	
+	public boolean isNumericInteger(String str) {
+		if (str == null)
+			return false;
+		try {
+			int d = Integer.parseInt(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
 		return true;
 	}
 }

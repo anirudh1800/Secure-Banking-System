@@ -62,8 +62,7 @@ table.inner {
 							CELLPADDING="4" CELLSPACING="3" type="submit" name="EditInfo"
 							value="Edit Personal Info" />
 					</form:form></td>
-			</tr>
-
+			</tr>			
 			<tr>
 				<td><form:form action="${logoutUrl}" method="post"
 						id="logoutForm">

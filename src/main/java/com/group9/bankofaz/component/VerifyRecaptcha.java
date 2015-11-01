@@ -1,4 +1,4 @@
-// Obtained from internet
+
 package com.group9.bankofaz.component;
 
 import java.io.BufferedReader;

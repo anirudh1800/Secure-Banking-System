@@ -91,8 +91,7 @@ table.inner {
 
 			<tr>
 				<td><b>SSN</b></td>
-				<td><input type="text" class="form-control" name="ssn"
-					value="${ssn}"></td>
+				<td><input type="hidden" name="ssn" value="${ssn}">${ssn}</td>				
 			</tr>
 
 			<tr>

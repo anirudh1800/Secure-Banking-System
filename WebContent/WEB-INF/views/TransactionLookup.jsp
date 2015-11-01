@@ -36,7 +36,7 @@ table.inner {
 	<form:form name="form" align="center"
 		action="${pageContext.request.contextPath}/employee/transactionlookup"
 		class="form-inline" onsubmit="return validateForm()" method="GET">
-		Transaction ID : <input type="text" name="tid" class="form-control" />&nbsp;
+		Transaction ID : <input type="number" min="0" name="tid" class="form-control" />&nbsp;
 		 <input value="View Transaction" type="submit" class="form-control" />
 		<br>
 	</form:form>

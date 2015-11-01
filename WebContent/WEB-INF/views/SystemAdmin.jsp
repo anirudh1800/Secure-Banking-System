@@ -21,6 +21,7 @@
 table.inner {
 	border: 0px
 }
+
 .table-nonfluid {
 	width: auto !important;
 }
@@ -31,8 +32,7 @@ table.inner {
 <body>
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 
-	<h1>
-		System Administrator Page</h1>
+	<h1>System Administrator Page</h1>
 
 	<div style="float: left; width: 30%;">
 		<p align='left'>
@@ -40,32 +40,43 @@ table.inner {
 			<tr>
 				<td><form:form name="tl" method="post"
 						action="${pageContext.request.contextPath}/employee/internaluserlookup">
-						<input class="btn btn-lg btn-primary btn-block" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="InternalUser" value="InternalUser" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="InternalUser"
+							value="InternalUser" />
 					</form:form></td>
 			</tr>
 
 			<tr>
 				<td><form:form name="ti" method="post"
 						action="${pageContext.request.contextPath}/employee/logs">
-						<input class="btn btn-lg btn-primary btn-block" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="Logs" value="Logs" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="Logs"
+							value="Logs" />
 					</form:form></td>
 			</tr>
 
 			<tr>
 				<td><form:form name="ei" method="post"
 						action="${pageContext.request.contextPath}/employee/editinfo">
-						<input class="btn btn-lg btn-primary btn-block" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="EditInfo" value="Edit Personal Info" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="EditInfo"
+							value="Edit Personal Info" />
 					</form:form></td>
 			</tr>
-
+			<tr>
+				<td><form:form name="pii" method="post"
+						action="${pageContext.request.contextPath}/employee/pii">
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="PII"
+							value="PII" />
+					</form:form></td>
+			</tr>
 			<tr>
 				<td><form:form action="${logoutUrl}" method="post"
 						id="logoutForm">
-						<input class="btn btn-lg btn-primary btn-block" id="tl" CELLPADDING="4" CELLSPACING="3"
-							type="submit" name="Logout" value="Log out" />
+						<input class="btn btn-lg btn-primary btn-block" id="tl"
+							CELLPADDING="4" CELLSPACING="3" type="submit" name="Logout"
+							value="Log out" />
 						<input type="hidden" name="${_csrf.parameterName}"
 							value="${_csrf.token}" />
 					</form:form></td>
@@ -99,11 +110,11 @@ table.inner {
 			<br />
 			<br />
 			<input type="hidden" id="taskselected" name="taskselected" value="">
-			<input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit">
+			<input type="submit" class="btn btn-lg btn-primary btn-block"
+				value="Submit">
 		</form:form>
 
-		<script>	
-		
+		<script>
 			$(document).ready(
 					function() {
 						$("#taskForm").submit(

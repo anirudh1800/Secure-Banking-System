@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.group9.bankofaz.component.VerifyRecaptcha;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Pii;
 import com.group9.bankofaz.model.Users;
 import com.group9.bankofaz.service.RegistrationService;
 
@@ -75,17 +77,17 @@ public class RegistrationController {
 		// validate input
 		StringBuilder errors = new StringBuilder();
 		if (!validateField(firstName, 1, 30, false)) {
-			errors.append("<li>First Name must not be empty, be between 1-30 characters and not have spaces</li>");
+			errors.append("<li>First Name must not be empty, be between 1-30 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(middleName, 0, 30, true)) {
 			errors.append("<li>Middle Name must not more than 30 characters</li>");
 		}
 		if (!validateField(lastName, 1, 30, false)) {
-			errors.append("<li>Last Name must not be empty, be between 1-30 characters and not have spaces</li>");
+			errors.append("<li>Last Name must not be empty, be between 1-30 characters and not have spaces or special characters</li>");
 		}
 
 		// email validations
-		if (!validateField(emailId, 1, 30, false)) {
+		if (!validateFieldSpecialCharactersAllowed(emailId, 1, 30, false)) {
 			errors.append("<li>Email Id must not be empty, be between 1-30 characters and not have spaces</li>");
 		}
 		Matcher matcher = email_pattern.matcher(emailId);
@@ -98,7 +100,7 @@ public class RegistrationController {
 		}
 
 		// password validations
-		if (!validateField(password, 1, 30, false)) {
+		if (!validateFieldSpecialCharactersAllowed(password, 1, 30, false)) {
 			errors.append("<li>Password must not be empty, be between 1-30 characters and not have spaces</li>");
 		} else {
 			if (!password.equals(repassword))
@@ -113,27 +115,30 @@ public class RegistrationController {
 		if (accountType.equals("merchant")) {
 			if (!validateField(bName, 1, 30, true)) {
 				errors.append(
-						"<li>For Merchant accounts, Organization Name must not be empty, and be between 1-30 characters</li>");
+						"<li>For Merchant accounts, Organization Name must not be empty, and be between 1-30 characters and not have special characters</li>");
 			}
 		}
 
 		if (!validateField(addressLine1, 1, 30, true)) {
-			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 1 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(addressLine2, 1, 30, true)) {
-			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters</li>");
+			errors.append("<li>Address Line 2 must not be empty, be between 1-30 characters and not have special characters</li>");
 		}
 		if (!validateField(city, 1, 16, true)) {
-			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>City must not be empty, be between 1-16 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(state, 1, 16, false)) {
-			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces</li>");
+			errors.append("<li>State must not be empty, be between 1-16 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(zipcode, 1, 5, false)) {
-			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces</li>");
+			errors.append("<li>Zipcode must not be empty, be between 1-5 characters and not have spaces or special characters</li>");
 		}
 		if (!validateField(ssn, 9, 9, false)) {
-			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces</li>");
+			errors.append("<li>SSN must not be empty, be 9 characters long and not have spaces or special characters</li>");
+		}
+		if (registerService.externalUserWithSSNExists(ssn) != null) {
+			errors.append("<li>An user exists with the given SSN, please use an alternate SSN</li>");
 		}
 
 		if (errors.length() != 0) { // return back with errors and previously
@@ -182,6 +187,11 @@ public class RegistrationController {
 		Users users = new Users();
 		users.setUsername(emailId);
 		users.setEnabled(1);
+		
+		Pii pii = new Pii();
+		pii.setSsn(ssn);
+		pii.setVisastatus(registerService.getVisaStatus());
+		
 
 		StandardPasswordEncoder encryption = new StandardPasswordEncoder();
 		users.setPassword(encryption.encode(request.getParameter("password").toString()));
@@ -216,7 +226,9 @@ public class RegistrationController {
 
 		registerService.addBankAccount(checking);
 		registerService.addBankAccount(savings);
-
+		
+		registerService.addPii(pii);
+		
 		// prepare to pass data back to registration successful page
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("firstName", external.getFirstname());
@@ -253,7 +265,7 @@ public class RegistrationController {
 		}
 	}
 
-	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
+	private boolean validateFieldSpecialCharactersAllowed(String field, int minSize, int maxSize, boolean spacesAllowed) {
 		if (field == null)
 			return false;
 		if (!spacesAllowed && field.indexOf(" ") != -1)
@@ -263,5 +275,31 @@ public class RegistrationController {
 
 		return true;
 	}
-
+	
+	private boolean validateField(String field, int minSize, int maxSize, boolean spacesAllowed) {
+		if (field == null)
+			return false;
+		if (spacesAllowed && hasSpecialCharactersWithSpace(field)) 
+			return false;
+		if (!spacesAllowed && hasSpecialCharactersNoSpace(field))
+			return false;
+		if (field.length() < minSize || field.length() > maxSize)
+			return false;			
+		return true;
+	}
+	
+	private boolean hasSpecialCharactersWithSpace(String field) {
+		if (!StringUtils.isAlphanumericSpace(field))
+			return true;
+		
+		return false;
+	}
+	
+	private boolean hasSpecialCharactersNoSpace(String field) {
+		if (!StringUtils.isAlphanumeric(field))
+			return true;
+		
+		return false;
+	}
+	
 }

@@ -12,11 +12,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.sql.rowset.serial.SerialBlob;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.group9.bankofaz.dao.BankAccountDAO;
 import com.group9.bankofaz.dao.ExternalUserDAO;
+import com.group9.bankofaz.dao.PiiDAO;
 import com.group9.bankofaz.dao.UsersDAO;
 import com.group9.bankofaz.model.BankAccount;
 import com.group9.bankofaz.model.ExternalUser;
+import com.group9.bankofaz.model.Pii;
 import com.group9.bankofaz.model.Users;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
@@ -47,6 +49,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	@Autowired
 	private BankAccountDAO bankAccountDao;
+	
+	@Autowired
+	private PiiDAO piiDao;
 
 	GoogleAuthenticatorConfigBuilder configBuilder;
 	GoogleAuthenticatorConfig config;
@@ -125,6 +130,34 @@ public class RegistrationServiceImpl implements RegistrationService {
 	public String getPrivateKeyLocation(String randFile) {
 		String tempDir = System.getProperty("java.io.tmpdir");
 		return tempDir + "/" + randFile;			
+	}
+
+	@Override
+	public String getVisaStatus() {
+		// this should be external service
+		String[] visaStatus = {
+							"F1",
+							"H1B",
+							"B1",
+							"B2",
+							"F2",
+							"L1",
+							"L2",
+							"L4"
+		}; 		
+		return visaStatus[ThreadLocalRandom.current().nextInt(0, visaStatus.length)];		
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ExternalUser externalUserWithSSNExists(String ssn) {
+		return externalUserDao.findUserBySSN(ssn);
+	}
+
+	@Override
+	@Transactional
+	public void addPii(Pii pii) {
+		piiDao.add(pii);
 	}	
 	
 }

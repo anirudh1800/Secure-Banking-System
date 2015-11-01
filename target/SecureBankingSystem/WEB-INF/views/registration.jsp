@@ -41,9 +41,12 @@ table.inner {
 	<h3 align="center">SIGN UP</h3>
 	<form:form class="form-signin"
 		action="${pageContext.request.contextPath}/reg_validate" name="RForm"
-		method="post" onsubmit="return validateForm()">
+		method="post" onsubmit="return validateForm()">		
 		<table align="center" class="table table-nonfluid" cellpadding="10"
 			width="80%">
+			<tr>
+				<td colspan="2"><div id="errors" style="color: #ff0000">${errors}</div></td>
+			</tr>
 			<tr>
 				<td>FIRST NAME *</td>
 				<td><input type="text" class="form-control" name="First_Name"

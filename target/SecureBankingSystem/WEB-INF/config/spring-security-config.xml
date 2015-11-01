@@ -34,12 +34,30 @@
 
 		<intercept-url pattern="/account**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
-
+		
+		<intercept-url pattern="/dopayment**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+				
+		<intercept-url pattern="/customerPersonalInfo**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		
+		<intercept-url pattern="/edit**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		
 		<intercept-url pattern="/debit**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
 
+		<intercept-url pattern="/dodebit**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		
 		<intercept-url pattern="/credit**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+		
+		<intercept-url pattern="/docredit**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
+			
+		<intercept-url pattern="/payment**"
+			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />	
 
 		<intercept-url pattern="/dotransfer**"
 			access="hasAnyRole('ROLE_INDIVIDUAL','ROLE_MERCHANT') and isFullyAuthenticated()" />
@@ -73,6 +91,9 @@
 
 		<intercept-url pattern="/employee/transactioninquiry**"
 			access="hasAnyRole( 'ROLE_EMPLOYEE', 'ROLE_MANAGER') and isFullyAuthenticated()" />
+			
+		<intercept-url pattern="/employee/pii**"
+			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />
 
 		<intercept-url pattern="/employee/logs"
 			access="hasAnyRole( 'ROLE_ADMIN') and isFullyAuthenticated()" />

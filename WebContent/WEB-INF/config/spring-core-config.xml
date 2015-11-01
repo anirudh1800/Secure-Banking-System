@@ -62,7 +62,6 @@
 	<bean id="taskDao" class="com.group9.bankofaz.dao.TaskDAOImpl" />
 	<bean id="bankAccountDao" class="com.group9.bankofaz.dao.BankAccountDAOImpl" />
 	<bean id="logsDao" class="com.group9.bankofaz.dao.LogsDAOImpl" />
-	<bean id="piiDao" class="com.group9.bankofaz.dao.PiiDAOImpl" />
 
 	<bean id="loginService" class="com.group9.bankofaz.service.LoginServiceImpl" />
 	<bean id="registerService" class="com.group9.bankofaz.service.RegistrationServiceImpl" />
