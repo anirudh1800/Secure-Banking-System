@@ -1,2 +1,3 @@
 target/* linguist-vendored=true
+dumps/* linguist-vendored=true
 *.java linguist-language=Java
