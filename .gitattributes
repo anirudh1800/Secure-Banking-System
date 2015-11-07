@@ -1,4 +1,5 @@
 target/* linguist-vendored=true
 dumps/* linguist-vendored=true
 *.java linguist-language=Java
-*.jsp linguist-language=HTML
+*.jsp linguist-language=Java Server Pages
+*.xml linguist-language=XML
