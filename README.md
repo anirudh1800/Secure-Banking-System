@@ -364,7 +364,7 @@ each member is listed below:-</font></font></p>
 </p>
 <p align="justify" style="margin-bottom: 0in; font-weight: normal; line-height: 100%">
 <font face="Times New Roman, serif"><font size="2" style="font-size: 10pt">Anirudh
-Ruia Gali(Team Leader) - Most of his contribution in the project
+ Gali(Team Leader) - Most of his contribution in the project
 deals with designing the application, assigning the work to each team
 member and scheduling the meetings. Apart from the leadership, He was
 responsible for developing the modules - transaction processing,
@@ -475,7 +475,7 @@ https://tools.ietf.org/html/rfc2818</font></font></p>
 <p align="left" style="margin-bottom: 0in; font-weight: normal; line-height: 100%">
 <font face="Times New Roman, serif"><font size="2" style="font-size: 10pt">[6]
 Secure Banking System source code. (n.d.). Retrieved December 1,
-2015, from https://github.com/anirudhruia/ Secure-Banking-System</font></font></p>
+2015, from https://github.com/anirudhgali/ Secure-Banking-System</font></font></p>
 <p align="left" style="margin-bottom: 0in; line-height: 100%"><font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span style="font-weight: normal">[</span></font></font><font face="Times New Roman, serif"><font size="2" style="font-size: 10pt"><span style="font-weight: normal">7]
 ReCAPTCHA. (n.d.). Retrieved December 1, 2015, from
 https://www.google.com/recaptcha/intro/index.html</span></font></font></p>
